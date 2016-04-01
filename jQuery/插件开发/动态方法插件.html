@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>动态方法插件</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			// 对象级别组件开发
+			// 即挂载在 jQuery 原型下的方法，这样通过选择器获取的 jQuery 对象实例也能共享该方法，也称为动态方法 例如 addClass() attr() 等，需要创建实例来调用
+			// $.fn.myPlugin=function(){};  这里的 $.fn === $.prototype
+			$.fn.extend({
+				drag: function () {
+					var disX = 0;
+					var disY = 0;
+					var $this = this; // this ==> $('div')
+
+					$this.mousedown(function (ev) {
+						disX = ev.pageX - $(this).offset().left;
+						disY = ev.pageY - $(this).offset().top;
+
+						$(document).mousemove(function (ev) {
+							$this.css({
+								'left': ev.pageX - disX,
+								'top': ev.pageY - disY
+							});
+						});
+
+						$(document).mouseup(function () {
+							$(this).off();
+						});
+
+						return false;
+					});
+				}
+			});
+
+			$('div').drag();   // 调用
+
+
+			// 链式调用：
+			$.fn.myPlugin = function () {
+				// return this 返回当前对象，来维护插件的链式调用
+				// each   循环实现每个元素的访问
+				return this.each(function () {
+					// do something...
+				});
+			};
+
+		});
+
+
+	</script>
+</head>
+<body>
+<div style="width: 100px;height: 100px;background-color: green; position: relative; top: 0;left: 0;"></div>
+</body>
+</html>

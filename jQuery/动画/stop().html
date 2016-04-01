@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>Panel</title>
+	<style>
+		* { margin: 0; padding: 0; }
+
+		body { font-size: 13px; line-height: 130%; padding: 60px }
+
+		#panel { width: 60px; border: 1px solid #0050D0; height: 22px; overflow: hidden; }
+
+		.head { padding: 5px; background: #96E555; cursor: pointer; width: 300px; }
+
+		.content { padding: 10px; text-indent: 2em; border-top: 1px solid #0050D0; display: block; width: 280px; }
+	</style>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			// stop([clearQueue],[gotoEnd])   [clearQueue],[gotoEnd] 可选
+			// [clearQueue]： 是否要清空未执行完的动画队列
+			// [gotoEnd]： 代表是否直接将正在执行的动画跳转到末尾状态
+
+			/*
+			 * stop() 默认只会阻止当前的运动，如果接下来还有动画等待继续进行，则以当前状态开始接下来的动画。( 结束当前正在进行的动画，并立即执行队列中的下一个动画 )
+			 * 例如：为一个元素绑定 hover 事件之后，用户把光标移入元素时会触发动画效果，而当这个动画还没结束时，用户就将光标移出了这个元素，
+			 * 那么光标移出的动画效果将会被放进队列之中，等待光标移入的动画结束之后再执行。因此如果光标一如移出过快就会导致动画效果与
+			 * 光标的动作不一致。此时只要在光标的移入、移出动画之前加入stop()，就能解决这个问题。
+			 *
+			 */
+			var $panel = $("#panel");
+			$panel.hover(function () {
+				$(this).stop().animate({height: "150", width: "300"}, 200);
+			}, function () {
+				$(this).stop().animate({height: "22", width: "60"}, 300);
+			});
+
+			/*
+			 * stop(true)  阻止后续的所有运动
+			 * 第2个参数 ( gotoEnd ) 可以用与让正在执行的动画直接达到结束时刻的状态，通常用于后一个动画需要基于前一个动画的末尾状态的情况，
+			 * 可以通过stop(false,true) 让当前动画直接到达末状态，继续下一个动画( 不清空动画队列，直接将正在执行的动画跳转到末尾状态 )
+
+			 * 此时只用一个不带参数的 stop() 方法就显的力不从心。因为stop()方法只会停止正在进行的动画，如果动画正执行在第1阶段( 改变height的阶段 )，
+			 * 则触发光标移出事件后，只会停止当前的动画，并继续进行下面的.animate({width : "300" } , 300 )动画，而光标移出事件中的动画要等这个动画
+			 * 结束后才会继续执行，这显然不是预期的结果。这种情况下stoop()方法的第1个参数就发挥作用了，可以把第1个参数(clearQueue)设置为true，此时
+			 * 程序会把当前元素接下来尚未执行完的动画队列都清空。
+			 */
+			$panel.hover(function () {
+				$(this).stop()
+						.animate({height: "150"}, 200)  // 如果在此时触发了光标移出的事件
+					//  将执行下面的动画
+					// 而非光标移出事件中的动画，所以使用stop(true)
+						.animate({width: "300"}, 300)
+			}, function () {
+				$(this).stop()
+						.animate({height: "22"}, 200)
+						.animate({width: "60"}, 300)
+			});
+
+			// 注意：jQuery 只能设置正在执行的动画的最终状态，而没有提供直接到达未执行动画队列的最终状态的方法
+			// 无论怎么设置 stop() 方法，均无法再改变"width"或者"height"时，将此div元素的某尾状态变成300*150的大小，并且设置透明度为 0.2
+			// 也就是说 stop() 停止执行到一半的动画，可能这个时候是 width:100，height:100，而无法直接变成 width:300，height:150 最终结果
+
+			// finish() 停止当前运行的动画，移除所有排队的动画，并为被选元素完成所有动画( 立即停止到运动中的所有目标点 )。
+			// stop(true,true)  清空动画队列，直接将正在执行的动画跳转到末尾状态，并阻止后续所有运动
+			// stop(false,true) 不清空动画队列，直接将正在执行的动画跳转到末尾状态，继续下一个动画
+
+		});
+	</script>
+</head>
+<body>
+<div id="panel">
+	<h5 class="head">什么是jQuery?</h5>
+
+	<div class="content">
+		jQuery是继Prototype之后又一个优秀的JavaScript库，它是一个由 John Resig
+		创建于2006年1月的开源项目。jQuery凭借简洁的语法和跨平台的兼容性，极大地简化了JavaScript开发人员遍历HTML文档、操作DOM、处理事件、执行动画和开发Ajax。它独特而又优雅的代码风格改变了JavaScript程序员的设计思路和编写程序的方式。
+	</div>
+</div>
+
+</body>
+</html>

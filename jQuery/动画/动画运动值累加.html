@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>动画运动值累加</title>
+	<style>
+		* { margin: 0; padding: 0; }
+
+		body { padding: 60px }
+
+		#panel { position: relative; width: 100px; height: 100px; border: 1px solid #0050D0; background: #96E555; cursor: pointer }
+
+		#panel2 { position: relative; width: 100px; height: 100px; border: 1px solid #0050D0; background: blueviolet; cursor: pointer }
+	</style>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			// 动画效果相同，但是当点击第二次的时候，panel 不动了， panel2 会继续向左移动
+			$(document).click(function () {
+				$("#panel").animate({left: "400px"}, 1000);
+			});
+			$(document).click(function () {
+				$("#panel2").animate({left: '+=' + 400}, 1000);
+			});
+
+			$(document).click(function () {
+				$("#div1").animate({
+					left: "250px",
+					height: "+=150px",
+					width: "+=150px"
+				});
+			});
+			// 也可以定义相对值 ( 该值相对于元素的当前值 )。需要在值的前面加上 += 或 -=
+			$(document).click(function () {
+				$("#div2").animate({
+					left: "250px",
+					height: "150px",
+					width: "150px"
+				});
+			});
+
+		});
+	</script>
+</head>
+<body>
+<div id="panel"></div>
+<br/>
+
+<div id="panel2"></div>
+<br/>
+<button>开始动画</button>
+<p>默认情况下，所有 HTML 元素的位置都是静态的，并且无法移动。如需对位置进行操作，记得首先把元素的 CSS position 属性设置为 relative、fixed 或 absolute。</p>
+<!-- 运动到 150px 150px -->
+<div id="div1" style="background:#98bf21;height:100px;width:100px;position:absolute;">
+</div>
+<!-- 累加运动到 250px 250px -->
+<div id="div2" style="background:darkred;height:100px;width:100px;position:absolute; top: 550px;">
+</div>
+
+</body>
+</html>

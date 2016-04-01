@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>finish()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		// finish()、stop(true,true)、stop(false,true) 的区别
+		$(function () {
+			$("#start").click(function () {
+				$("div").animate({height: 300}, 3000)
+						.animate({width: 300}, 3000);
+			});
+
+			$("#complete").click(function () {
+				$("div").finish();
+			});
+			$("#stop").click(function () {
+				$("div").stop(true, true);
+			});
+			$("#stop2").click(function () {
+				$("div").stop(false, true);
+			});
+
+		});
+
+	</script>
+</head>
+<body>
+<p>
+	<button id="start">Start Animation</button>
+	<button id="complete">Finish Current Animation</button>
+	<button id="stop">stop(true,true) Current Animation</button>
+	<button id="stop2">stop(false,true) Current Animation</button>
+</p>
+
+<div style="background:#98bf21;height:100px;width:100px">
+</div>
+</body>
+</html>

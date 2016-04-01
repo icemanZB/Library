@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>动画效果</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			// fadeIn()、fadeOut()   淡入淡出从 0到1 默认 400ms
+			// fadeOut() 即元素的不透明度的比例从 100% 逐渐减小到 0%
+
+			// fadeTo(1000,0.6)  淡入淡出到某个值
+
+			// slideUp()、slideDown() 向上向下卷曲
+			// slideToggle()、fadeToggle()  如果元素已经隐藏，则该效果不产生任何变化
+
+			// 除了 show() 和 hide()，所有其他特效的默认执行时间都是 400ms ( show()、hide() 默认为0ms )
+
+			/*
+			 * show() => animate({height : "show" , width : "show" , opacity : "show" } , 600 )
+			 * slideDown() => animate({height : "show" } , 600 )
+			 * fadeIn() => animate({ opacity : "show" } , 600 )
+			 * fadeTo() => animate({ opacity : "0.2" } , 600 )
+			 */
+
+			// $.fx.off 如果设置为true，则关闭所有网页特效。 ( 没有任何动画效果 )
+			// jQuery.fx.off = true;  jQuery.fx.off = false;
+
+
+			// 回调函数
+			$("p").fadeOut(300, function () {
+				$(this).remove();
+			});
+
+			// 复杂的运动
+			$("div").animate({
+						left: "+=50", // 在原有值的基础上右移
+						opacity: 0.25 // 指定透明度
+					},
+					300, // 持续时间
+					function () {
+						console.log("done!");
+					} //回调函数
+			);
+
+
+		});
+	</script>
+</head>
+<body>
+<div style="width: 100px;height: 100px;background: red;position: relative;"></div>
+<p style="width: 100px;height: 100px;background: grey;position: relative;top: 100px;"></p>
+</body>
+</html>

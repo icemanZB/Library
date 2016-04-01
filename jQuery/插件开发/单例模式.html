@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		(function ($) {
+			var privateFn = function () {
+				// 插件内部私有方法
+			};
+			var PageSwitch = (function () {
+
+				function PageSwitch(ele, opts) {
+					this.settings = $.extend(true, $.fn.PageSwitch.settings, opts || {});
+					this.ele = ele;
+					// 可以写一些获取 DOM 结构
+					this.init(); // 初始化插件
+				}
+
+				// 主要的方法写在这
+				PageSwitch.prototype = {
+					constructor: PageSwitch,
+					init: function () {
+						console.log(1);
+					}
+				};
+
+				return PageSwitch;
+
+			})();
+
+			// 对外提供插件的入口
+			$.fn.PageSwitch = function (options) {
+				return this.each(function () {
+					var me = $(this), instance = me.data('PageSwitch');  // 单例模式
+					if (!instance) {
+						instance = new PageSwitch(me, options);
+						me.data('PageSwitch', instance);
+					}
+					// 提供外部调用 PageSwitch 对象的 init() 方法
+					if ($.type(options) === 'string') {
+						return instance[options]();
+					}
+
+				});
+			};
+
+			// 配置默认参数
+			$.fn.PageSwitch.settings = {};
+
+		})(jQuery);
+
+		$(function(){
+			$("div").PageSwitch();
+		})
+	</script>
+</head>
+<body>
+<div></div>
+</body>
+</html>

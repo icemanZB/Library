@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>easing</title>
+	<script src="../js/jquery-2.0.2.js"></script>
+	<script src="../js/jquery.easing.1.3.js"></script>
+	<script>
+
+		// 参数 duration 定义动画运动时间(毫秒)，其实就是速度，时间越短运动速度越快。
+
+		/*
+		 * 参数easing：指定动画效果 Easing js提供多种动画效果,有匀速运动、变加速运动、缓冲波动效果,它们是：
+		 * linear，swing，jswing，easeInQuad，easeOutQuad，easeInOutQuad，easeInCubic， easeOutCubic，easeInOutCubic，easeInQuart，easeOutQuart，
+		 * easeInOutQuart， easeInQuint，easeOutQuint，easeInOutQuint，easeInSine，easeOutSine， easeInOutSine，easeInExpo，easeOutExpo，
+		 * easeInOutExpo，easeInCirc， easeOutCirc，easeInOutCirc，easeInElastic，easeOutElastic，easeInOutElastic， easeInBack，easeOutBack，
+		 * easeInOutBack，easeInBounce，easeOutBounce，easeInOutBounce.
+		 */
+
+		$(function () {
+			$("div").animate({
+				height: 500,
+				width: 600
+			}, {
+				easing: "easeInOutQuad",
+				duration: 500,
+				complete: function () {
+					console.log(1);
+				}
+			});
+		})
+
+	</script>
+</head>
+<body>
+<div style="width: 100px; height: 100px; background: red;"></div>
+</body>
+</html>

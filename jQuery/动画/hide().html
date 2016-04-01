@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>hide()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * $(selector).hide(speed,callback)
+		 *
+		 * speed : 可选，规定元素从可见到隐藏的速度。默认为 "0"ms ， "slow"、"normal"、"fast"
+		 *
+		 * 在设置速度的情况下，元素从可见到隐藏的过程中，会逐渐地改变其高度、宽度、外边距、内边距和透明度。
+		 *
+		 * callback : 可选，hide 函数执行完之后，要执行的函数。
+		 * 除非设置了 speed 参数，否则不能设置该参数。
+		 *
+		 * hide() 方法，会记住原先的 display 属性值( "block" 或 "inline" 或其他的，除了 "none" 值之外的值)，然后把 display 属性值设置为 "none"
+		 * 当调用 show() 方法时，就会根据 hide() 方法记住的 display 属性值来显示元素
+		 */
+		$(function () {
+			$(".btn1").click(function () {
+				$("p").hide(); // 隐藏
+			});
+			$(".btn2").click(function () {
+				$("p").show();
+			});
+
+		});
+	</script>
+</head>
+<body>
+<p>This is a paragraph.</p>
+<button class="btn1">Hide</button>
+<button class="btn2">Show</button>
+</body>
+</html>

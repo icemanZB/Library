@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>delay()</title>
+	<style>
+		* { margin: 0; padding: 0; }
+
+		body { padding: 60px }
+
+		#panel { position: relative; width: 100px; height: 100px; border: 1px solid #0050D0; background: #96E555; cursor: pointer; opacity: 0.5; }
+	</style>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			var $panel = $("#panel");
+
+			$panel.click(function () {
+				$(this).animate({left: "400px", height: "200px", opacity: "1"}, 3000)
+						.delay(1000)
+						.animate({top: "200px", width: "200px"}, 3000)
+						.delay(2000)
+						.fadeOut("slow");
+			});
+		});
+	</script>
+</head>
+<body>
+
+<div id="panel"></div>
+</body>
+</html>
