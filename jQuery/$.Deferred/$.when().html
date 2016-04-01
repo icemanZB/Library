@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.when()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		function show1() {
+			var dfd = $.Deferred();
+			setTimeout(function () {
+				console.log("第一个");
+				dfd.resolve();
+			}, 1000);
+			return dfd;
+		}
+
+		function show2() {
+			var dfd = $.Deferred();
+			setTimeout(function () {
+				console.log("第二个");
+				dfd.reject();  // resolve()
+			}, 2000);
+			return dfd;
+		}
+
+		$.when(show1(), show2()).then(function () {
+			console.log("都成功才触发");
+		}, function () {
+			console.log("其中一个不成功就失败");
+		});
+
+		$.when($.ajax("http://service.finance365.com/api/Company/COMPANY201509071053058314317")
+				, $.ajax("http://service.finance365.com/api/book/GetBookByBookNo/2061")
+		).done(function () {
+					console.log("哈哈，成功了！");
+				}).fail(function () {
+					console.log("出错啦！");
+				});
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

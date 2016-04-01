@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>progress()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		function cb() {
+			console.log("progress");
+		}
+		var dtd = $.Deferred();
+		// 请求过程中不断执行回调函数。这可用在文件上传时的 loading 百分比或进度条
+		dtd.progress(cb);
+		setInterval(function () {
+			dtd.notify();
+		}, 2000);
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.Deferred()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * 防止执行状态被外部改变的方法，是使用 deferred 对象的建构函数 $.Deferred()
+		 */
+
+		// 直接把它传入 $.Deferred()
+		var waitFn = function (dtd) {
+			var tasks = function () {
+				console.log("执行完毕！");
+				dtd.resolve(); // 改变 deferred 对象的执行状态
+			};
+			setTimeout(tasks, 2000); // 假设 tasks() 需要执行2秒
+			return dtd;
+		};
+		// $.Deferred() 可以接受一个函数名（注意，是函数名）作为参数
+		// $.Deferred() 所生成的 deferred 对象将作为这个函数的默认参数
+
+		$.Deferred(waitFn).done(function () {
+			console.log("$.Deferred()哈哈，成功了！");
+		}).fail(function () {
+			console.log("$.Deferred()出错啦！");
+		});
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

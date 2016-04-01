@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>promise()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		// 将 dtd 对象变成 wait(）函数的内部对象。
+		var waitFn = function () {
+			var dtd = $.Deferred(); // 在函数内部，新建一个 Deferred 对象
+			var tasks = function () {
+				console.log("执行完毕！");
+				dtd.resolve(); // 改变 Deferred 对象的执行状态
+			};
+			setTimeout(tasks, 2000);
+			return dtd.promise(); // 返回 promise 对象
+		};
+		$.when(waitFn()).done(function () {
+			console.log("哈哈，成功了！");
+		}).fail(function () {
+			console.log("出错啦！");
+		});
+
+	</script>
+</head>
+
+<body>
+</body>
+</html>

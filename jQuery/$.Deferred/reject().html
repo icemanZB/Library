@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>reject()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		function show(time) {
+			var dtd = $.Deferred();
+			setTimeout(function () {
+				console.log(time + "秒后");
+				dtd.reject(); // 对应执行失败的回调函数
+			}, time * 1000);
+
+			return dtd;
+		}
+
+		show(1).then(function () {
+			console.log("1秒后成功执行");
+		}, function () {
+			console.log("1秒后失败执行");
+		});
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

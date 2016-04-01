@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>promise()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		var dtd = $.Deferred();
+		var waitDtd = function (dtd) {
+			var tasks = function () {
+				console.log("执行完毕！");
+				dtd.resolve(); // 改变Deferred对象的执行状态
+			};
+			setTimeout(tasks, 2000);
+		};
+		dtd.promise(waitDtd); // 可以直接在 waitDtd 对象上部署 deferred 接口
+		waitDtd.done(function () {
+			console.log("哈哈，成功了！");
+		}).fail(function () {
+			console.log("出错啦！");
+		});
+
+		waitDtd(dtd); // 函数调用
+
+	</script>
+</head>
+
+<body>
+</body>
+</html>

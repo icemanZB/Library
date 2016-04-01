@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>resolve()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		//  $.Deferred() 它用来解决 JavaScript 中的异步编程，它遵循 Common Promise/A 规范。实现此规范的还有 when.js 和 dojo
+		function show(time) {
+			var dtd = $.Deferred();
+			setTimeout(function () {
+				console.log(time + "秒后");
+				dtd.resolve();  // 对应执行成功的回调函数
+			}, time * 1000);
+
+			return dtd;
+		}
+
+		show(1).done(function () {
+			console.log("1秒后成功执行");
+		}).fail(function () {
+			console.log("1秒后失败执行");
+		});
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

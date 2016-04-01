@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>链式操作</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		function fn1() {
+			console.log("success");
+		}
+		function fn2() {
+			console.log("fail");
+		}
+		function fn3() {
+			console.log("progress");
+		}
+		var dtd = $.Deferred();
+		dtd.done(fn1).fail(fn2).progress(fn3); // 链式操作
+		setTimeout(function () {
+			dtd.resolve();
+			// dtd.reject();
+			// dtd.notify();
+		}, 3000);
+
+		dtd.reject();  // 会执行 fail 因为状态在外部被修改了
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
