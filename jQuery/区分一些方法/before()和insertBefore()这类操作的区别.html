@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script>
+
+		/*
+		 * 对于 before() 、insertBefore() 这类的 DOM 结构操作的一些区别
+		 *
+		 * 1、后续的操作是针对哪个元素
+		 *      $("span").insertBefore($("div")).css("background","red");  // 在 span 前面插入 div，span 变红
+		 *      $("div").before($("span")).css("background","red");  // 在 span 前面插入 div， div 变红
+		 *
+		 * 2、prepend() 和 prependTo() 的区别是 内容和选择器的位置
+		 *
+		 * $("div").prependTo("p");   p、div 都是选择器
+		 * $("p").prepend($("div"));  $('p').prepend('div'); 只有 p 是选择器
+		 *
+		 * 3、prepend() 能够使用函数来插入内容
+		 */
+
+	</script>
+</head>
+<body>
+</body>
+</html>

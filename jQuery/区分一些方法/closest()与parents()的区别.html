@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>closet()与parents()的区别</title>
+    <script src="../js/jquery-2.0.3.min.js"></script>
+    <script>
+        $(function () {
+            // div1 和 body 都会加上样式，并且可以找到多个元素
+            // $("#div2").parents(".box").css("background","red");
+
+            // 给 div1 加上样式，必须要选筛选的参数，只能找到一个元素
+            // 如果 class 加到 div2 本身，那么 closest(".box") 方法会使 div2 自身变红
+            $("#div2").closest(".box").css("background", "red");
+        });
+    </script>
+</head>
+<body class="box">
+<div id="div1" class="box">aaa
+    <div id="div2">bbb</div> <!--  class="box" -->
+</div>
+</body>
+</html>

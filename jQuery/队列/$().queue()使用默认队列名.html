@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$().queue()使用默认队列名</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+
+			function fn1() {
+				console.log(1);
+			}
+
+			function fn2() {
+				console.log(2);
+			}
+
+			function fn3() {
+				console.log(3);
+			}
+
+			// 如果使用 jQuery 默认的队列 "fx"，可以只传 data
+			var $p = $("p");
+			$p.queue(fn1);
+			$p.queue(fn2);
+			$p.queue(fn3);
+
+			// 当使用默认列名"fx"时，它会调用 $.dequeue() 出列执行下
+			var queue = $p.queue("fx");  // 第一个 fn1 已经出列
+
+			console.log(queue); // ["inprogress", fn2, fn3]
+		})
+	</script>
+</head>
+<body>
+
+<p id="box">PPPPPPPPPPPPPPPPPPPPPPPPPPPP</p>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.queue()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+
+			var ele = document.getElementById("box");
+
+			function fn1() {
+				console.log(1);
+			}
+
+			function fn2() {
+				console.log(2);
+			}
+
+			var arr = [fn1, fn2];
+
+			/*
+			 * $.queue() 它既是 setter，又是 getter。
+			 * 第一个参数 elem 是 DOM 元素，第二个参数 type 是字符串，第三个参数 data 可以是 function 或数组
+			 */
+
+			$.queue(ele, "mx", fn1); // 第三个参数为 function
+			$.queue(ele, "xm", arr); // 第三个参数为 数组
+
+			// 这时可以取到存入的 callbacks
+
+			var fns1 = $.queue(ele, "mx");
+			var fns2 = $.queue(ele, "xm");
+
+			console.log(fns1);// [fn1]
+			console.log(fns2); // [fn1, fn2]
+
+		})
+	</script>
+</head>
+<body>
+
+<p id="box">PPPPPPPPPPPPPPPPPPPPPPPPPPPP</p>
+
+</body>
+</html>

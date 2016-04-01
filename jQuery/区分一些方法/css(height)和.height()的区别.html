@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>css(height)和height()的区别</title>
+	<script src="../js/jquery-2.0.2.js"></script>
+	<script>
+		$(function () {
+
+			// $(element).css("height")  和  $(element).height() 的区别
+
+			/*
+			 * css() 方法获取的高度值与样式的设置有关，可能会得到 "auto"，也可能得到 "10px" 之类的字符串
+			 * 而 height() 方法获取的高度值则是元素在页面中的实际高度，与样式设置无关，并且不带单位
+			 * height() 方法也能用来设置元素的高度，如果需要用其它单位 (em)，则必须传递一个字符串
+			 * $("p").height(100) 、$("p").height("10em")
+			 */
+
+		});
+	</script>
+</head>
+<body>
+
+<p class="high another aaa">pppppppp</p>
+
+</body>
+</html>

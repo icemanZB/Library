@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$().dequeue()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+
+			function fn1() {
+				console.log(1);
+			}
+
+			function fn2() {
+				console.log(2);
+			}
+
+			function fn3() {
+				console.log(3);
+			}
+
+			var $p = $("p");
+			$p.queue("mx", fn1);
+			$p.queue("mx", fn2);
+			$p.queue("mx", fn3);
+
+
+			setInterval(function () {
+				$p.dequeue("mx");
+			}, 2000);
+
+		})
+	</script>
+</head>
+<body>
+
+<p id="box">PPPPPPPPPPPPPPPPPPPPPPPPPPPP</p>
+
+</body>
+</html>

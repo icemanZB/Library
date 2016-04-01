@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>remove()和detach()的区别</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * remove()  删除节点
+		 * remove() 方法有返回值，就是返回删除后的元素
+		 */
+		$(function () {
+			var $div1 = $("#div1");
+			var $div2 = $("#div2");
+			// 由于 div 被删除了 click 事件已经没有了，不在触发
+			$div1.click(function () {
+				console.log(1);
+			});
+			// detach()  作用和 remove() 是一样的,只不过他会保留删除元素的所有操作行为
+			$div2.click(function () {
+				console.log(2);
+			});
+			var oDiv1 = $div1.remove();
+			var oDiv2 = $div2.detach();
+			// 删除后的元素在重新添加回去
+			$("body").append(oDiv1, oDiv2);
+		});
+	</script>
+</head>
+<body>
+<div id="div1">测试div1</div>
+<div id="div2">测试div2</div>
+</body>
+</html>

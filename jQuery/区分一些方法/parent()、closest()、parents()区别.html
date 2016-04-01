@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>parent()、closest()、parents()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			var $strong = $("strong");
+			/*
+			 * parents() 获取所有祖先节点，返回的节点集是以从里到外的顺序排序的
+			 * parent()  它和 parents() 不同的是，它只向上搜索一层，而 parents() 会搜索整个 DOM 树
+			 * closest() 它和 parents()的区别:
+			 * closest() 从自身开始向上遍历，直到找到一个适合的节点，返回的 jQuery 对象包含 0个 或者 1个对象
+			 * parents() 从自身的父节点开始向上遍历，返回所有祖先节点，并根据选择器对这些节点进行筛选，最终返回的 jQuery 对象可能包含 0、1或者多个对象
+			 */
+
+			console.log($strong.parents()); // span、p、div、body、html
+			console.log($strong.parent());  // span
+			console.log($strong.closest("div"));  // div
+
+			function resetStyle() {
+				$("*").removeAttr("style");
+			}
+
+			// parent()
+			$("input:eq(0)").click(function () {
+				resetStyle();
+				$(".item-1").parent().css("background-color", "red");  // <ul class="level-2"></ul> 背景变红
+			});
+			// parents() 当他找到第一个父节点时并没有停止查找，而是继续查找，最后返回多个父节点
+			$("input:eq(1)").click(function () {
+				resetStyle();
+				$(".item-1").parents("ul").css("background-color", "red");  // <ul class="level-2"></ul>、<ul id="one" class="level-1">变红
+			});
+			// closest() 方法查找是从包含自身的节点找起，它同parents()方法类似，不同点就是在于它只返回匹配的第一个元素节点
+			$("input:eq(2)").click(function () {
+				resetStyle();
+				$(".item-1").closest("ul").css("background-color", "red"); // <ul class="level-2"></ul> 变红
+			});
+		});
+	</script>
+</head>
+<body>
+<div>
+	<p>
+		<span>
+		 	<strong>My parents</strong>
+		</span>
+	</p>
+</div>
+
+<input type="button" value="parent()"/>
+<input type="button" value="parents()"/>
+<input type="button" value="closest()"/>
+
+<ul id="one" class="level-1">
+	<li class="item-i">I</li>
+	<li id="ii" class="item-ii">II
+		<ul class="level-2">
+			<li class="item-a"><a href="#" class="item-1">Home</a></li>
+			<li class="item-b"><a href="#" class="item-2">Product</a></li>
+			<li class="item-c"><a href="#" class="item-3">About</a></li>
+		</ul>
+	</li>
+	<li class="item-iii">III</li>
+</ul>
+</body>
+</html>

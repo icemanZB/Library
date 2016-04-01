@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.dequeue()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+
+			function fn1() {
+				console.log(1);
+			}
+
+			function fn2() {
+				console.log(2);
+			}
+
+			function fn3() {
+				console.log(3);
+			}
+
+			var p = $("p")[0];
+			$.queue(p, "mx", fn1);
+			$.queue(p, "mx", fn2);
+			$.queue(p, "mx", fn3);
+
+			/*
+			 * 将回调函数出列执行，每调用一次仅出列一个，因此当回调有N个时，需要调用 .dequeue() 方法N次元素才全部出列。
+			 * .dequeue() 的第一个参数是 DOM 元素，第二个参数是 queueName
+			 */
+
+			// 每2秒调用一次 $.dequeue() 依次输出1,2,3
+			setInterval(function () {
+				$.dequeue(p, "mx");
+			}, 2000);
+
+		})
+	</script>
+</head>
+<body>
+
+<p id="box">PPPPPPPPPPPPPPPPPPPPPPPPPPPP</p>
+
+</body>
+</html>

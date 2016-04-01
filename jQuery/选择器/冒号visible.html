@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>:visible</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * :visible 选择器选取每个当前是可见的元素
+		 *
+		 * 除以下几种情况之"外"的元素即是可见元素：
+		 * 设置为 display:none、type="hidden" 的表单元素、Width 和 height 设置为 0
+		 * 隐藏的父元素(同时隐藏所有子元素)
+		 *
+		 */
+		$(function () {
+			/*
+			 * 选择可见的元素，其中 visibility:hidden; opacity:0; 算是可见元素
+			 * jQuery 的判断逻辑是：这个对象的 offsetWidth 和 offsetHeight 都为 0 才是不可见
+			 *  而 visibility:hidden; 的对象元素这两个值都是不为 0 的
+			 */
+
+			// 获取可见元素
+			console.log($("div:visible"));  // #n1,#n2,#n3
+
+			console.log(
+					$('div').filter(function () {
+						return ($(this).css('visibility') === 'hidden');
+					})
+			);  // #n1
+		})
+	</script>
+</head>
+<body>
+
+
+<div style="visibility: hidden;" id="n1">
+	aaaa
+</div>
+<div style="opacity: 0;" id="n2">
+	bbb
+</div>
+<div id="n3">
+	cccc
+</div>
+<div style="display: none;" id="n4"></div>
+</body>
+</html>
