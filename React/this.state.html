@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>this.state</title>
+	<script src="js/react.js"></script>
+	<script src="js/JSXTransformer.js"></script>
+	<script type="text/jsx">
+		// 组件免不了要与用户互动，React 的一大创新就是将组件看成是一个状态机,一开始有一个初始状态，然后用户互动导致状态变化，从而触发重新渲染 UI
+		var LikeButton = React.createClass({
+			getInitialState: function () {
+				return {liked: false};
+			},
+			handleClick: function () {
+				this.setState({liked: !this.state.liked});
+			},
+			render: function () {
+				var text = this.state.liked ? "like" : "haven\'t liked";
+				return (
+						<p onClick={this.handleClick}>
+							You {text} this. Click to toggle.
+						</p>
+				);
+			}
+		});
+
+		React.render(
+				<LikeButton />,
+				document.getElementById("example")
+		);
+
+		// LikeButton 组件，它的 getInitialState 方法用于定义初始状态，也就是一个对象，这个对象可以通过 this.state 属性读取。
+		// 当用户点击组件，导致状态变化， this.setState 方法就修改状态值，每次修改以后自动调用 this.render 方法再次渲染组件。
+		// 由于 this.props 和 this.state 都用于描述组件的特性可能会产生混淆。
+		// 一个简单的区分方法是 this.props 表示那些一旦定义就不再改变的特性，而 this.state 是会随着用户互动而产生变化的特性。
+
+	</script>
+</head>
+<body>
+<div id="example"></div>
+</body>
+</html>

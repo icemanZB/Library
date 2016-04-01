@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>运行中阶段</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script src="js/react.js"></script>
+	<script src="js/JSXTransformer.js"></script>
+	<script type="text/jsx">
+		$(function () {
+			var style = {
+				color: "red",
+				fontSize: "14px"
+			};
+			var HelloWorld = React.createClass({
+				componentWillReceiveProps: function (newProps) {
+					console.log("componentWillReceiveProps,1");
+					console.log(newProps);
+				},
+				// 提高性能的时候会用到
+				shouldComponentUpdate: function () {
+					console.log("shouldComponentUpdate,2");
+					return true;  // 如果什么都不返回会报错
+				},
+				componentWillUpdate: function () {
+					console.log("componentWillUpdate,3");
+				},
+				render: function () {
+					console.log("render,4");
+					return <p>Hello, {this.props.name ? this.props.name : "World"}</p>;
+				},
+				componentDidUpdate: function () {
+					console.log("componentDidUpdate,5");
+					$(React.findDOMNode(this)).append("suprise!");
+				}
+			});
+
+			var HelloUniverse = React.createClass({
+				getInitialState: function () {
+					return {name: ''};
+				},
+				handleChange: function (ev) {
+					this.setState({name: ev.target.value});
+				},
+				// HelloWorld 组件是 HelloUniverse 的子组件
+				render: function () {
+					return <div>
+						<HelloWorld name={this.state.name}></HelloWorld>
+						<br />
+						<input type="text" onChange={this.handleChange}/>
+					</div>;
+				}
+			});
+
+
+			React.render(<div style={style}>
+				<HelloUniverse></HelloUniverse>
+			</div>, document.body);
+
+		});
+	</script>
+</head>
+<body>
+
+</body>
+</html>

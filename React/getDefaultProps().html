@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="js/react.js"></script>
+	<script src="js/JSXTransformer.js"></script>
+	<script type="text/jsx">
+
+		var MyTitle = React.createClass({
+			getDefaultProps: function () {
+				return {
+					title: "Hello World"
+				};
+			},
+
+			render: function () {
+				return <h1> {this.props.title} </h1>;
+			}
+		});
+
+		React.render(
+				<MyTitle />,
+				document.body
+		);
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="js/react.js"></script>
+	<script src="js/JSXTransformer.js"></script>
+	<script type="text/jsx">
+		// 变量 HelloWorld 就是一个组件类。模板插入 <HelloWorld /> 时,会自动生成 HelloWorld 的一个实例，所有组件类都必须有自己的 render 方法用于输出组件
+		// 注意：组件类的第一个字母必须大写否则会报错。另外，组件类只能包含一个顶层标签否则也会报错。
+		// 添加组件属性，有一个地方需要注意就是 class 属性需要写成 className ， for 属性需要写成 htmlFor 这是因为 class 和 for 是 JavaScript 的保留字
+		var HelloWorld = React.createClass({
+			render: function () {
+				return <p>Hello {this.props.name}</p>;
+			}
+		});
+		React.render(<HelloWorld name="World"></HelloWorld>,document.body);
+	</script>
+</head>
+<body>
+
+</body>
+</html>

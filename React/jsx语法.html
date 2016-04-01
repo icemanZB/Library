@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="js/react.js"></script>
+	<script src="js/JSXTransformer.js"></script>
+	<script type="text/jsx">
+		var style = {
+			color: "red",
+			fontSize: "14px"
+		};
+		var HelloWorld = React.createClass({
+			render: function () {
+				return <p name="test">Hello World{
+					" hello"
+					// 添加注释
+				}</p>;
+			}
+		});
+		React.render(<div style={style}>
+			<HelloWorld></HelloWorld>
+		</div>, document.body);
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>初始化阶段触发顺序</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script src="js/react.js"></script>
+	<script src="js/JSXTransformer.js"></script>
+	<script type="text/jsx">
+		$(function () {
+			var count = 0;
+			var style = {
+				color: "red",
+				fontSize: "14px"
+			};
+			var HelloWorld = React.createClass({
+				// 即使没有生成实例，getDefaultProps 也会被调用，在createClass 就会调用，他是共享引用
+				getDefaultProps: function () {
+					console.log("getDefalutProps,1");
+					return {name: "Iceman"};
+				},
+				// 初始化每个实例特有的状态
+				getInitialState: function () {
+					console.log("getInitialState,2");
+					return {myCount: count++, ready: false};
+				},
+				// render 之前最后一次修改状态的机会
+				componentWillMount: function () {
+					console.log("componentWillMount,3");
+					this.setState({ready: true});
+				},
+				// 只能访问 this.props 和 this.state ，只有一个顶层组件，不允许修改状态和 DOM 输出
+				render: function () {
+					console.log("render,4");
+					return <p ref="childp">Hello, {this.props.name ? this.props.name : "World"}
+						<br />
+						{"" + this.state.ready} {this.state.myCount}
+					</p>;
+				},
+				// 成功 render 并渲染完成真实 DOM 后触发，可以修改 DOM
+				componentDidMount: function () {
+					console.log("componentDidMount,5");
+					$(React.findDOMNode(this)).append("suprise!");
+				}
+			});
+			React.render(<div style={style}>
+				<HelloWorld></HelloWorld><br /><HelloWorld></HelloWorld>
+			</div>, document.body);
+		});
+	</script>
+</head>
+<body>
+
+</body>
+</html>

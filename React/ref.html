@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>ref</title>
+	<script src="js/react.js"></script>
+	<script src="js/JSXTransformer.js"></script>
+	<script type="text/jsx">
+		var style = {
+			color: "red",
+			fontSize: "14px"
+		};
+		var rawHTML = {
+			__html: "<h1>I'm inner HTML</h1>"
+		};
+		var HelloWorld = React.createClass({
+			// this.refs.childp 拿到的是虚拟的DOM节点
+			render: function () {
+				return <p ref="childp">Hello World</p>;
+			}
+		});
+		React.render(<div style={style} dangerouslySetInnerHTML={rawHTML}></div>, document.body);
+	</script>
+</head>
+<body>
+
+</body>
+</html>

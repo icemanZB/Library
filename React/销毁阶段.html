@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>销毁阶段</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script src="js/react.js"></script>
+	<script src="js/JSXTransformer.js"></script>
+	<script type="text/jsx">
+		$(function () {
+			var style = {
+				color: "red",
+				fontSize: "14px"
+			};
+			var HelloWorld = React.createClass({
+
+				render: function () {
+					console.log("render,4");
+					return <p>Hello, {this.props.name ? this.props.name : "World"}</p>;
+				},
+				componentWillUnmount: function () {
+					console.log("BOOOOOOOOOOOOOOOOOOM");
+				}
+			});
+
+			var HelloUniverse = React.createClass({
+				getInitialState: function () {
+					return {name: ""};
+				},
+				handleChange: function (ev) {
+					this.setState({name: ev.target.value});
+				},
+				render: function () {
+					if (this.state.name == "123") {
+						return <div>123</div>;
+					}
+					return <div>
+						<HelloWorld name={this.state.name}></HelloWorld>
+						<br />
+						<input type="text" onChange={this.handleChange}/>
+					</div>
+
+				}
+			});
+
+
+			React.render(<div style={style}>
+				<HelloUniverse></HelloUniverse>
+			</div>, document.body);
+
+		});
+	</script>
+</head>
+<body>
+
+</body>
+</html>
