@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>jQuery</title>
+	<script src="jquery-2.0.3.study.js"></script>
+	<script>
+		$(function(){
+
+			var aDiv = document.getElementsByTagName("div");
+
+			console.log( $.makeArray(aDiv) );  // [div, div, div]
+
+			console.log( $.makeArray(aDiv,{length:0}) );
+
+		});
+	</script>
+</head>
+<body>
+<div></div>
+<div></div>
+<div></div>
+</body>
+</html>

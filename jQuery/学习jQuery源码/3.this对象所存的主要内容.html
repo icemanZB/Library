@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>jQuery</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+		$(function () {
+			var $li = $("li");
+			console.log($li); // 获取的就是类似 jQueryThis 中的内容，是个json对象"类数组"
+			// $("li")[1] 这个 1 就是通过下标获取对应的值
+			$li[1].style.background = "red";
+
+		});
+
+		/*var aLi = document.getElementsByTagName("li");
+
+		 for(var i=0;i<aLi.length;i++){
+		 aLi[i].style.background = "red";
+		 }*/
+		// 类数组，添加了 length 属性用于 for 循环
+		var jQueryThis = {
+			0: "liDOM",
+			1: "liDOM",
+			2: "liDOM",
+			length: 3
+		};
+
+		for (var i = 0; i < jQueryThis.length; i++) {
+			jQueryThis[i].style.background = "red";
+		}
+	</script>
+</head>
+<body>
+<ul>
+	<li></li>
+	<li></li>
+	<li></li>
+</ul>
+</body>
+</html>

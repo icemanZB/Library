@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>jQuery</title>
+	<script src="jquery-2.0.3.study.js"></script>
+	<script>
+		$(function () {
+
+			console.log($("div").toArray());  // [div, div, div]
+
+			// $("div") : { 0 : div , 1 : div , 2 : div , length : 3 }
+
+			// $("div").toArray() : [div,div,div]  里面的都是 DOM 元素，不能再调用 jQuery 方法
+
+		});
+	</script>
+</head>
+<body>
+<div></div>
+<div></div>
+<div></div>
+</body>
+</html>

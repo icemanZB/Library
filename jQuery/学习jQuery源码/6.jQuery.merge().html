@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>jQuery</title>
+	<script src="jquery-2.0.3.study.js"></script>
+	<script>
+		$(function () {
+			var arr = ["a", "b"];
+			var arr2 = ["c", "d"];
+
+			// 对外提供接口的功能是数组合并
+			console.log($.merge(arr, arr2));  // ["a", "b", "c", "d"]
+
+			// 对内是用在合并json，但是json格式一定是这样子的类数组格式
+			var jsonArr = {
+				0: "a",
+				1: "b",
+				length: 2
+			};
+
+			console.log($.merge(jsonArr, arr2));  //  Object { 0="a",  1="b",  2="c", 3="d",length="4"}
+
+			$("<li>sss</li><li>sss</li>", document).appendTo($("ul"));
+
+		});
+	</script>
+</head>
+<body>
+<ul>
+</ul>
+</body>
+</html>

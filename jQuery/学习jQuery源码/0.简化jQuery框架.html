@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>jQuery</title>
+	<script>
+		// $() => jQuery()
+		// http://nuysoft.iteye.com/blog/1190542
+		(function(){
+			var rootjQuery,
+			// (21 , 94) 定义了一些变量和函数
+			//  其中这个函数很重要，这个就是jQuery函数，在61行
+			jQuery = function( selector, context){
+				// The jQuery object is actually just the init constructor 'enhanced'
+				return new jQuery.fn.init( selector, context, rootjQuery );  // 63 行
+			};
+
+			// 96 行 jQuery.fn 就是 jQuery的原型
+			jQuery.fn = jQuery.prototype={
+				constructor: jQuery,
+				init: function( selector, context, rootjQuery ) {
+					// something to do
+					return this;
+				}
+			};  // 96行-283行， 给 jQuery 对象，添加一些方法和属性
+
+			// Give the init function the jQuery prototype for later instantiation
+			/*
+			 * 给init函数后实例化jQuery原型， jQuery.fn 就是 jQuery 的原型，现在赋值给 jQuery.fn.init 的原型
+			 * jQuery.prototype = jQuery.fn = jQuery.fn.init.prototype ( 让 jQuery 原型中的 init 方法中的原型对象指向 jQuery 的原型 )
+			 * 赋值了以后。在调用的时候，当 init 中没有方法的时候，就会去原型函数中调用
+			 * jQuery.extends()、jQuery.fn.extends()；jQuery.extends() 是直接扩展 jQuery 而 jQuery.fn.extends()，很明显是扩展的原型
+			 * 这样所有通过 $ 创建出来的对象都将共享 fn 对象上的成员。因此，jQuery 对象都有了类似 attr 、html 等等方法了
+			 */
+			jQuery.fn.init.prototype = jQuery.fn;  // 283行
+
+			// 285 -  347 行 是 jQuery 继承方，希望后续添加的的代码通过 extend 方法，挂载到jQuery对象上，方便扩展
+			// 通过 jQuery.fn.extend 扩展的函数，大部分都会调用通过 jQuery.extend 扩展的同名函数
+			jQuery.extend = jQuery.fn.extend = function() {};
+
+			// 349 - 817 jQuery.extend({}) : 扩展一些工具方法
+			/* 工具方法，就是在函数下面扩展方法(或属性)，也就是扩展静态方法或者静态属性 ( $.trim()、$.proxy()，$ 就是一个函数 )
+			 * 工具方法和实例方法( $().css()、$().html() )的关系，工具方法就是底层的方法，实例方法通过调用工具方法，来完成一些事情
+			 * */
+			jQuery.extend({});
+
+			// (877 , 2856)  Sizzle : 复杂选择器的实现
+
+			// (2880 , 3042) Callbacks : 回调对象 : 对函数的统一管理  $.Callbacks();
+
+			// (3043 , 3183) Deferred : 延迟对象 : 对异步的统一管理
+
+			// (3184 , 3295) support : 功能检测 ( 通过功能判断浏览器 )
+
+			// (3308 , 3652) data() : 数据缓存，如果把数据(对象类型)扩展到元素身上，会产生内存泄漏的问题
+
+			// (3653 , 3797) queue() : 队列方法 : 执行顺序的管理
+
+			// (3803 , 4299) attr() prop() val() addClass()等 : 对元素属性的操作
+
+			// (4300 , 5128) on() trigger() : 事件操作的相关方法
+
+			// (5140 , 6057) DOM操作 : 添加 删除 获取 包装 DOM筛选
+
+			// (6058 , 6620) css() : 样式的操作
+
+			// (6621 , 7854) 提交的数据和ajax() : ajax() load() getJSON()
+
+			// (7855 , 8584) animate() : 运动的方法
+
+			// (8585 , 8792) offset() : 位置和尺寸的方法
+
+			// (8804 , 8821) JQ支持模块化的模式
+
+			// All jQuery objects should point back to these
+			rootjQuery = jQuery(document);  // 866行
+
+			window.jQuery = window.$ = jQuery; // 8826行，对外提供接口
+
+		})();
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
