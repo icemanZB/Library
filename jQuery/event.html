@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>event</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			var $div = $("div");
+			// ev ： event 对象已经做了兼容
+			$div.click(function (ev) {
+				// ev.target  div 操作的事件源 ( 获取事件对象DOM元素 )
+				// ev.type    click  事件类型
+				// ev.pageX   类似于 原生 JavaScript 中 clientX  有所区别
+				// clientX    是相对于可视区的 pageX 是相对于文档的，那么也就是多了一个滚动条的距离
+				// ev.which   类似于 keyCode，但比 keyCode 更加强大，可以对应出鼠标的键值  1 = 鼠标左键 2 = 鼠标中键 3 = 鼠标右键，在键盘事件中获取键盘的按键
+				// ev.metaKey 针对不同的浏览器对键盘中的<ctrl>按键解释不同，jQuery 进行了封装
+				ev.preventDefault();   // 阻止默认事件
+				ev.stopPropagation();  // 阻止冒泡的操作
+				return false;  // 即阻止默认事件，又阻止了冒泡
+			});
+
+			// mouseover 和 mouseout 这两个触发的事件对象里添加了一个叫 relatedTarget 的属性，来表示与事件相关的DOM元素。
+			// mouseover 中 relatedTarget 指向鼠标来自的元素，而 mouseout 中的 relatedTarget 指向的是鼠标去向的那个元素。
+			// jQuery中，reatedTarget 只用在 mouseover 和 mouseout 事件中，且 relatedTarget 是一个对象属性，不是一个函数（方法）不能调用。
+			$div.mouseenter(function (event) {
+				console.log("relatedTarget is: " + event.relatedTarget);
+			});
+
+
+		});
+
+	</script>
+</head>
+<body>
+<div></div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>closest()</title>
+	<style>
+		.demo {
+			border: 2px solid #0000FF;
+			color: #FF0000;
+			padding: 10px;
+		}
+
+		#ul3 li { margin: 3px; padding: 3px; background: #EEEEEE; }
+
+		#ul3 li.hilight { background: yellow; }
+	</style>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			/*
+			 * closet() 获取最近的指定的祖先节点(包括当前元素自身)，必须要有选筛选的参数，只能找到一个元素
+			 *
+			 * 首先检查当前元素是否匹配，如果匹配则直接返回元素本身。如果不匹配则向上查找父元素
+			 * 逐级向上直到找到匹配选择器的元素。如果什么都没有找到则返回一个空的 jQuery 对象
+			 *
+			 */
+			$(".li2").closest(".demo").css("background-color", "blue");
+
+			$("#ul1").find("li").click(function () {
+				// 找到触发单击事件的元素的最近的div元素，然后让这个 div 元素的背景颜色变成灰色
+				$(this).closest(".demo").css("background-color", "gray");
+				// 当closest方法没有传入参数时，肯定是取不到元素的
+				// $(this).closest().css("background-color", "red");
+			});
+
+			// 当前元素自身背景变成绿色
+			$("li.item-1").closest(".level-3").css("background-color", "red");
+
+			// 传递 DOM 元素作为 context，在其中搜索最接近的元素
+			var listItemII = document.getElementById('ii');
+
+			// 代码会改变 level-2 <ul> 的颜色
+			$('li.item-a').closest('ul', listItemII).css('background-color', 'green');
+
+			// 通过 closest() 完成事件委托；当被最接近的列表元素或其子后代元素被点击时，会切换黄色背景
+			$("#ul3").bind("click", function (ev) {
+				console.log( $(ev.target) );
+				$(ev.target).closest("li").toggleClass("hilight");
+			});
+
+		});
+	</script>
+</head>
+<body>
+<div class="demo">
+	div为父级
+	<ul id="ul1">
+		<li>第一个li</li>
+		<li class="li2">第二个li</li>
+		<li>第三个li</li>
+	</ul>
+</div>
+
+<ul id="ul2">
+	<li class="item-i">I</li>
+	<li id="ii" class="item-ii">II
+		<ul class="level-2">
+			<li class="item-a">A</li>
+			<li class="item-b">B
+				<ul class="level-3">
+					<li class="item-1">1</li>
+					<li class="item-2">2</li>
+					<li class="item-3">3</li>
+				</ul>
+			</li>
+			<li class="item-c">C</li>
+		</ul>
+	</li>
+	<li class="item-iii">III</li>
+</ul>
+
+<ul id="ul3">
+	<li><b>Click me!</b></li>
+	<li>You can also <b>Click me!</b></li>
+</ul>
+
+</body>
+</html>

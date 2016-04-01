@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>text()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+
+			/*
+			 * text()  获取的是所有元素的文本 ( 可以用来读取或者是设置某个元素的文本内容 )
+			 * 注意:  1、JavaScript 中的 innerText 属性并不能再 FireFox 浏览器下运行，而 jQuery 的 text() 方法支持所有浏览器
+			 *        2、text() 方法对 HTML 文档和 XML 文档都有效
+			 *        3、text("<h3>h3</h3>")  输出出来的是文本,不会转为标签
+			 */
+
+			$("div").text();  // div1spandiv2div3
+
+		})
+
+	</script>
+</head>
+<body>
+<div>div1<span>span</span></div>
+<div>div2</div>
+<div>div3</div>
+</body>
+</html>

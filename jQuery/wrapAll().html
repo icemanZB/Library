@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>wrapAll()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * 参数	  描述
+		 *        wrapper
+		 *        必需。规定包裹被选元素的内容。
+		 *        可能的值:
+		 *        HTML 代码 - 比如 ("<div></div>")
+		 *        新元素 - 比如 (document.createElement("div"))
+		 *        已存在的元素 - 比如 ($(".div1"))
+		 *        已存在的元素不会被移动，只会被复制，并包裹被选元素。
+		 *        使用函数来包裹元素
+
+		 * 使用函数来规定在每个被选元素周围包裹的内容。
+		 * 语法： $(selector).wrapAll(function())
+		 *
+		 */
+		// 注意： 如果被包裹的多个元素间有其它元素，其它元素会被放到包裹元素之后
+		$(function () {
+			// 结果： <b>
+			//           <strong title="选择你最喜欢的水果." >你最喜欢的水果是?</strong>
+			//            <strong title="选择你最喜欢的水果." >你最喜欢的水果是?</strong>
+			//         </b>
+			$("strong").wrapAll("<b></b>");
+		});
+	</script>
+</head>
+<body>
+<strong title="选择你最喜欢的水果.">
+	你最喜欢的水果是?
+
+</strong>
+<span>aaa</span>
+<em>emeemem
+	<span>bbbb</span>
+</em>
+<strong title="选择你最喜欢的水果.">你最喜欢的水果是?</strong>
+</body>
+</html>

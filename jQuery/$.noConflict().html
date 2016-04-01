@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.noConflict()</title>
+	<script>
+		var $ = 1233;
+		var jQuery = 333;
+	</script>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		// 防止冲突
+		var $$ = $.noConflict(); // 用 $$ 代替 $
+
+		// var $$ =$.noConflict(true);
+
+		var $ = 123;
+
+		$$(function () {
+
+			console.log($);
+
+		});
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

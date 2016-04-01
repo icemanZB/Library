@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>prepend()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * prepend() 方法在被选元素的开头（仍位于内部）插入指定内容。
+		 */
+
+		$(function () {
+
+			$("#btn1").click(function () {
+				// 在每个 p 元素开头插入内容(仍然在内部)
+				// 生成的 html ： <p><b>Hello world!</b> This is another paragraph.</p><p><b>Hello world!</b> This is another paragraph.</p>
+				$("p").prepend("<b>Hello world!</b> ");
+			});
+
+			/*
+			 * $(selector).prepend(function(index,html))  函数必须规定返回待插入内容的函数
+			 */
+			$("#btn2").click(function () {
+				// 生成的 html： <p><b>这个 p 元素的 index 是：0</b>This is a paragraph.</p>
+				$("p").prepend(function (n) {
+					return "<b>这个 p 元素的 index 是：" + n + "</b> ";
+				});
+			});
+
+			// 在div之前插入 p 字符串
+			$('#btn3').click(function () {
+				/*
+				 * $("p").prepend("div"); // 这里的 p 不是一个选择器，不能获取p元素，只是单纯的文本
+				 */
+				$("p").prepend($("div")); // 在 p 元素前面插入div元素 (内部) 剪切
+			});
+
+		});
+
+	</script>
+</head>
+<body>
+<p>This is a paragraph.</p>
+
+<p>This is another paragraph.</p>
+<button id="btn1">在每个 p 元素的开头插入内容</button>
+<input type="button" value="可以使用函数构建html" id="btn2"/>
+<input type="button" value="在div之前插入p字符串" id="btn3"/>
+
+<div>aaaa</div>
+
+</body>
+</html>

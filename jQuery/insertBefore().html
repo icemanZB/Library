@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>insertBefore()</title>
+    <script src="js/jquery-2.0.3.min.js"></script>
+    <script>
+	    /*
+	     * 方法在被选元素之前插入 HTML 标记或已有的元素 (外部)
+	     * 注释：如果该方法用于已有元素，这些元素会被从当前位置移走，然后被添加到被选元素之前
+	     */
+        $(function(){
+	        $("#btn1").click(function(){
+		        // 生成的 html： <span>你好！</span><p>This is a paragraph.</p>
+		        $("<span>你好！</span>").insertBefore("p");
+	        });
+
+	        $("#btn2").click(function(){
+		        // 生成的 html ：  <h1>这是一个标题</h1><p>This is a paragraph.</p>
+		        $("h1").insertBefore("p"); // 在p之前插入h1，这两个参数均是选择器
+	        });
+        });
+
+    </script>
+</head>
+<body>
+<p>This is a paragraph.</p>
+<button id="btn1">在每个 p 元素后插入内容</button>
+<h1>这是一个标题</h1>
+<p>这是一个段落。</p>
+<p>这是另一个段落。</p>
+<button id="btn2">在每个 p 元素之前插入 h1 元素</button>
+</body>
+</html>

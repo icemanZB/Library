@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>prev()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * prevAll()   获得匹配元素集合中每个元素的上一个的同胞元素
+		 * prevAll(selector) 获得匹配元素集合中每个元素的上一个的同胞元素
+		 * selector 可选，通过选择器进行筛选
+		 */
+		$(function () {
+			// 找到类名为 "third-item" 的前面的同胞元素
+			$(".li.third-item").prevAll().css("background-color", "red");  // item1、item2 变红
+
+		})
+	</script>
+</head>
+<body>
+<ul>
+	<li>list item 1</li>
+	<li>list item 2</li>
+	<li class="third-item">list item 3</li>
+	<li>list item 4</li>
+	<li>list item 5</li>
+</ul>
+</body>
+</html>

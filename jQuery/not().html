@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>not()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			// not() 从匹配元素集合中删除元素 :even 去掉偶数
+			$("#ul1").find("li").not(":even").css("background-color", "red");
+			// 里面可以直接放 DOM 元素，除了 item3，li的背景都变绿
+			$("#ul2").find("li").not(document.getElementById("notli")).css("background-color", "green");
+			$("p").not(function (index) {
+				console.log(index); // 0 1 2
+				console.log($(this));
+				return $(this).hasClass("selected") ? $(this).css("background-color", "yellow") : $(this).css("background-color", "red");
+			});
+		});
+	</script>
+</head>
+<body>
+<ul id="ul1">
+	<li>list item 1</li>
+	<li>list item 2</li>
+	<li>list item 3</li>
+	<li>list item 4</li>
+	<li>list item 5</li>
+</ul>
+
+<ul id="ul2">
+	<li>list item 1</li>
+	<li>list item 2</li>
+	<li id="notli">list item 3</li>
+	<li>list item 4</li>
+	<li>list item 5</li>
+</ul>
+<p>aaa</p>
+
+<p class="selected">bbb</p>
+
+<p>ccc</p>
+</body>
+</html>

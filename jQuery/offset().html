@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>offset()</title>
+	<style>
+		* { margin: 0; padding: 0 }
+
+		#div1 { width: 200px; height: 200px; background: red; overflow: hidden; margin: 20px; position: relative; }
+
+		#div2 { width: 100px; height: 100px; background: yellow; margin: 30px; position: absolute; left: 60px; display: -none; }
+	</style>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			// offset() 方法就是获取到屏幕的左边距离，不管父级有没有定位，或者自己是绝对定位(可以不用自己写方法获取了，循环递归)
+			// margin-left 也是计算在内 (  获取元素在当前视窗的相对偏移，他只对可见元素有效 )
+			// 如果 div1、div2 都没有定位，就获取到屏幕左边的距离 ( 50 = 20 + 30  )
+			console.log($("#div2").offset().left); // 110 = 20 + 30 + 60
+		});
+	</script>
+</head>
+<body>
+
+<div id="div1">
+	<div id="div2"></div>
+</div>
+
+</body>
+</html>

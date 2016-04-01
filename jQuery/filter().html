@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>filter()</title>
+	<style>
+		div { width: 60px; height: 60px;
+			margin: 5px; float: left;
+			border: 2px white solid;
+		}
+	</style>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			// filter() 方法将匹配元素集合缩减为匹配指定选择器的元素 ( 偶数加红 )
+			$("#ul1").find("li").filter(':even').css('background-color', 'red');
+			// 筛选出 '.middle' 的 div 加背景红色
+			$("div").css("background", "#c8ebcc")
+					.filter(".middle")
+					.css("border-color", "red");
+			// 对于每个元素，如果该函数返回 true，则元素会被包含在已筛选集合中；否则会排除这个元素
+			$("#ul2").find("li").filter(function (index) {
+				console.log(index);
+				// 是从父节点里找子节点
+				return $("strong", this).length == 1;
+			}).css("background-color", "red");
+		})
+	</script>
+</head>
+<body>
+
+<ul id="ul1">
+	<li>list item 1</li>
+	<li>list item 2</li>
+	<li>list item 3</li>
+	<li>list item 4</li>
+	<li>list item 5</li>
+	<li>list item 6</li>
+</ul>
+<div></div>
+
+<div class="middle">aaa</div>
+<div class="middle">bbb</div>
+<div class="middle">ccc</div>
+<div class="middle">dddd</div>
+
+<div></div>
+<p style="clear: both;"></p>
+<ul id="ul2">
+	<li><strong>list</strong> item 1 - one strong tag</li>
+	<li><strong>list</strong> item <strong>2</strong>
+		- two <span>strong tags</span></li>
+	<li>list item 3</li>
+	<li>list item 4</li>
+	<li>list item 5</li>
+	<li>list item 6</li>
+</ul>
+
+</body>
+</html>

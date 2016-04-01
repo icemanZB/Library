@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>浏览器检测</title>
+	<script src="js/jquery-1.7.1.min.js"></script>
+	<script>
+		/*
+		 * jQUery 老版本使用的是通过正则来匹配 userAgent 判断浏览器的种类和版本
+		 * version ----浏览器版本
+		 * msie ---- IE 浏览器( Microsoft Internet Explorer )
+		 * mozilla ---- 火狐浏览器
+		 * opera ---- opera浏览器
+		 */
+		$(function () {
+			if ($.browser.msie && ($.browser.version == "6.0") && !$.support.style) {
+				alert("ie6");
+			}
+			if ($.browser.msie && ($.browser.version == "7.0")) {
+				alert("ie7");
+			}
+		});
+
+	</script>
+</head>
+<body>
+<div style="width: 200px; height: 100px;">aa</div>
+</body>
+</html>

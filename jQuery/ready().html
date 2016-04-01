@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>ready()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		// 以下三个语法全部是等价的：
+		// $(document).ready(handler)
+		// $().ready(handler) (this is not recommended)
+		// $(handler)
+
+		// $(document).bind("ready", handler)的行为类似于 ready 方法，但有一个例外：
+		// 如果 ready 事件已触发后，再尝试用 .bind("ready") 绑定的处理函数将不会被执行。
+
+		// .ready() 方法只能在包含了 document 的 jQuery 上调用，因此选择器可以省略。
+		// .ready() 方法典型的用法是使用一个匿名函数：
+
+		/* $(document) 在源码内部是 rootjQuery = jQuery(document) */
+		$(document).ready(function() {
+			// Handler for .ready() called.
+		});
+		// 等价于：
+		$(function() {
+			// Handler for .ready() called.
+			var class2type = {};
+			$.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {
+				class2type[ "[object " + name + "]" ] = name.toLowerCase();
+			});
+			console.log(class2type);
+		});
+
+		// 如果在 DOM 加载完毕之后调用.ready()，新的句柄将会立即执行。
+
+		// .ready() 的触发要早于.load()，如果要获取或操作样式，或依赖于像图片这样的必须加载完成才能获取和操作的元素，就用<body onload=""> 或.load()
+	</script>
+</head>
+<body>
+
+</body>
+</html>

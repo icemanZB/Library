@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>replcaeWith()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * $(selector).replaceWith(content)
+		 参数            描述
+		 content         必需。规定替换被选元素的内容。
+						 可能的值:
+						 HTML 代码 - 比如 ("<div></div>")
+						 新元素 - 比如 (document.createElement("div"))
+						 已存在的元素 - 比如 ($(".div1")),已存在的元素不会被移动，只会被复制，并包裹被选元素。
+		 selector        必需。规定要替换的元素。
+		 */
+		// replaceAll() 只是和 replaceWidth() 颠倒了操作
+		$(function () {
+			$("p").click(function () {
+				console.log($(this).html());
+			});
+			// 如果替换之前，已经为元素绑定事件，替换后原先绑定的事件将会与被替换的元素一起消失，需要在新元素上重新绑定事件
+			$(".btn1").click(function () {
+				$("p").replaceWith("<b>Hello world!</b>");
+			});
+		});
+	</script>
+</head>
+<body>
+
+<p>This is a paragraph.</p>
+
+<p>This is another paragraph.</p>
+<button class="btn1">用粗体文本替换所有段落</button>
+</body>
+</html>

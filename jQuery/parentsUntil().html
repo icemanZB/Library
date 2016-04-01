@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>parentsUntil()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * parentsUntil()  获得当前匹配元素集合中每个元素的祖先元素，直到（但不包括）被选择器、DOM 节点或 jQuery 对象匹配的元素
+		 * 语法       1、.parentsUntil(selector,filter)
+		 * 参数	     描述   selector	可选。字符串值，规定在何处停止对祖先元素进行匹配的选择器表达式。
+		 * filter	 可选。字符串值，包含用于匹配元素的选择器表达式。
+		 *
+		 * 语法       2、.parentsUntil(element,filter)
+		 * 参数	     描述   element	可选。DOM 节点或 jQuery 对象，指示在何处停止对祖先元素的匹配。
+		 * filter	 可选。字符串值，包含用于匹配元素的选择器表达式。
+		 * */
+		$(function () {
+			// 查找 <li class="item-a"> 的祖先元素，直到 <ul class="level-1">，并将它们设置为红色背景。
+			$("li.item-a").parentsUntil(".level-1").css("background-color", "red");
+
+			// 找到 <li class="item-2"> 的所有类名为 "yes" 的祖先元素，直到 <ul class="level-1">，然户为它们设置蓝色边框
+			$("li.item-2").parentsUntil($("ul.level-1"), ".yes").css("border", "3px solid blue");
+		});
+	</script>
+</head>
+<body>
+<ul class="level-1 yes">
+	<li class="item-i">I</li>
+	<li class="item-ii">II
+		<ul class="level-2 yes">
+			<li class="item-a">A</li>
+			<li class="item-b">B
+				<ul class="level-3">
+					<li class="item-1">1</li>
+					<li class="item-2">2</li>
+					<li class="item-3">3</li>
+				</ul>
+			</li>
+			<li class="item-c">C</li>
+		</ul>
+	</li>
+	<li class="item-iii">III</li>
+</ul>
+</body>
+</html>

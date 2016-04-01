@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>append()</title>
+	<script src="js/jquery-2.0.2.js"></script>
+	<script>
+		/*
+		 * append() 方法在被选元素的结尾(仍然在内部)插入指定内容。
+		 */
+		$(function () {
+
+			$("#btn1").click(function () {
+				// 生成的 html ： <p>This is a paragraph.<b>Hello world!</b></p> <p>This is a paragraph.<b>Hello world!</b></p>
+				$("p").append("<b>Hello world!</b>");
+			});
+
+			/*
+			 * $(selector).append(function(index,html)) 可以使用函数构建 html
+			 */
+
+			$("#btn2").click(function () {
+				// 生成的 html ： <p>This is a paragraph.<b>This p element has index 0</b></p><p>This is a paragraph.<b>This p element has index 1</b></p>
+				$("p").append(function (n) {
+					return "<b>This p element has index " + n + "</b>";
+				});
+			});
+
+			$('#btn3').click(function () {
+				/*
+				 * $('p').append('div');  这里的 div 只是单纯的文本
+				 */
+				// 生成的 html ： <p>This is another paragraph.<div>aaaa</div></p><p>This is another paragraph.<div>aaaa</div></p>
+				$('p').append($('div')); // 把 div 元素加入到 p 元素后面 (内部) 剪切
+			});
+
+			$("#btn4").click(function () {
+				/*
+				 * $('div').append("p","h1");  先插入 p 文本，后插入 h1文本
+				 */
+				// 生成的 html ： <div>aaaa<p>This is a paragraph.</p><p>This is another paragraph.</p><h1>h1</h1></div>
+				$('div').append($("p"), $("h1")); // 先插入 p 元素，后插入 h1 元素 到 div 内部 ( 剪切 )
+			});
+
+		});
+
+	</script>
+</head>
+<body>
+<h1>h1</h1>
+
+<p>This is a paragraph.</p>
+
+<p>This is another paragraph.</p>
+<button id="btn1">在每个 p 元素后插入内容</button>
+<input type="button" value="可以使用函数构建html" id="btn2"/>
+<input type="button" value="把div元素加入到p元素后面(内部)剪切" id="btn3"/>
+<input type="button" value="append 的一个特殊用法" id="btn4"/>
+
+<div>aaaa</div>
+
+</body>
+</html>

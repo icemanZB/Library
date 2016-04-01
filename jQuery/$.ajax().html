@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.ajax()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		var jqxhr = $.ajax({
+			url: url,
+			type: "GET", // 默认为 GET,可以根据需要更改
+			cache: true, // 默认为 true ,但对于 script ,jsonp 类型为 false ,可以自行设置
+			data: {}, // 将请求参数放这里
+			dataType: "json", // 指定想要的数据类型
+			jsonp: "callback", // 指定回调处理JSONP类型的请求
+			statusCode: { // 如果你想处理各状态的错误的话
+				404: "handler404",
+				500: "handler500"
+			}
+		});
+		jqxhr.done(successHandler); // 相当于 success()
+		jqxhr.fail(failureHandler); // fail() 相当于error()
+		function successHandler() {
+		}
+		function failureHandler() {
+		}
+
+		$.ajax({}).then(successHandler, failureHandler);
+
+		// 回调函数可以添加任意多个，它们按照添加顺序执行
+		$.ajax("test.html").done(function () {
+			console.log("哈哈，成功了！");
+		}).fail(function () {
+			console.log("出错啦！");
+		}).done(function () {
+			console.log("第二个回调函数！");
+		});
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

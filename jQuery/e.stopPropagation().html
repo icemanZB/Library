@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>e.stopPropagation()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			$("#hr_three").click(function (e) {
+				e.stopPropagation();  // 阻止事件冒泡 只会弹出我是最里层
+				return false; // 会弹出我是最里层，但不会执行链接到百度页面
+				// return false 作用是阻止事件冒泡 和 默认事件
+			});
+		});
+	</script>
+</head>
+<body>
+<div id="divOne" onclick="alert('我是最外层');">
+	<div id="divTwo" onclick="alert('我是中间层！')">
+		<a id="hr_three" href="http://www.baidu.com" onclick="alert('我是最里层！')">点击我</a>
+	</div>
+</div>
+</body>
+</html>

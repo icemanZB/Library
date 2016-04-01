@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>hasClass()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			var $ul = $("#ul1");
+			// has() 检测某个元素是否在另一个元素中
+
+			$ul.append("<li>" + ($ul.has("li").length ? "Yes" : "No") + "</li>");
+
+			// list item 2 背景变红
+			$("#ul2").find("li").has("ul").css("background-color", "red");
+
+		});
+	</script>
+</head>
+<body>
+<ul id="ul1">
+	<li>Does the UL contain an LI?</li>
+</ul>
+
+<ul id="ul2">
+	<li>list item 1</li>
+	<li>list item 2
+		<ul>
+			<li>list item 2-a</li>
+			<li>list item 2-b</li>
+		</ul>
+	</li>
+	<li>list item 3</li>
+	<li>list item 4</li>
+</ul>
+
+</body>
+</html>

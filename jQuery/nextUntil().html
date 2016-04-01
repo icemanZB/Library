@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>prevUntil()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		//
+		/*
+		 * nextUntil() 获得每个元素所有跟随的同胞元素，但不包括被选择器、DOM 节点或已传递的 jQuery 对象匹配的元素
+		 * 语法       1、.nextUntil(selector,filter)
+		 * 参数	       描述   selector	字符串值，包含指示在何处停止匹配跟随的同胞元素的选择器表达式。
+		 * filter	   字符串值，包含用于匹配元素的选择器表达式。
+		 *
+		 * 语法        2、.nextUntil(element,filter)
+		 * 参数	       描述   element	指示在何处停止匹配跟随的同胞元素的 DOM 节点或 jQuery 对象。
+		 * filter	   字符串值，包含用于匹配元素的选择器表达式。
+		 *
+		 */
+
+		// 查找跟随 <dt id="term-2"> 的同胞元素，直到下一个 <dt>，然后将它们设置为红色背景色。
+		$(function () {
+			$("#term-2").nextUntil("dt").css("background-color", "red");
+
+			// 找到跟随 <dt id="term-1"> 的 <dd> 同胞元素，直到 <dt id="term-3">，并为它们设置蓝色文本颜色
+			var term3 = document.getElementById("term-3");
+			$("#term-1").nextUntil(term3, "dd").css("color", "blue");
+		});
+	</script>
+</head>
+<body>
+<dl>
+	<dt id="term-1">term 1</dt>
+	<dd>definition 1-a</dd>
+	<dd>definition 1-b</dd>
+	<dd>definition 1-c</dd>
+	<dd>definition 1-d</dd>
+
+	<dt id="term-2">term 2</dt>
+	<dd>definition 2-a</dd>
+	<dd>definition 2-b</dd>
+	<dd>definition 2-c</dd>
+
+	<dt id="term-3">term 3</dt>
+	<dd>definition 3-a</dd>
+	<dd>definition 3-b</dd>
+</dl>
+</body>
+</html>

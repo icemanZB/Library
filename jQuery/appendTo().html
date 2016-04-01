@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>appendTo()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * appendTo() 方法在被选元素的结尾(仍然在内部)插入指定内容
+		 */
+		$(function () {
+			// 在每个 p 元素结尾插入内容 ( 仍然在内部 ) ( 先删除后插入 )
+			$("#btn1").click(function () {
+				/*
+				 * 这里不能使用函数构建 html，与 append() 有区别
+				 * $("<b>Hello World!</b>").appendTo(function(){}); 错误
+				 */
+				// 生成的 html ： <p>This is a paragraph.<b>Hello world!</b></p><p>This is a paragraph.<b>Hello world!</b></p>
+				$("<b>Hello World!</b>").appendTo("p");
+			});
+
+			// 在 p 之后( p的内部 ) 插入选择到 div 的元素( 剪切 )
+
+			$('#btn2').click(function () {
+				// 生成的 html ： <p>This is another paragraph.<div>aaaa</div></p>
+				$('div').appendTo('p');
+			});
+
+		});
+
+	</script>
+</head>
+<body>
+<p>This is a paragraph.</p>
+
+<p>This is another paragraph.</p>
+<button id="btn1">在每个 p 元素后插入内容</button>
+<input type="button" value="在p之后(p的内部)插入选择到div的元素(剪切)" id="btn2"/>
+
+<div>aaaa</div>
+
+
+</body>
+</html>

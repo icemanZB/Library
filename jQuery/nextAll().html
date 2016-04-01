@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>nextAll()</title>
+	<style>
+		div { width: 80px; height: 80px; background: #abc; border: 2px solid black; margin: 10px; float: left; }
+
+		div.after { border-color: red; }
+	</style>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * nextAll(selector) 获得匹配元素集合中每个元素的所有跟随的同胞元素，由选择器筛选是可选的
+		 */
+		$(function () {
+			// 查找第一个 div 之后的所有同级 div，并为他们添加 .after
+			$("div:first").nextAll().addClass("after");
+			$("li.third-item").nextAll().css("background-color", "red");
+		})
+	</script>
+</head>
+<body>
+<div>first</div>
+<div>sibling
+	<div>child</div>
+</div>
+<div>sibling</div>
+<div>sibling</div>
+<p style="clear:both;"></p>
+<ul style="margin-top: 50px;">
+	<li>list item 1</li>
+	<li>list item 2</li>
+	<li class="third-item">list item 3</li>
+	<li>list item 4</li>
+	<li>list item 5</li>
+</ul>
+</body>
+</html>

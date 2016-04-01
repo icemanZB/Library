@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>get()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			// ["John", "password", "http://w3school.com.cn/"]
+			// 使用 get() 来处理返回的对象以得到基础的数组
+			console.log($("input").map(function () {
+				return $(this).val();
+			}).get());
+
+			// 转为 DOM 对象  $("p").get() 是返回一个数组
+			console.log($("p").get(0));
+
+		});
+	</script>
+</head>
+<body>
+<p><b>Values: </b></p>
+
+<form>
+	<input type="text" name="name" value="John"/>
+	<input type="text" name="password" value="password"/>
+	<input type="text" name="url" value="http://w3school.com.cn/"/>
+</form>
+</body>
+</html>

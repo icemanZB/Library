@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>toggle()</title>
+	<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+	<script src="js/jquery.toggler.js"></script>
+	<script>
+		/*
+		 * $(selector).toggle(speed,callback,switch)
+		 * speed : 可选，规定元素从可见到隐藏的速度（或者相反）。默认为 "0"，"slow"、"normal"、"fast"
+		 *         逐渐地改变其高度、宽度、外边距、内边距和透明度
+		 *         如果设置此参数，则无法使用 switch 参数
+		 *
+		 * callback : 可选，toggle 函数执行完之后，要执行的函数
+		 *
+		 * switch : 可选，布尔值。规定 toggle 是否隐藏或显示所有被选元素
+		 *          True - 显示所有元素  False - 隐藏所有元素
+		 *          如果设置此参数，则无法使用 speed 和 callback 参数
+		 *
+		 * ****　jquery1.9版本之后，取消了这个切换事件的方法，只保留了显示/隐藏　需要自己写插件
+		 */
+		$(function () {
+			$(".btn1").click(function () {
+				$("p").toggle(); // toggle() 方法切换元素的可见状态
+			});
+			// 不加载插件的时候，是不能用
+			$("#btn").toggler(
+					function () {
+						$("body").css("background-color", "green");
+					},
+					function () {
+						$("body").css("background-color", "red");
+					},
+					function () {
+						$("body").css("background-color", "yellow");
+					}
+			);
+		});
+	</script>
+</head>
+<body>
+<p>This is a paragraph.</p>
+<button class="btn1">Toggle</button>
+<br/>
+
+<button id="btn">请点击这里，来切换不同的背景颜色</button>
+
+</body>
+</html>

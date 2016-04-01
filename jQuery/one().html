@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>one()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			// one  事件就只能执行一次
+			$("div").one("click", function () {
+				console.log(1)
+			});
+		});
+	</script>
+</head>
+<body>
+<div style="width: 100px; height: 100px; background: red;">aaaa</div>
+</body>
+</html>

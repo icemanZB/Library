@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>map()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			var $input = $("input");
+			$("p").append($input.map(function () {
+				return $(this).val();
+			}).get().join(","));
+			// 返回值是 jQuery 封装的数组，使用 get() 来处理返回的对象以得到基础的数组
+			console.log($input.map(function () {
+				return $(this).val();
+			}));
+			// ["John", "password", "http://w3school.com.cn/"]
+			console.log($input.map(function () {
+				return $(this).val();
+			}).get());
+
+			// $.map() 方法可将一个数组转换为另一个数组
+			var arr = '1,2,3,4,5,jQuery,CSS,5'.split(',');
+			arr = $.map(arr, function (val, index) {
+				// 和 $.grep() 的区别
+				// return isNaN(val)，得到结果为：[true, true]
+				console.log(index);
+				return isNaN(val) ? val : null;
+			});
+
+			console.log(arr); // ["jQuery", "CSS"]
+		});
+	</script>
+</head>
+<body>
+<p><b>Values: </b></p>
+
+<form>
+	<input type="text" name="name" value="John"/>
+	<input type="text" name="password" value="password"/>
+	<input type="text" name="url" value="http://w3school.com.cn/"/>
+</form>
+
+</body>
+</html>

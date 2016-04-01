@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.extend()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		// 合并多个对象
+		var Css1 = {
+			size: "10px",
+			style: "oblique"
+		};
+		var Css2 = {
+			size: "12px",
+			style: "oblique",
+			weight: "bolder"
+		};
+		// 结果: Css1 的 size 属性被覆盖，而且继承了 Css2 的 weight 属性
+		var newcss = $.extend(Css1, Css2); //  {size: "12px", style: "oblique", weight: "bolder"}
+		console.log(Css1); // Css1 = {size: "12px",style: "oblique",weight: "bolder"}
+
+		// 浅拷贝
+		var obj = $.extend({
+			name: "John",
+			location: {
+				city: "Boston"
+			}
+		}, {
+			last: "Resig",
+			location: {
+				state: "MA"
+			}
+		});
+		console.log(obj); // { name: "John", last: "Resig", location: { state: "MA" } }
+
+		// 深拷贝
+		console.log($.extend(true, {
+					name: "John",
+					location: {
+						city: "Boston"
+					}
+				}, {
+					last: "Resig",
+					location: {
+						state: "MA"
+					}
+				})
+		);// { name: "John", last: "Resig",location: { city: "Boston", state: "MA" } }
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

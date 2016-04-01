@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>after()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * after() 在被选元素之后插入指定的内容html (外部)
+		 */
+
+		$(function () {
+			$("#btn1").click(function () {
+				// 生成的 html： <p>This is a paragraph.</p><p>Hello world!</p>
+				$("p").after("<p>Hello world!</p>");
+			});
+
+			/*
+			 * $(selector).after(function(index)) 必需。规定返回待插入内容的函数
+			 */
+			$("#btn2").click(function () {
+				// 生成的html <p>This is a paragraph.</p><p>The p element above has index 0</p>
+				$("p").after(function (n) {
+					return "<p>The p element above has index " + n + "</p>";
+				});
+			});
+
+			$("#btn3").click(function () {
+				/*
+				 * $("div").after("p"); 这里的 p 不是一个选择器，不能获取p元素，只是单纯的文本
+				 */
+
+				// 生成的 html： <div>aaa</div><p>This is a paragraph.</p>
+				$("div").after($("p")); // 把获取到的p元素插入到 div后面 (外部) 剪切 ( 原来p被删掉了 )
+			});
+
+		});
+
+
+	</script>
+</head>
+<body>
+<p>This is a paragraph.</p>
+<button id="btn1">在每个 p 元素后插入内容</button>
+<input type="button" id="btn2" value="使用函数在被选元素之后插入指定的内容"/>
+<input type="button" id="btn3" value="把获取到的p元素插入到div后面"/>
+
+<div>aaa</div>
+
+</body>
+</html>

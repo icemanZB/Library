@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>siblings()</title>
+    <script src="js/jquery-2.0.3.min.js"></script>
+    <script>
+        $(function () {
+            // siblings() 获取兄弟节点( 匹配元素前后所有的同辈元素 )，其中也可以传入筛选的参数
+            $("li.third-item").siblings().css("background-color", "red"); // item1、item2、item4、item5 变红
+        });
+    </script>
+</head>
+<body>
+<ul>
+    <li>list item 1</li>
+    <li>list item 2</li>
+    <li class="third-item">list item 3</li>
+    <li>list item 4</li>
+    <li>list item 5</li>
+</ul>
+</body>
+</html>

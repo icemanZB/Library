@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>before()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		/*
+		 * 方法在被选元素前( 外部 ) 插入指定的内容 html
+		 */
+		$(function () {
+			$("#btn1").click(function () {
+				// 生成的 html ： <p>Hello world!</p><p>This is a paragraph.</p>
+				$("p").before("<p>Hello world!</p>");
+			});
+
+			/*
+			 * $(selector).before(function(index)) 必需。规定返回待插入内容的函数
+			 */
+			$("#btn2").click(function () {
+				// 生成的 html ： <p>The p element below has index 0</p><p>This is a paragraph.</p>
+				$("p").before(function (n) {
+					return "<p>The p element below has index " + n + "</p>";
+				});
+			});
+
+			$('#btn3').click(function () {
+				/*
+				 * $('div').before("p");  这里的 p 不是一个选择器，不能获取p元素，只是单纯的文本
+				 */
+				$("div").before($("p")); // 在 div 元素前面插入 p 元素 (外部) 剪切
+			});
+
+		});
+
+
+	</script>
+</head>
+<body>
+<p>This is a paragraph.</p>
+<button id="btn1">在每个 p 元素后插入内容</button>
+<input type="button" value="使用函数在被选元素之前( 外部 )插入指定的内容" id="btn2"/>
+<input type="button" value="在div元素前面插入p元素 (外部) 剪切" id="btn3"/>
+
+<div>aaa</div>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>clone()</title>
+    <script src="js/jquery-2.0.3.min.js"></script>
+    <script>
+        $(function () {
+            // 复制节点没参数的情况是潜复制(不复制事件)，clone(true)深复制 复制元素的同时复制元素所绑定的事件
+            $("ul li").click(function(){
+                $(this).clone(true).appendTo("ul"); // 注意参数 true，可以复制自己，并且他的副本保留事件
+            })
+        });
+    </script>
+</head>
+<body>
+
+<ul>
+    <li title='苹果'>苹果</li>
+    <li title='橘子'>橘子</li>
+    <li title='菠萝'>菠萝</li>
+</ul>
+</body>
+</html>

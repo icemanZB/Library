@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>表单获取()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			$("#address").focus(function () {
+				var txt_value = $(this).val();
+				// this.defaultValue 就是当前文本框的默认值
+				if (txt_value == this.defaultValue) {
+					$(this).val("");
+				}
+			});
+
+			$("#single").val("选择2号");  // 设置下拉框选中
+
+			console.log($("#single option")); // 获取全部选项
+			console.log($("#single option:selected")); // 获取选中项
+
+			var $multiple = $("#multiple");
+
+			$multiple.val(["选择2号", "选择3号"]);  // 设置下拉框多选
+			// 双击获取选中的项
+			$multiple.dblclick(function () {
+				var $options = $("option:selected", this); // 获取选中的项，this指代的是select，相当于给定了一个父级
+				console.log($options);
+			});
+
+			$(":checkbox").val(["check2", "check3"]);  // 设置多选框选中
+
+			$(":radio").val(["radio2"]); // 设置单选框选中
+
+			// 也可以使用 prop() 方法来实现同样的功能
+			$("#single option:eq(1)").prop("selected", true);
+			$("[value='radio2']:radio").prop("checked", true);
+
+			$(":checkbox:radio").serialize(); // 复选框和单选框序列化为字符串形式
+
+			var fields = $(':checkbox,:radio').serializeArray(); // 将 DOM 元素序列化之后，返回 json 格式的数据
+
+		});
+	</script>
+</head>
+<body>
+
+<input type="text" id="address" value="请输入邮箱地址"/>
+<select id="single">
+	<option>选择1号</option>
+	<option>选择2号</option>
+	<option>选择3号</option>
+</select>
+
+<select id="multiple" multiple="multiple" style="height:120px;">
+	<option selected="selected">选择1号</option>
+	<option>选择2号</option>
+	<option>选择3号</option>
+	<option>选择4号</option>
+	<option selected="selected">选择5号</option>
+</select>
+
+<input type="checkbox" value="check1"/> 多选1
+<input type="checkbox" value="check2"/> 多选2
+<input type="checkbox" value="check3"/> 多选3
+<input type="checkbox" value="check4"/> 多选4
+
+<input type="radio" value="radio1"/> 单选1
+<input type="radio" value="radio2"/> 单选2
+<input type="radio" value="radio3"/> 单选3
+</body>
+</html>

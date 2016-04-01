@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>scrollLeft()</title>
+    <script src="js/jquery-2.0.3.min.js"></script>
+    <script>
+        $(function () {
+            $("button").click(function () {
+                // $(selector).scrollLeft() 获取水平滚动条位置
+                $("div").scrollLeft(100); // srollLeft(position) 方法返回或设置匹配元素的滚动条的水平位置
+            });
+        })
+    </script>
+</head>
+<body>
+<div style="border:1px solid black;width:100px;height:130px;overflow:auto">
+    The longest word in the english dictionary is: pneumonoultramicroscopicsilicovolcanoconiosis.
+</div>
+<button class="btn1">把滚动条的水平位置设置为 100px</button>
+</body>
+</html>

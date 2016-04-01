@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>trigger()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+
+			var $btn = $("#btn");
+			// trigger() 方法触发被选元素的指定事件类型
+
+			$btn.trigger("click"); // 可以主动触发事件  $("#btn").click();
+
+			// 触发自定义事件
+			$btn.bind("myClick", function () {
+				$("#test").append("<p>我的自定义事件.</p>");
+			});
+
+			$btn.click(function () {
+				$(this).trigger("myClick");
+			}).trigger("myClick");
+
+			// 传参数
+			$btn.bind("myClick2", function (event, message1, message2) {
+				$("#test").append("<p>" + message1 + message2 + "</p>");
+			});
+			$btn.click(function () {
+				$(this).trigger("myClick2", ["我的自定义", "事件"]);
+			}).trigger("myClick", ["我的自定义", "事件"]);
+
+			// 会触发 input 元素绑定的 focus 事件，也会使 input 元素本身得到焦点( 这是浏览器的默认操作 )
+			// 如果只想触发绑定 focus 事件，而不想执行浏览器默认操作，可以使用triggerHandler()方法
+			var $input = $("input");
+			$input.trigger("focus");
+			$input.triggerHandler("focus"); // 只会触发绑定的 focus 事件，不会得到焦点
+
+		});
+	</script>
+</head>
+<body>
+<button id="btn">点击我</button>
+<div id="test"></div>
+</body>
+</html>
