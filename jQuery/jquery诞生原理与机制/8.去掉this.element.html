@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script>
+		window.onload = function () {
+
+			/*
+			 * 我不喜欢this.element, 可以去掉吗？
+			 * 现在包装器对象结构类似这样：
+			 * F.prototype = {
+				 element: [NodeList],
+				 each: function() {},
+				 hide: function() {}
+			 * }
+			 *
+			 * element 看上去好碍眼，就不能去掉吗？可以啊，NodeList 是个类数组结构，我们把它以数值索引形式分配到对象中就好啦！
+			 * 一来去除冗余 element 属性，二来让原型对象成为类数组结构，可以有一些特殊的功能。
+			 * 于是 F.prototype.getNodeList 需要换一个名字了，比方说初始化 init
+			 */
+
+			var $ = function (selector, context) {
+				return new F(selector, context);
+			};
+
+			var F = function (selector, context) {
+				return this.init(selector, context);
+			};
+			F.prototype.init = function (selector, context) {
+				var nodeList = (context || document).querySelectorAll(selector);
+				this.length = nodeList.length;
+				for (var i = 0; i < this.length; i++) {
+					this[i] = nodeList[i];
+				}
+				return this;
+			};
+			F.prototype.each = function (fn) {
+				// { 0: img#image1, 1: img#image2, length: 2 }
+				console.log(this);
+				// 此时，each() 方法中，就没有烦人碍眼的 this.element[i] 出现了，而是直接的 this[i]
+				var i = 0, length = this.length;
+				for (; i < length; i++) {
+					fn.call(this[i], i, this[i]);
+				}
+				return this;
+			};
+
+			F.prototype.hide = function () {
+				this.each(function () {
+					this.style.display = "none";
+				});
+			};
+
+			$("button")[0].onclick = function () {
+				$("img").hide();
+			};
+
+		};
+
+	</script>
+</head>
+<body>
+<button id="button">点击我</button>
+<img id="image1" src="img/mm.jpg">
+<img id="image2" src="img/mm2.jpg">
+</body>
+</html>

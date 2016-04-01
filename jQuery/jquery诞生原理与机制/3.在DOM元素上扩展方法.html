@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script>
+		window.onload = function () {
+			var $ = function (id) {
+				return document.getElementById(id);
+			};
+			/*
+			 * 如何识别”芝麻开门“的暗号
+			 * $("image1") 本质是个 DOM 元素，$("image1").hide() 也就是在DOM元素上扩展一个hide方法，调用即隐藏
+			 *
+			 * 哦扩展，立马想到了 JavaScript 中的 prototype 原型。 // ps: 老板，现在满大街什么菜最便宜。老板：原型啊都泛滥了！
+
+			 * 虽然在身体上钻了个窟窿插进入了一个方法，毕竟浏览器有有效果啊，切肤之痛就不算什么了。但是，我们是在泱泱天朝
+			 * 很多 IE6~IE8 老顽固，这些老东西不认识 HTMLElement，对于 HTMLElement 自残扩展之法根本理解不了，而这些老家伙掌管了半壁江山。
+			 * 唉面对现实，元素直接扩展是行不通了。因此，由于兼容性，我们需要想其他扩展方法。
+			 */
+
+			HTMLElement.prototype.hide = function () {
+				this.style.display = "none";
+			};
+
+			$("button").onclick = function () {
+				$("image1").hide();
+				$("image2").hide();
+			};
+
+		};
+
+	</script>
+</head>
+<body>
+<button id="button">点击我</button>
+<img id="image1" src="img/mm.jpg">
+<img id="image2" src="img/mm2.jpg">
+</body>
+</html>

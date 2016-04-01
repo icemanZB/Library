@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script>
+		window.onload = function () {
+
+			var $ = function (selector, context) {
+				// 那我把所有的 F 换成 $.fn
+				return new $.fn(selector, context);
+			};
+
+			$.fn = function (selector, context) {
+				return this.init(selector, context);
+			};
+
+			$.fn.prototype.init = function (selector, context) {
+				var nodeList = (context || document).querySelectorAll(selector);
+				this.length = nodeList.length;
+				for (var i = 0; i < this.length; i++) {
+					this[i] = nodeList[i];
+				}
+				return this;
+			};
+			$.fn.prototype.each = function (fn) {
+				var i = 0, length = this.length;
+				for (; i < length; i += 1) {
+					fn.call(this[i], i, this[i]);
+				}
+				return this;
+			};
+
+			$.fn.prototype.hide = function () {
+				this.each(function () {
+					this.style.display = "none";
+				});
+			};
+
+			/*
+			 * 上面的代码所示的JS结构，则包装器对象要扩展新方法，每个都需要再写一个原型的。例如，扩展一个 attr() 方法，则要写成
+			 */
+			$.fn.prototype.attr = function () {
+				// dosomething...
+			};
+
+			$("button")[0].onclick = function () {
+				$("img").hide();
+			};
+
+		};
+
+	</script>
+</head>
+<body>
+<button id="button">点击我</button>
+<img id="image1" src="img/mm.jpg">
+<img id="image2" src="img/mm2.jpg">
+</body>
+</html>

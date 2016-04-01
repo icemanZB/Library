@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script>
+		/*
+		 * 虽然 IE6~IE8 不识 HTMLElement 原型扩展，但是 Function 的原型扩展认识啊。管不管用暂时不得而知，先随便搞个简单的试试呗~
+		 */
+		var F = function () {
+		};
+		F.prototype.hide = function () {
+			// this?.style.display = "none";  // 这里的问号表示可能是 this.xxx.style
+			console.log("hide");
+		};
+
+		new F().hide();    // 这个实现隐藏？
+
+		/*
+		 * new F() 可以看做是 this?.style 这里的 this. 可能会跳起来抢答道：”那 new F() 的 return 值 = DOM 元素不就完事 OK 啦！
+		 * —— this.style.hide = new F().style.hide = DOM.style.hide”！ 错了
+		 *
+		 * 只要 new 表达式之后的 constructor 返回 ( return ) 一个引用对象（数组、对象、函数等）都将覆盖 new 创建的匿名对象
+		 * 如果返回 （ return ） 一个原始类型（ 无 return 时其实为 return 原始类型 undefined），那么就返回 new 创建的匿名对象。
+		 * 说白了就是 new F() 如果没有返回值 ( Undefined 类型 )，或返回值是5种基本型 （ Undefined类型、Null类型、Boolean类型、Number类型、String类型 ）之一
+		 * 则 new F() 可以看成是原型扩展方法中的 this ，如果返回是是数组啊、对象啊什么的，则返回值就是这些对象本身，此时 new F() ≠ this。
+		 */
+
+		window.onload = function () {
+			var Fn = function (id) {
+				return document.getElementById(id);
+			};
+			// true 说明看上去返回 DOM 对象，实际确实就是 DOM 对象
+			console.log( new Fn("image1"), new Fn("image1") == document.getElementById("image1") );  // true
+
+			var Fn2 = function (id) {
+				return id;
+			};
+
+			console.log( new Fn2("image2") );  // Fn2{} 返回的是 new 创建的匿名对象，而不是字符串
+			console.log( new Fn2("image2") == "image2" );  // false 说明看上去返回字符串值，实际并不是字符串
+
+			/*
+			 * 回到上面天真的想法。要想使用 prototype.hide 方法中的 this，就不能让 F 函数有乱七八糟的返回值
+			 * 因此 new F() 直接返回 DOM 是不可取的，但我们可以借助 this 间接调用
+			 */
+			var F = function (id) {
+				this.element = document.getElementById(id);
+			};
+			F.prototype.hide = function () {
+				this.element.style.display = "none";
+			};
+
+			document.getElementById("button").onclick = function () {
+				new F("image1").hide();
+				new F("image2").hide();
+			};
+		};
+
+
+	</script>
+</head>
+<body>
+<button id="button">点击我</button>
+<img id="image1" src="img/mm.jpg">
+<img id="image2" src="img/mm2.jpg">
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script>
+		window.onload = function () {
+			/*
+			 * 元素的获取直接在 F() 方法中，但是，实际情况考虑到兼容性实现，元素获取可能会相当复杂同时方法私有，不能重利用。
+			 * 因此，可以把元素获取方法放在原型上，便于管理和重用。
+			 */
+
+			var F = function (id) {
+				return this.getElementById(id);
+			};
+			// 元素获取方法放在 prototype 上，通过 F() 执行
+			F.prototype.getElementById = function (id) {
+				this.element = document.getElementById(id);
+				console.log(this); // F {element: img#image1}
+				return this; // 返回的 this，也就是 new F() 的返回值是 this
+			};
+			F.prototype.hide = function () {
+				this.element.style.display = "none";
+			};
+
+			document.getElementById("button1").onclick = function () {
+				new F("image1").hide();
+			};
+
+
+			/*
+			 * 我不喜欢 new，我喜欢 $
+			 * new F("image") 这种写法我好不喜欢，好吧,把 new 什么什么藏在 $ 方法中把
+			 */
+
+
+			var $ = function (id) {
+				return new F(id);
+			};
+			// 于是，上面的图片隐藏的直接执行代码就是
+			document.getElementById("button2").onclick = function () {
+				$("image2").hide();
+			};
+
+		};
+
+	</script>
+</head>
+<body>
+<button id="button1">点击我</button>
+<button id="button2">点击我2</button>
+<img id="image1" src="img/mm.jpg">
+<img id="image2" src="img/mm2.jpg">
+</body>
+</html>

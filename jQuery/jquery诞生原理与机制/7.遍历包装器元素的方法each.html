@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script>
+		window.onload = function () {
+			var F = function (selector, context) {
+				return this.getNodeList(selector, context);
+			};
+			F.prototype.getNodeList = function (selector, context) {
+				context = context || document;
+				this.element = context.querySelectorAll(selector);
+				return this;
+			};
+			// 单纯一个 hide() 方法还可以应付，再来个 show() 方法，岂不是还要循环遍历一次
+			//	因此，急需一个遍历包装器元素的方法，姑且叫做 each 吧
+			F.prototype.each = function (fn) {
+				var i = 0, length = this.element.length;
+				for (; i < length; i++) {
+					// 约定俗成的写法，修改 this 指向，下标，当前元素
+					fn.call(this.element[i], i, this.element[i]);
+				}
+				return this;
+			};
+			F.prototype.hide = function () {
+				this.each(function (index, ele) {
+					console.log(index, ele);
+					this.style.display = "none";
+				});
+			};
+
+			var $ = function (selector, context) {
+				return new F(selector, context);
+			};
+
+			$("button").element[0].onclick = function () {
+				$("img").hide();
+			};
+
+		};
+
+	</script>
+</head>
+<body>
+<button id="button">点击我</button>
+<img id="image1" src="img/mm.jpg">
+<img id="image2" src="img/mm2.jpg">
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script>
+		window.onload = function () {
+			// 这里的$()就是最简单的包装器，只是返回的是原生的DOM对象。
+			var $ = function (id) {
+				return document.getElementById(id);
+			};
+
+			// 页面复杂了，点击一个按钮有2张图片要隐藏
+			$("button").onclick = function () {
+
+				$("image1").style.display = "none";
+				$("image2").style.display = "none";
+				/*
+				 * 好像又看见长长的重复的东西，xxx.style.display = "none";
+				 * 为什么每次开门都要从包里找到钥匙，对准插口插进去，还要左扭扭右扭扭呢？一次还好天天经常老是这样怎受得了。
+				 * 设想要是有个”芝麻开门“的暗号就好了，”open开“，声音识别，门自动开了，多省心。
+				 *
+				 * 这里每次隐藏都要 xxx.style.display = "none"; 比每天拿钥匙开门还要烦，我希望有一个快捷的方式
+				 * 例如”hide“，语句识别，元素自动隐藏，多省心。
+
+				 * 就是要变成下面的效果：
+				 * $("image1").hide();
+				 * $("image2").hide();
+				 */
+			};
+
+		};
+
+	</script>
+</head>
+<body>
+<button id="button">点击我</button>
+<img id="image1" src="img/mm.jpg">
+<img id="image2" src="img/mm.jpg">
+</body>
+</html>
