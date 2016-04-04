@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <!-- 加id 通过id的方式来找相应的路径依赖，提高性能 -->
+    <script src="sea/sea.js" id="seajsnode"></script>
+    <script>
+		/* 使用插件需要先安装spm，然后在下载安装所要的插件
+		 * npm install spm -g
+		 * npm install spm-build -g
+		 * 运行构建命令 cd foo-module (进入这个文件夹)
+     	 * spm build
+     	 * spm install seajs/seajs-text
+		 */
+
+		// 引入多个模块
+	    seajs.use(['./js/module1.js', './js/module2.js'], function (ex, ex2) {
+		    ex.show();
+		    ex2.show();
+	    });
+
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
