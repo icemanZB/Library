@@ -40,6 +40,12 @@
 
 			var fields = $(':checkbox,:radio').serializeArray(); // 将 DOM 元素序列化之后，返回 json 格式的数据
 
+			// 证件类型
+			$("#single").change(function () {
+				 $(this).find(':selected').text();  // 获取选中的
+				
+			});
+
 		});
 	</script>
 </head>
