@@ -10,16 +10,18 @@ define(function (require, exports, module) {
     // exports 是 module.exports 的引用
 
     // 异步加载模块
-    require.async('.js/module2.js', function () {
-        alert('模块加载完的回调');
-    });
+    /* require.async('.js/module2.js', function () {
+     alert('模块加载完的回调');
+     });*/
 
     var a = 100;
 
     exports.a = a;
 
-    module.exports = {
-        a: a
-    };
+    /*  module.exports = {
+     a: a
+     };*/
 
 });
+
+var num = 200;  // 在模块2中使用 require() ，就相当于把这句话放到了模块2中

@@ -3,24 +3,8 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <!-- 加id 通过id的方式来找相应的路径依赖,提高性能 -->
     <script src="sea/sea.js" id="seajsnode"></script>
     <script>
-
-        seajs.use('./js/module1.js', function (exports) {
-
-            exports.show();  // 1
-
-            show();  // 2
-
-            function show() {
-                alert(2);
-            }
-
-        });
-
-
-
         /*
          * 配置信息
          * alias ： 别名配置
@@ -41,15 +25,10 @@
         });
 
 
-        seajs.use('m3', function (ex) {
-            alert(ex.a);  // ex 调用的其实是 module.exports
+        seajs.use('m3', function (exports) {
+            alert(exports.a);  // exports 调用的其实是 module.exports
         });
 
-
-        /*seajs.use(['./js/module1.js', './js/module2.js'], function (ex, ex2) {
-            ex.show();
-            ex2.show();
-        });*/
 
 
     </script>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="sea/sea.js" id="seajsnode"></script>
+	<script>
+		// 处理模块3和模块2的依赖
+		seajs.use("./js/module2.js", function (exports) {
+
+			exports.show(); // 100
+
+		});
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
