@@ -19,6 +19,14 @@
 			return isNaN(val);
 		});
 		console.log(arr); // 结果为： ["jQuery", "CSS"]
+
+		var arr2 = [1,2,3,4];
+
+		arr2 = $.grep( arr2 , function( n ){
+			return n > 2;
+		} , true ); // 第三个参数取的是相反的条件 ( n<=2 )
+
+		console.log( arr2 );  // [1, 2]
 	</script>
 </head>
 <body>

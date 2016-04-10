@@ -491,8 +491,8 @@ jQuery.extend = jQuery.fn.extend = function() {
 		--i;
 	}
 	/* 这个循环就是N多个对象扩展到一个对象上 N = { name : 'hello' } , { age : 30 }
-	* $.extend( a , { name : 'hello' } , { age : 30 } );
-	* */
+	 * $.extend( a , { name : 'hello' } , { age : 30 } );
+	 * */
 	for ( ; i < length; i++ ) {
 		// Only deal with non-null/undefined values
 		if ( (options = arguments[ i ]) != null ) {
@@ -931,16 +931,28 @@ jQuery.extend({
 	},
 
 	// results is for internal usage only
+	/* 第二个参数是内部使用的 */
 	makeArray: function( arr, results ) {
+		/* 这句是看有没有第二个参数，如果有的话就是{length:0}，没有的话就是[] */
 		var ret = results || [];
 
 		if ( arr != null ) {
+			/* Object(arr) 把 arr 放在 Object 中，是因为 isArraylike内部私有的方法只能针对的是对象，判断不了像123 这种参数
+			 *  isArraylike( Object(123) ) 实际的是返回 false，那么就会走 else
+			 *  isArraylike( Object("hello") ) 字符串调用 Object，会转为一个 json，就会有长度了，只要有长度其实就是会为true
+			 * */
 			if ( isArraylike( Object(arr) ) ) {
+				/* 最后还是调用的是 merge，在内部可以转成特殊形式的json
+				 * 这里有个判断 如果是字符串的话，就直接放到了数组里面，如果是 arguments ，或者 nodeList 就用 merge 转换
+				 * */
 				jQuery.merge( ret,
 					typeof arr === "string" ?
 					[ arr ] : arr
 				);
 			} else {
+				/* core_push = core_deletedIds.push，core_deletedIds 变量就是 []
+				 * 其实最后是调用 [].call([],arr);   [].call([],123); 把123添加进去了
+				 * */
 				core_push.call( ret, arr );
 			}
 		}
@@ -949,14 +961,23 @@ jQuery.extend({
 	},
 
 	inArray: function( elem, arr, i ) {
+		/* core_indexOf = core_deletedIds.indexOf ->  [].indexOf()
+		 * $.inArray("w",["a","b","c","d"])
+		 * i 是起始的位置，就是从哪里开始查起
+		 * */
 		return arr == null ? -1 : core_indexOf.call( arr, elem, i );
 	},
 
+	/* 对外就是合并数组，对内是转特定格式的json */
 	merge: function( first, second ) {
 		var l = second.length,
 			i = first.length,
 			j = 0;
-
+		/* 这个是判断第二个参数是不是json，因为json是没有长度的
+		 * $.merge(["a","b"],["c","d"])、$.merge(["a","b"],{0:"c",1:"d"}) 一般都是外部使用
+		 * if -> $.merge(["a","b"],["c","d"])
+		 * else -> $.merge(["a","b"],{0:"c",1:"d"}); 、 $.merge({0:"a",1:"b",length:2},{0:"c",1:"d"});、 $.merge({0:"a",1:"b",length:2},["c","d"]);
+		 * */
 		if ( typeof l === "number" ) {
 			for ( ; j < l; j++ ) {
 				first[ i++ ] = second[ j ];
@@ -967,6 +988,7 @@ jQuery.extend({
 			}
 		}
 
+		/* 改变 length 值 */
 		first.length = i;
 
 		return first;
@@ -976,13 +998,21 @@ jQuery.extend({
 		var retVal,
 			ret = [],
 			i = 0,
+			/* 获取数组的长度 */
 			length = elems.length;
+		/* 如果不写第三个参数的时候就是 undefined， !!undefined = false 就是类型转换 */
 		inv = !!inv;
 
 		// Go through the array, only saving the items
 		// that pass the validator function
 		for ( ; i < length; i++ ) {
+			/* callback( elems[ i ], i) elems[ i ]每一个操作的元素, i下标
+			 * !!callback( elems[ i ], i ) 这里也是做了类型转换。根据返回的值自动的转为 true、false
+			 * */
 			retVal = !!callback( elems[ i ], i );
+			/* 如果第三个参数没有传，那么就会把返回true的元素添加到 ret 中
+			 * 如果传了第三个参数，正好就会把条件相反的添加到 ret 中
+			 * */
 			if ( inv !== retVal ) {
 				ret.push( elems[ i ] );
 			}
@@ -992,6 +1022,7 @@ jQuery.extend({
 	},
 
 	// arg is for internal usage only
+	/* 最后一个参数是内部使用的 */
 	map: function( elems, callback, arg ) {
 		var value,
 			i = 0,
@@ -1000,17 +1031,20 @@ jQuery.extend({
 			ret = [];
 
 		// Go through the array, translating each of the items to their
+		/* 数组、类数组、特殊的json */
 		if ( isArray ) {
 			for ( ; i < length; i++ ) {
 				value = callback( elems[ i ], i, arg );
 
 				if ( value != null ) {
+					/* 把结果添加到新数组中，添加过一次 ret.length 就会自动累加 */
 					ret[ ret.length ] = value;
 				}
 			}
 
 		// Go through every key on the object,
 		} else {
+			/* 如果elems 是 json 就会走这里 */
 			for ( i in elems ) {
 				value = callback( elems[ i ], i, arg );
 
@@ -1021,6 +1055,13 @@ jQuery.extend({
 		}
 
 		// Flatten any nested arrays
+		/* 避免得到复合数组 core_concat = core_deletedIds.concat  [].concat.apply([],ret)
+		 * [1,2,3,4]. $.map( arr , function(n){
+		 *	 return [n+1];
+		 *	 } );
+		 *	 console.log( arr );  // [2,3,4,5]
+		 *
+		 * */
 		return core_concat.apply( [], ret );
 	},
 
