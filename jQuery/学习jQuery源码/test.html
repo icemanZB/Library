@@ -5,11 +5,16 @@
 	<title>jQuery</title>
 	<script src="jquery-2.0.3.study.js"></script>
 	<script>
-		$(function(){
-			var a = { name : { job : 'it' } };
-			var b = { name : {age : 30} };
-			$.extend( true , a  , b );
+		$(function () {
+			function show(n1, n2) {
+				console.log(n1);
+				console.log(n2);
+				console.log(this);
+			}
 
+			//$.proxy(show, document, 3)(4);  // 两种传参方式
+			// 修改 this 指向
+			$.proxy(show, document)(3, 4);
 		});
 	</script>
 </head>

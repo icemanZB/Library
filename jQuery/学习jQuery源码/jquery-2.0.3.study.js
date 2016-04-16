@@ -1066,16 +1066,33 @@ jQuery.extend({
 	},
 
 	// A global GUID counter for objects
+	/*
+	 * 唯一的标识符，在jQuery中与事件的操作有很大的关系
+	 * 通过他可以把事件和函数关联在一起，方便查找和删除
+	 */
 	guid: 1,
 
 	// Bind a function to a context, optionally partially applying any
 	// arguments.
+	/* 修改 this 指向 */
 	proxy: function( fn, context ) {
 		var tmp, args, proxy;
 
+		/*
+		 * 这个判断是为了支持简写的方式
+		 * var obj = {
+		 *     show: function () {
+		 *         alert(this);
+		 *     }
+		 * };
+		 * $.proxy(obj,'show') ->  $.proxy(obj.show,obj)
+		 */
 		if ( typeof context === "string" ) {
+			/* fn[context] -> obj.show */
 			tmp = fn[ context ];
+			/* context -> obj */
 			context = fn;
+			/* fn -> obj.show */
 			fn = tmp;
 		}
 
@@ -1086,41 +1103,61 @@ jQuery.extend({
 		}
 
 		// Simulated bind
+		/*
+		 * 这段是为了处理这两种形式：1、$.proxy(show, document)(3, 4); 2、$.proxy(show, document, 3)(4);
+		 * 拿第二个举例子：
+		 * arguments -> (show, document, 3) 那么首先要去掉前2个参数，从第三个参数开始是需要合并的参数
+		 * 此时的 args 就是 3
+		 * core_slice.call( arguments ) -> [].slice.call( arguments ) 转成真正的数组，然后和前面的数组合并
+		 */
+
 		args = core_slice.call( arguments, 2 );
 		proxy = function() {
+			/* 这里的 arguments 是 [4] 了，fn.apply 就相当于调用了所要执行的函数，那么 arguments 就是这里面的"(4)" */
 			return fn.apply( context || this, args.concat( core_slice.call( arguments ) ) );
 		};
 
 		// Set the guid of unique handler to the same of original handler, so it can be removed
+		/* 设置唯一标识，处理时间的时候或者删除的时候有用到 */
 		proxy.guid = fn.guid = fn.guid || jQuery.guid++;
 
+		/* 返回函数，相当于$.proxy(show, document, 3)() 调用了 proxy -> 那就会执行这个函数  */
 		return proxy;
 	},
 
 	// Multifunctional method to get and set values of a collection
 	// The value/s can optionally be executed if it's a function
+	/* 内部使用，多功能值的操作，如 $("div").css({"width":"100px","height":"100px"});
+	 * elems：操作的元素( 可能是个集合 )；fn：回调函数；key：就是 json 中的 "width"；value：就是 json 中的 "100px"
+	 * chainable：为 true 说明现在要设置，为 false 就说明要获取
+	 */
 	access: function( elems, fn, key, value, chainable, emptyGet, raw ) {
 		var i = 0,
 			length = elems.length,
+			/* key("width") 和 null 进行比较，如果为 null，bulk = true；key 有值，bulk = false  */
 			bulk = key == null;
 
 		// Sets many values
+		/* 设置多组值， 此时的 key = {"width":"100px","height":"100px"}，那就是设置值了，所以 chainable = true; */
 		if ( jQuery.type( key ) === "object" ) {
 			chainable = true;
 			for ( i in key ) {
+				/* 递归调用，相当于重新调用了 $("div").css("width","100px")、$("div").css("height","100px")  */
 				jQuery.access( elems, fn, i, key[i], true, emptyGet, raw );
 			}
 
 		// Sets one value
+		/* 设置一组值 */
 		} else if ( value !== undefined ) {
 			chainable = true;
-
+		    /* 判断 value 是否是个函数，如果是个字符串，那么 raw = true */
 			if ( !jQuery.isFunction( value ) ) {
 				raw = true;
 			}
-
+			/* 如果说没有 key 值的情况下 */
 			if ( bulk ) {
 				// Bulk operations run against the entire set
+				/* raw = true，那说明 value 是个字符串 */
 				if ( raw ) {
 					fn.call( elems, value );
 					fn = null;
@@ -1128,23 +1165,35 @@ jQuery.extend({
 				// ...except when executing function values
 				} else {
 					bulk = fn;
+					/* fn 这里并不执行，只是套了一层函数 */
 					fn = function( elem, key, value ) {
 						return bulk.call( jQuery( elem ), value );
 					};
 				}
 			}
-
+			/*
+			 * 有 key 值的情况下，fn存在，就调用fn()
+			 * raw ? value : value.call( elems[i], i, fn( elems[i], key ) )
+			 * raw = true，那么 value 肯定是字符串，如果 raw = false，那么 value 就是函数
+			 */
 			if ( fn ) {
 				for ( ; i < length; i++ ) {
 					fn( elems[i], key, raw ? value : value.call( elems[i], i, fn( elems[i], key ) ) );
 				}
 			}
 		}
-
+		/*
+		 * 这里是获取值，chainable = true 就返回 elems，方便链式操作
+		 * chainable = false 就是获取值
+		 * bluk = true; 没有 key 值的情况下，触发回调函数 bluck = false; 有 key 值
+		 * 在判断 length 存不存在，length 存在就是有元素，直接走 fn()， 不存在就返回 emptyGet
+		 * emptyGet 一般不写，就是 undefined
+		 */
 		return chainable ?
 			elems :
 
 			// Gets
+			/* $("div").css("width"); */
 			bulk ?
 				fn.call( elems ) :
 				length ? fn( elems[0], key ) : emptyGet;
@@ -1155,19 +1204,28 @@ jQuery.extend({
 	// A method for quickly swapping in/out CSS properties to get correct calculations.
 	// Note: this method belongs to the css module but it's needed here for the support module.
 	// If support gets modularized, this method should be moved back to the css module.
+	/*
+	 * CSS交换，内部使用，可以让 jQuery 获取到隐藏元素的值
+	 * 原理：先把 display:none;存起来，在设置 CSS 为：display:block;visibility:hidden;position:absolute;
+	 * 然后把获取到的值存起来，最后把 display:none 替换回来
+	 */
 	swap: function( elem, options, callback, args ) {
 		var ret, name,
+			/* 存老的样式 */
 			old = {};
 
 		// Remember the old values, and insert the new ones
+		/* 把所有老样式存在 old 中 */
 		for ( name in options ) {
 			old[ name ] = elem.style[ name ];
+			/* 把 display:block;visibility:hidden;position:absolute; 给到当前元素 */
 			elem.style[ name ] = options[ name ];
 		}
-
+		/* 这句话的作用就是类似获取宽度值 */
 		ret = callback.apply( elem, args || [] );
 
 		// Revert the old values
+		/* 样式还原 */
 		for ( name in options ) {
 			elem.style[ name ] = old[ name ];
 		}
@@ -1226,18 +1284,26 @@ jQuery.each("Boolean Number String Function Array Date RegExp Object Error".spli
 	class2type[ "[object " + name + "]" ] = name.toLowerCase();
 });
 
+/* 类数组或者数组或者特殊json的判断，内部使用 */
 function isArraylike( obj ) {
 	var length = obj.length,
 		type = jQuery.type( obj );
-
+	/* 判断是不是 window，因为要避免在 window 下挂载一些类似 length 属性和下面的判断有冲突 */
 	if ( jQuery.isWindow( obj ) ) {
 		return false;
 	}
-
+	/* 判断是不是元素节点并且 length 是否大于 0，如果都满足肯定是一组元素节点的类数组 */
 	if ( obj.nodeType === 1 && length ) {
 		return true;
 	}
-
+	/*
+	 * 先判断了 type !== "function" ，因为函数也是对象，也可以挂载类似 length 属性，但是函数不是我们要的，所以要排除掉
+	 * 这句是判断特殊的 json 或者 arguments ( 类数组 )
+	 * ( length === 0 ||
+	 * typeof length === "number" && length > 0 && ( length - 1 ) in obj )
+	 * 如果一个函数的 arguments 长度为 3 那么 (3-1) in arguments -> true
+	 * length === 0 是针对函数没有参数的情况下，如果不写 length === 0，那么 arguments = 0; (0-1) in arguments -> false，就有问题了
+	 */
 	return type === "array" || type !== "function" &&
 		( length === 0 ||
 		typeof length === "number" && length > 0 && ( length - 1 ) in obj );
