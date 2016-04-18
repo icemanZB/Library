@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>图像Ping</title>
+	<script>
+		// 图像Ping 最常用于跟踪用户点击页面或动态广告曝光次数
+		// 图像Ping有两个主要的缺点：1、是只能发送GET请求      2、是无法访问服务器的响应文本
+		// 所以，图像Ping 只能用于浏览器与服务器间的简单通信
+
+		var img = new Image();
+		img.onload = img.onerror = function () {
+			alert("Done!");
+		};
+		img.src = "http://www.baidu.com?name=Nicholas";
+	</script>
+</head>
+<body>
+
+</body>
+</html>

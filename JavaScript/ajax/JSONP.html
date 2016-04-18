@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>JSONP</title>
+	<script>
+		/*
+		 * JSONP 由两部分组成：回调函数和数据。
+		 * 回调函数是当响应到来时应该在页面中调用的函数，回调函数的名字一般是在请求中指定的。而数据就是传入回调函数中的JSON数据
+		 * 缺点：
+		 * 1、JSONP 是从其他域中加载代码执行，如果其他域不安全，除了完全放弃JSONP调用之外，没有办法追究，所以一定要保证它可靠
+		 * 2、要确定 JSONP 请求是否失败并不容易，可以使用 HTML5 给 <script> 元素新增了一个 onerror 事件处理程序
+		 *    目前支持不好，需要使用定时器检测指定时间内是否接收到了相应。
+		 */
+		function handleResponse(response) {
+			console.log(response);
+		}
+		var script = document.createElement("script");
+		script.src = "http://freegeoip.net/json/?callback=handleResponse";
+		document.body.insertBefore(script, document.body.firstChild);
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>CORS</title>
+	<script>
+		/*
+		 * IE8 对 CORS 的实现，所有 XDR 请求都是异步执行的，不能用它来创建同步请求，规定：
+		 * 1、cookie 不会随请求发送，也不会随响应返回
+		 * 2、只能设置请求头部信息中的 Content-Type 字段
+		 * 3、不能访问响应头部信息
+		 * 4、只支持 GET 和 POST 请求
+		 */
+
+		var xdr = new XDomainRequest();
+		xdr.onload = function () {
+			alert(xdr.responseText);
+		};
+
+		// 接收到响应后，只能访问响应的原始文本，没有办法确定相应的状态码
+		// 只要有响应就会触发 onload 事件，如果失败( 包括缺少 Access-Control-Allow-Origin 头部 ) 就会触发 error 事件
+		// 只能检测请求是否成功
+		xdr.onerror = function () {
+			alert(xdr.responseText);
+		};
+		xdr.timeout = 1000;
+		xdr.ontimeout = function () {
+			alert("Request took too long.");
+		};
+		xdr.open("get", "http://www.baidu.com");
+		xdr.send();
+
+		// POST
+		var xdrPOST = new XDomainRequest();
+		xdrPOST.onload = function () {
+			alert(xdr.responseText);
+		};
+		xdrPOST.onerror = function () {
+			alert(xdr.responseText);
+		};
+		xdrPOST.open("post", "http://www.baidu.com");
+		xdrPOST.contentType = "application/x-www-form-urlencoded";
+		xdrPOST.send("name=value&age=value");
+
+		function createXHR() {
+			if (typeof XMLHttpRequest != "undefined") {
+				return new XMLHttpRequest();
+			} else if (typeof ActiveXObject != "undefined") {
+				var versions = ["MSXML2.XMLHttp6.0", "MSXML2.XMLHttp.3.0", "MSXML2.XMLHttp"], i, len;
+				for (i = 0, len = versions.length; i < len; i++) {
+					try {
+						new ActiveXObject(versions[i]);
+						arguments.callee.activeXString = versions[i];
+						break;
+					} catch (ex) {
+						// 跳过
+					}
+				}
+
+				return new ActiveXObject(arguments.callee.activeXString);
+			} else {
+				throw new Error("No XHR object available");
+			}
+		}
+
+		/*
+		 * 其他浏览器对 CORS 的实现：Firefox3.5、Safari4+、Chrome、iOS版 Safari 和 Android 平台中的 WebKit，通过 XMLHttpRequest 对象实现对 CROS 的原生支持
+		 * 为了安全考虑，有一些限制：
+		 * 1、不能使用 setRequestHeader() 设置定义头部
+		 * 2、不能发送和接收 cookie
+		 * 3、调用 getAllResponseHeaders() 方法总行返回空字符串
+		 */
+		// 支持同步请求，通过跨域 XHR 对象可以访问 status 和 statusText 属性
+		var xhr = createXHR();
+		xhr.onprogress = function (event) {
+			if (xhr.readyState == 4) {
+				if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+					console.log(xhr.responseText);
+				} else {
+					alert("Request was unsuccessful: " + xhr.status);
+				}
+			}
+		};
+		xhr.open("get", "http://www.somewhere-else.com/page/", true);
+		xhr.send();
+
+		// 跨浏览器的 CORS
+		function createCROSRequest(method, url) {
+			var xhr = new XMLHttpRequest();
+			if ("withCredentials" in xhr) {
+				xhr.open(method, url, true);
+			} else if (typeof XDomainRequest != "undefined") {
+				xhr = new XDomainRequest();
+				xhr.open(method, url);
+			} else {
+				xhr = null;
+			}
+			return xhr;
+		}
+
+		var request = createCROSRequest("get", "http://www.baidu.com/page");
+		if (request) {
+			request.onload = function () {
+				// 对 request.responseText 进行处理
+			};
+			request.send();
+		}
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

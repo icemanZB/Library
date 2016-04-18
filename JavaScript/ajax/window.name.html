@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>window.name</title>
+	<script>
+		// 随意打开一个页面，输入以下代码
+		window.name = "My window's name";
+		location.href = "http://www.qq.com/";
+		// 再检测  window.name  // My window's name
+		// 可以看到，如果在一个标签里面跳转网页的话，我们的 window.name 是不会改变的
+		// 基于这个思想，我们可以在某个页面设置好 window.name 的值，然后跳转到另外一个页面，在这个页面中就可以获取到我们刚刚设置的值了
+		// 由于安全原因，浏览器始终会保持 window.name 是 string 类型，这个方法也可以应用到与 <iframe> 的交互上来
+
+		// 我的页面 ( http://one.example.com/index.html ) 中内嵌了一个  <iframe>
+		// 在 iframe.html 中设置好了  window.name  为我们要传递的字符串
+		// 我们在 index.html 中写下面的代码
+
+		// 由于 window.name 不随着 URL 的跳转而改变，所以我们使用一个暗黑技术来解决这个问题
+		var iframe = document.getElementById("iframe");
+		var data = "";
+
+		iframe.onload = function() {
+			iframe.onload = function(){
+				data = iframe.contentWindow.name;
+			};
+			iframe.src = "about:blank"; // 或者将里面的 about:blank 替换成某个同源页面 ( 最好是空页面，减少加载时间 )
+		};
+
+		// 这种方法与 document.domain 方法相比，放宽了域名后缀要相同的限制，可以从任意页面获取 string 类型的数据。
+
+	</script>
+</head>
+<body>
+<iframe id="iframe" src="http://omg.com/iframe.html"></iframe>
+</body>
+</html>

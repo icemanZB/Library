@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>document.domain</title>
+	<script>
+		/*
+		 * document.domain
+		 * 使用条件：1、有其他页面 window 对象的引用    2、二级域名相同    3、协议相同      4、端口相同
+		 */
+
+		// document.domain  默认的值是整个域名，所以即使两个域名的二级域名一样，那么他们的 document.domain 也不一样。
+		// 使用方法就是将符合上述条件页面的 document.domain 设置为同样的二级域名。这样我们就可以使用其他页面的 window 对象引用做我们想做的任何事情了。
+		// x.one.example.com 和 y.one.example.com 可以将 document.domain 设置为 one.example.com，也可以设置为 example.com。
+		// document.domain  只能设置为当前域名的一个后缀，并且包括二级域名或以上 ( .edu.cn 这种整个算顶级域名 )。
+		// 例如：用两个网站 http://wenku.baidu.com/ 和 http://zhidao.baidu.com/
+		// 这两个网站都是 http 协议，端口都是 80， 且二级域名都是 baidu.com。
+		// 打开 http://wenku.baidu.com/ 然后在 console 中输入代码
+		document.domain = "baidu.com";
+
+		var otherWindow = window.open("http://zhidao.baidu.com/");
+		// 百度知道的网页已经打开了，在百度知道网页的 console 中输入以下代码
+		document.domain = "baidu.com";
+		// 现在回到百度文库的网页，我们就可以使用百度知道网页的 window 对象来操作百度知道的网页了
+		var divs = otherWindow.document.getElementsByTagName("div");
+
+		// 上面这个例子的使用方法并不常见，但是非常详细的说明了这种方法的原理
+		// 比如的页面( http://one.example.com/index.html )中内嵌了一个 <iframe>
+		// 在 iframe.html 中使用 JavaScript 将 document.domain 设置好，也就是 example.com
+		// 在 index.html 执行以下脚本：
+		var iframe = document.getElementById("iframe");
+
+		document.domain = "example.com";
+
+		// iframe.contentDocument; 框架的 document 对象
+		// iframe.contentWindow; 框架的 window 对象
+		// 这样，就可以获得对框架的完全控制权了
+	</script>
+
+</head>
+<body>
+<iframe id="iframe" src="http://two.example.com/iframe.html"></iframe>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>实现HTTP流</title>
+	<script>
+		// 在 Firefox、Safari、Opera、Chrome 中，通过侦听 readystatechange 事件及检测 readyState 的值是否为3，就可以利用 XHR 对象实现 HTTP 流
+
+		function createStreamingClient(url, progress, finished) {
+			var xhr = new XMLHttpRequest(), received = 0;
+			xhr.open("get", url, true);
+			xhr.onreadystatechange = function () {
+				var result;
+				if (xhr.readyState == 3) {
+					// 只取得最新的数据并调整计数器
+					result = xhr.responseText.substring(received);
+					received += result.length;
+					// 调用 progress 回调函数
+					progress(result);
+				} else if (xhr.readyState == 4) {
+					finished(xhr.responseText);
+				}
+			};
+			xhr.send();
+			return xhr;
+		}
+		var client = createStreamingClient("streaming.php", function (data) {  // 接收数据回调函数
+			alert("Received: " + data);
+		}, function (data) { // 关闭连接回调函数
+			alert(data);
+		});
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>get</title>
+	<script>
+		function createXHR() {
+			if (typeof XMLHttpRequest != "undefined") {
+				return new XMLHttpRequest();
+			} else if (typeof ActiveXObject != "undefined") {
+				var versions = ["MSXML2.XMLHttp6.0", "MSXML2.XMLHttp.3.0", "MSXML2.XMLHttp"], i, len;
+				for (i = 0, len = versions.length; i < len; i++) {
+					try {
+						new ActiveXObject(versions[i]);
+						arguments.callee.activeXString = versions[i];
+						break;
+					} catch (ex) {
+						// 跳过
+					}
+				}
+				return new ActiveXObject(arguments.callee.activeXString);
+			} else {
+				throw new Error("No XHR object available");
+			}
+		}
+
+		var xhr = createXHR();
+		xhr.onprogress = function (event) {
+			var divStatus = document.getElementById("status");
+			// lengthComputable：是一个表示进度信息是否可用的布尔值
+			// position：表示已经接受的字节数
+			// totalSize：表示根据 Content-Length 相应头部确定的预期字节数
+			// 必须在 open() 方法之前添加 onprogress 事件处理程序
+			if (event.lengthComputable) {
+				divStatus.innerHTML = "Received" + event.position + " of " + event.totalSize + " bites";
+			}
+		};
+		xhr.timeout = 1000; // 将超时设置为1秒钟 ( 仅适用于 IE8+ )
+		xhr.ontimeout = function () {
+			alert("Request did not return in a second");
+		};
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState == 4) {
+				try {
+					if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+						console.log(xhr.responseText);
+					}
+				} catch (ex) {
+					// 假设由 ontimeout 事件处理程序处理
+				}
+			}
+		};
+		xhr.open("get", "example.php", true);
+		xhr.send();
+	</script>
+</head>
+<body>
+
+</body>
+</html>
