@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>合并数组</title>
+	<script>
+		// 结合/合并两个JS数组的各种常用方法，并比较各种方法的优缺点
+		var q = [5, 5, 1, 9, 9, 6, 4, 5, 8];
+		var b = ["tie", "mao", "csdn", "ren", "fu", "fei"];
+		var c = q.concat(b);
+		console.log(c); //  [5, 5, 1, 9, 9, 6, 4, 5, 8, "tie", "mao", "csdn", "ren", "fu", "fei"]
+
+		// c 是一个全新的数组，表示 q 和 b 这两个数组的组合，但是 q 和 b 现在没用了是吧
+		// 如果 q 数组有 10000 个元素，b 数组也有有 10000 个元素， 那么数组 c 现在就有 20000 个元素，这种方式占用了2倍的内存
+		// "这没问题!"你可能会觉得，只要将 q 和 b 置空就行，然后就会被垃圾回收，对吗?问题解决了!
+		q = b = null; // "q" and "b" 现在可以被垃圾回收了
+		// 额? 如果数组都很小，那自然没问题，但对大型的数组，或需要多次重复处理时，内存就被限制了，它还需要进行优化
+
+		// 循环插入
+		// 把一个数组的内容加入到另一个中试试，使用 Array#push() 方法
+		var q1 = [5, 5, 1, 9, 9, 6, 4, 5, 8];
+		var b1 = ["tie", "mao", "csdn", "ren", "fu", "fei"];
+		// 将数组 "b" 插入 "q"
+		for (var i = 0; i < b1.length; i++) {
+			q1.push(b1[i]);
+		}
+
+		// q1 中存放了两个原始数组的内容 ( q1 + b1 )，看样子对内存优化做的不错
+		console.log(q1); // [5,5,1,9,9,6,4,5,8,"tie","mao","csdn","ren","fu","fei"]
+		b1 = null;
+
+		var q2 = [5, 5, 1, 9, 9, 6, 4, 5, 8];
+		var b2 = ["tie", "mao", "csdn", "ren", "fu", "fei"];
+		// 但如果 q 数组很小而 b 又很大呢？ 出于内存和速度的考虑，这时想把较小的 q 插入到 b 前面
+		// 没问题，只要用 unshift() 方法代替 push() 即可，对应的也要从大到小进行循环遍历
+		// "q" into "b":
+		for (var j = q2.length - 1; j >= 0; j--) {
+			b2.unshift(q2[j]);
+		}
+
+		console.log(b2); // [5,5,1,9,9,6,4,5,8,"tie","mao","csdn","ren","fu","fei"]
+
+		q2 = null;
+
+		// 实用技巧
+		var q3 = [5, 5, 1, 9, 9, 6, 4, 5, 8];
+		var b3 = ["tie", "mao", "csdn", "ren", "fu", "fei"];
+
+		// 悲催的是 for 循环很土并且难以维护，我们能做得更好吗？
+		// 先试试 Array#reduce
+		// "b" onto "q"
+		q3 = b3.reduce(function (coll, item) {
+			// console.log(coll,item);  coll ->q  item 就是迭代的 b3
+			coll.push(item);
+			return coll;
+		}, q3);
+
+		console.log(q3); // [5,5,1,9,9,6,4,5,8,"tie","mao","csdn","ren","fu","fei"]
+
+		var q4 = [5, 5, 1, 9, 9, 6, 4, 5, 8];
+		var b4 = ["tie", "mao", "csdn", "ren", "fu", "fei"];
+		// or "q" into "b":
+		b4 = q4.reduceRight(function (coll, item) {
+			coll.unshift(item);
+			return coll;
+		}, b4);
+
+		console.log(b4); // [5,5,1,9,9,6,4,5,8,"tie","mao","csdn","ren","fu","fei"]
+
+		// Array#reduce() 和 Array#reduceRight() 很高大上，但有点笨重， JavaScript 规范6 中的 => 箭头函数 ( arrow-functions ) 能让代码量大大减少
+		// 但需要对每个数组元素执行函数调用，也是很渣的手段
+
+		// 那么下面的代码怎么样呢?
+
+		var q5 = [5, 5, 1, 9, 9, 6, 4, 5, 8];
+		var b5 = ["tie", "mao", "csdn", "ren", "fu", "fei"];
+		// "b" onto "q"
+		q5.push.apply(q5, b5);
+		console.log(q5); // [5,5,1,9,9,6,4,5,8,"tie","mao","csdn","ren","fu","fei"]
+
+		// or "q" into "b"
+		b5.unshift.apply(b5, q5);
+		console.log(b5); // [5,5,1,9,9,6,4,5,8,"tie","mao","csdn","ren","fu","fei"]
+
+		// 但是，事实上这种方法还是太乐观了，在这两种情况下，不管是将 a 或 b 传递给 apply() 作为第二个参数，还是使用 … 展开运算符的方式，实际上数组都会被打散成为函数的 arguments
+		// 第一个主要的问题是，占用了双倍的内存(当然是临时的!)，因为需要将数组复制到函数栈之中。此外，不同的 JavaScript 引擎有不同的实现算法，可能会限制了函数可以传递的参数数量
+		// 如果数组添加了一百万个元素，那一定会超过函数栈所允许的大小，不管是 push() 或 unshift() 调用，这种方式只在几千个元素时可用，所以必须限制其不能超过一定范围
+
+		// 注意: 也可以试试 splice(), 肯定会发现他和 push(..) / unshift(..) 都是一样的限制
+		// 一种选择是继续使用这种方法，但是采用分批次处理
+		function combineInto(q, b) {
+			var len = q.length;
+			for (var i = 0; i < len; i = i + 5000) {
+				// 一次处理5000条
+				b.unshift.apply(b, q.slice(i, i + 5000));
+			}
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>concat()</title>
+	<script>
+		// concat() 方法用于连接两个或多个数组
+		// 该方法不会改变现有的数组，返回被连接后的新数组
+		var arr = [1, 2, 3];
+		console.log(arr);  // [1,2,3]
+
+		/*
+		 * concat() 方法没有传递参数的情况下，他只是复制当前数组并返回
+		 */
+		console.log(arr.concat()); //  [1, 2, 3]
+		console.log(arr); // [1,2,3]
+		console.log(arr.concat(4, 5));  // [1,2,3,4,5]
+
+		var arr2 = ["George", "John", "Thomas"];
+		var arr3 = ["James", "Adrew", "Martin"];
+
+		console.log(arr2.concat(arr3));  // ["George", "John", "Thomas", "James", "Adrew", "Martin"]
+
+		var arr4 = ["William", "Franklin"];
+		// 链接3个数组
+		console.log(arr2.concat(arr3, arr4)); //  ["George", "John", "Thomas", "James", "Adrew", "Martin", "William", "Franklin"]
+
+		// 实现二维数组的扁平化
+		var matrix = [
+			[1, 2],
+			[3, 4],
+			[5, 6]
+		];
+
+		var flatten = matrix.reduce(function (previous, current) {
+			return previous.concat(current);
+		});
+
+		console.log(flatten); // [1, 2, 3, 4, 5, 6]
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

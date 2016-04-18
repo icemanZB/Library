@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>join()</title>
+	<script>
+		/*
+		 * join()  是对于值进行操作的
+		 * 如果不传任何值给 join() 方法，则默认使用逗号作为分隔符，IE7 以下的版本会错误的使用 undefined 作为分隔符
+		 * 建议传入参数
+		 */
+		var arr = ["Iceman", 25, "Shanghai", new Date()];
+
+		console.log(arr.join("")); 	// 数组转换为字符串 Iceman25ShanghaiTue Feb 16 2016 10:05:56 GMT+0800 (中国标准时间)
+		console.log(arr); //  ["Iceman", 25, "Shanghai", Date {Sat Jan 23 2016 21:27:11 GMT+0800}]
+		console.log(typeof arr.join(""));  // string
+		console.log(arr.join("|"));  // 按 | 分割的字符串  Iceman|25|Shanghai|Tue Feb 16 2016 10:05:56 GMT+0800 (中国标准时间)
+
+		var aa = [null, undefined, "null"];
+		// 如果数组中的某一项值是 null、undefined
+		// 那么在 join()、toLocaleString()、toString()、valueOf() 方法返回的结果中以空字符串表示
+		console.log(aa.join()); // ,,null
+
+	</script>
+</head>
+<body>
+</body>
+</html>

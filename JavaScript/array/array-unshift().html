@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>unshift()</title>
+	<script>
+		var arr = [10, 2, 3, 5, 6, 7];
+		var arr2 = [10, 2, 3, 5, 6, 7];
+
+		// unshift() 方法将把它的参数插入 arrayObject 的头部，返回数组长度
+		// 在 IE7 以下的版本，总是返回 undefined 而不是数组的新长度，IE8 在兼容模式下会返回正确的长度值
+
+		console.log(arr.unshift(11, 12, 13)); // 返回数组长度  9
+
+		console.log(arr2.unshift([1, 2, 3]));  // 7
+
+		// unshift() 方法不创建新的创建，而是直接修改原有的数组
+		console.log(arr);  //  [11, 12, 13, 10, 2, 3, 5, 6, 7]
+
+		console.log(arr2); // [ [1,2,3],10,2,3,5,6,7]
+	</script>
+</head>
+<body>
+
+</body>
+</html>

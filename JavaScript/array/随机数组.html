@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>随机数组</title>
+	<script>
+		// 从数组中随机获取N个值，默认从数组取一个值
+		function ran1(array, n) {
+			var _result = [], _index = 0, _arrayTemp;
+			// 防止原数组被改变
+			_arrayTemp = array.slice(0);
+
+			if (array == null || array.length == 0 || array.length < n) {
+				return _result;
+			}
+			// 随机获取一个值
+			if (n === null) {
+				_index = Math.floor(Math.random() * array.length);
+				_result.push(array[_index]);
+			} else {
+				// 随机获取N个值
+				for (var i = 0; i < n; i++) {
+					_index = Math.floor(Math.random() * _arrayTemp.length);
+					_result.push(_arrayTemp[_index]);
+					// 删除该元素
+					_arrayTemp.splice(_index, 1);
+				}
+			}
+			return _result;
+		}
+
+		var arr = [11, 11, 22, 3, 4, 56, 6, 3, 22];
+
+		console.log(ran1(arr, 5));
+
+		// 从指定范围内( 暂定为100以内 )，随机获取N ( 暂定为10 )个值的数组
+		function ran3() {
+			var result = [], SCOPE_NO = 100, COUNT = 10;
+
+			result = getRandomNo(SCOPE_NO, COUNT);
+
+			function getRandomNo(scope_no, count) {
+				var i, s_n, ran_n, _result = [];
+
+				s_n = parseInt(scope_no, 10); // 转为10进制
+
+				for (i = 0; i < count; i++) {
+					ran_n = Math.floor(Math.random() * s_n);
+					_result.push(ran_n);
+				}
+				return _result;
+			}
+
+			return result;
+		}
+
+		console.log(ran3());
+
+		// 打乱数组顺序，要数组中的每个元素都不能停留在原来的位置
+		function ran2(array) {
+			var array_tmp = [], i, j, len, new_a = [], a_obj;
+
+			// 添加数组原位置标志位
+			for (i = 0, len = array.length; i < len; i++) {
+				a_obj = {
+					"key": i,
+					"val": array[i]
+				};
+				array_tmp.push(a_obj);
+			}
+
+			for (i = 0, len = array.length; i < len; i++) {
+				j = ranCount(array_tmp.length);
+				// 如下标位置与原值重复，重新随机
+				while (i === array_tmp[j].key) {
+					j = ranCount(array_tmp.length);
+				}
+				new_a.push(array_tmp[j].val);
+				// 删除数组
+				array_tmp.splice(j, 1);
+			}
+
+			// 获得给定数字的随机数，出错返回-1
+			function ranCount(n) {
+				var result = parseInt(n, 10);
+				if (isNaN(result)) {
+					result = -1;
+				}
+				result = Math.floor(Math.random() * result);
+				return result;
+			}
+
+			return new_a;
+		}
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

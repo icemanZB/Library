@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>数组分块</title>
+	<script>
+		// 数组分块的重要性在于它可以将多个项目的处理在执行列队上分开，每个项目处理之后，给予其他的浏览器处理机会运行，这样就可以避免长时间运行脚本的错误
+		// 一旦某个函数需要花 50ms 以上的时间完成，那么最好看看能否将任务分割为一系列可以使用定时器的小任务
+		// 数组分块模式中，array 变量本质上就是一个"待办事宜"列表，它包含了要处理的项目，要处理的项目的数组，用于处理项目的函数，函数的运行环境
+		function chunk(array, process, context) {
+			setTimeout(function () {
+				var item = array.shift();
+				process.call(context, item);
+
+				if (array.length > 0) {
+					setTimeout(arguments.callee, 100);
+				}
+			}, 100);  // 100ms 大多数情况效果不错
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

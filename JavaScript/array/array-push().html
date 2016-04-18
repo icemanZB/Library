@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>push()</title>
+	<script>
+		// push() 方法可向数组的末尾添加一个或多个元素，并返回新的长度
+		var arr = ["George", "John", "Thomas"];
+		var arr2 = ["George", "John", "Thomas"];
+		console.log(arr.push("Iceman")); // 4
+		console.log(arr);  // ["George", "John", "Thomas", "Iceman"]
+		console.log(arr2.push([1, 2, 3])); // 4
+		console.log(arr2);  // ["George","John","Thomas",[1,2,3]]
+
+
+		// 特殊用法，合并数组
+		var arr3 = ["1", "2", "3"];
+
+		var arr4 = ["4", "5", "6"];
+
+		[].push.apply(arr3, arr4);
+
+		console.log(arr3);
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

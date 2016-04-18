@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>shift()</title>
+	<script>
+		var arr = [10, 2, 3, 5, 6, 7];
+		// shift() 方法用于把数组的第一个元素从其中删除，并返回第一个元素的值
+		console.log(arr.shift()); // 10
+
+		// 如果数组是空的，那么 shift() 方法将不进行任何操作，返回 undefined 值
+		console.log([].shift()); // undefined
+
+		// 请注意，该方法不创建新数组，而是直接修改原有的数组
+		console.log(arr); // [2, 3, 5, 6, 7]
+	</script>
+</head>
+<body>
+
+</body>
+</html>

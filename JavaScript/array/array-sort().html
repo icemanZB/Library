@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>sort()</title>
+	<script>
+		// sort() 方法会调用每个数组项的 toString() 转型方法，然后得到字符串进行排序
+		// 也就是说即使数组中每一项都是数值，sort() 方法比较的也是字符串
+
+		var arr = [12, 8, 99, 19, 112];
+
+		// 从小到大
+		arr.sort(function (n1, n2) {
+			return n1 - n2;
+		});
+		// 注意，数组在原数组上进行排序，不生成副本
+		console.log(arr); //  [8, 12, 19, 99, 112]
+
+		console.log(["float", "width", "alpha", "zoom", "left"].sort());  // ["alpha", "float", "left", "width", "zoom"]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

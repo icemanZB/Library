@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>数组</title>
+	<script>
+		console.dir([1, , undefined]);  // 0:1 , 2:undefined
+
+		// 既然数组的索引可以被跳过，那数组的 length 属性还能反映其长度吗？
+
+		/*
+		 * 数组的 length 属性并不能反应数组中元素的数目，在绝大多数情况 ( 即没有人工干预 length 属性，且数组中没有跳过的索引 )，它只是刚好等于最大的索引加一
+		 * 当我们从对象的角度来看待数组时，像 0、1、2、3、4、5、6 等等这些数字索引和 length 一样，都只是数组对象的属性
+		 * 用 delete 操作符删除数组任意一项，或者将任意一项值赋值为 undefined，length 不改变
+		 * 当设置数组的 length 属性值时，length 随之改变，同时索引不小于该值的都会被从数组中彻底删除
+		 */
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
