@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>window.location</title>
+	<script>
+		/* window.location === document.location  */
+
+		// http://www.baidu.com/WileyCDA     每次修改 location 属性 ( hash除外 )，页面都会以新URL重新加载
+		/*
+		 * 属性名		|		例子							|		说明
+		 * hash			|		"#contents"					|		返回URL中的hash(#号后跟零或多个字符)，如果URL中不包含散列，则返回空字符串
+		 *              |									|
+		 * host			|		"www.baidu.com:80"			|		返回服务器名称和端口号(如果有)
+		 *              |									|
+		 * hostname		|		"www.baidu.com"				|		返回不带端口号的服务器名称
+		 *              |  									|
+		 * href			|		"http://www.baidu.com"		|		返回当前加载页面的完整URL，而 location 对象的 toString() 方法也返回这个值
+		 *              |									|
+		 * pathname		|		"/WileyCDA"					|		返回URL中的目录和(或)文件名
+		 *				|									|
+		 * port			|		"8080"						|		返回URL中指定的端口号，如果URL中不包含端口号，则这个属性返回空字符串
+		 *              |									|
+		 * portocol		|		"http:"						|		返回页面使用的协议，通常是 http: 或 https:
+		 *              |									|
+		 * search		|		"?q=javascript"				|		返回URL的查询字符串，这个字符串以问号开头
+		 */
+
+
+		function getQueryStringArgs() {
+			// 取得查询字符串并去掉开头的问号
+			var qs = (location.search.length > 0 ? location.search.substring(1) : ""),
+			// 保存数据对象
+					args = {},
+			// 取得每一项
+					items = qs.length ? qs.split("&") : [],
+					item = null,
+					name = null,
+					value = null,
+					i = 0,
+					len = items.length;
+			for (i = 0; i < len; i++) {
+				item = items[i].split("=");
+				name = decodeURIComponent(item[0]);
+				value = decodeURIComponent(item[1]);
+
+				if (name.length) {
+					args[name] = value;
+				}
+			}
+			return args;
+		}
+
+		// 假设查询的字符串是 ?q=javascript&num=10
+		var args = getQueryStringArgs();
+		console.log(args["q"]); // javascript
+		console.log(args["num"]);  // 10
+
+		/*
+		 * 在 IE8、Firefox、Safari2+、Opera9+、Chrome 中，修改 hash 的值会在浏览器历史记录中生成一条新记录
+		 * 在 IE 的早期版本中，hash 属性不会再用户单击"后退"和"前进"按钮时被更新，而只会在用户单击包含 hash 的 URL 时才会更新
+		 * 禁用"后退"按钮，使用 location.replace(); 这个方法接收一个参数，要导航的URL；结果虽然会导致浏览器位置改变，但不会再历史记录中生成新记录
+		 * location.reload() 页面以最有效的方式重新加载，如果上次请求并没有改变，页面会从浏览器缓存中加载；
+		 * 如果是要从服务器重新加载 loaction.reload(true);
+		 */
+	</script>
+</head>
+
+<body>
+</body>
+</html>

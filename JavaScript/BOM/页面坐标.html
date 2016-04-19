@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>页面坐标</title>
+	<script>
+		window.onload = function () {
+
+			// 客户区坐标 clientX、clientY
+			var div = document.getElementById("myDiv");
+
+			div.addEventListener("click", function (ev) {
+				ev = window.event || ev;
+				// clientX、clientY 不包括页面滚动的距离
+				console.log("Client corrdinates:" + ev.clientX + "," + ev.clientY);
+			});
+
+
+			// 页面坐标位置  pageX、pageY IE8 及更早版本不支持
+			div.addEventListener("click", function (ev) {
+				ev = window.event || ev;
+				// pageX、pageY 是页面坐标，这两个属性表示鼠标光标在页面中的位置，所以坐标是从页面本身而非视口左边计算
+				console.log("Client corrdinates:" + ev.pageX + "," + ev.pageY);
+			});
+
+
+			// 在没有滚动条的情况下，pageX、pageY 和 clientX、clientY值相等
+			// 兼容写法
+			div.addEventListener("click", function (ev) {
+				ev = window.event || ev;
+				var pageX = ev.pageX, pageY = ev.pageY;
+				if (pageX === undefined) {
+					pageX = ev.clientX + (document.body.scrollLeft || document.documentElement.scrollLeft);
+				}
+				if (pageY === undefined) {
+					pageY = ev.clientY + (document.body.scrollTop || document.documentElement.scrollTop);
+				}
+				console.log("Page coordinates: " + pageX + "," + pageY);
+			});
+
+
+			/*
+			 * shiftKey、ctrlKey、altKey、metaKey 判断用户是否按下其中的几个键，IE8及之前的版本不支持metaKey属性
+			 *
+			 * 鼠标按钮，对于 mousedown 和 mouseup 事件来说，其event存在一个button属性，表示按下或释放按钮
+			 * DOMbutton 属性有3个值：0表示左键、1表示鼠标滚轮按钮、2表示右键
+			 * IE8之前也提供了button属性，但有很大差异
+			 * 0：表示没有按下按钮
+			 * 1：表示按下了左键
+			 * 2：表示按下了右键
+			 * 3：表示同时按下了左键和右键
+			 * 4：表示按下了滚轮
+			 * 5：表示同时按下了左键和滚轮
+			 * 6：表示同时按下了右键和滚轮
+			 * 7：表示同时按下了3个鼠标按钮
+			 */
+			// 在使用 mouseup 事件处理程序时，button 表示释放的是哪个按钮，如果不是按下或释放了左键，Opera 不会触发 mouseup 或 mousedown 事件
+
+		};
+	</script>
+</head>
+<body>
+
+</body>
+</html>

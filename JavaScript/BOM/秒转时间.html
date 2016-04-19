@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>秒转时间</title>
+	<script type="text/javascript">
+		var second = 156;
+		console.info(parseInt(second / 60) + '分' + second % 60 + '秒');
+
+		var _RANGE = [1115, 1030, 2200, 2230];  // 配置时间节点 ( 每天10:00-10:30及22:00-22:30 )
+		calcTime(_RANGE);
+
+		function calcTime(_RANGE) {
+
+			var nowTime = new Date(); // "2016/03/03 22:10:00"
+			var remainNum = $(".animate-wrap").data("remainNum");
+			nowTime = nowTime.toString() == "Invalid Date" ? null : nowTime;
+			if (!nowTime) {
+				alert("请输入正确的时间格式");
+				return;
+			}
+
+			var s = 0;
+			var year = nowTime.getFullYear(),
+					month = nowTime.getMonth() + 1,
+					day = nowTime.getDate(),
+					hour = nowTime.getHours(),
+					minute = nowTime.getMinutes();
+
+			if (month < 10) month = "0" + month.toString();
+			if (day < 10) day = "0" + day.toString();
+			if (hour < 10) hour = "0" + hour.toString();
+			if (minute < 10) minute = "0" + minute.toString();
+
+			var formatNowTime = hour + "" + minute;
+
+			var formatActiveTime = [];
+			for (var i = 0; i < _RANGE.length; i++) {
+				var _HH = _RANGE[i].toString().substring(0, 2);
+				var _mm = _RANGE[i].toString().substring(2);
+				formatActiveTime.push(new Date(year, month, day, _HH, _mm));
+			}
+
+			if (remainNum === 0) {
+
+				if (formatNowTime > formatActiveTime[0] || formatNowTime < formatActiveTime[0]) {
+					s = Math.floor((formatActiveTime[2] - nowTime) / 1000);
+				} else if (formatNowTime > formatActiveTime[2] || formatNowTime < formatActiveTime[3]) {
+					s = Math.floor((formatActiveTime[0] - nowTime) / 1000);
+				}
+
+			} else {
+				if (formatNowTime < _RANGE[0]) {
+
+					s = Math.floor((formatActiveTime[0] - nowTime) / 1000);
+
+				} else if (formatActiveTime.length <= 2 && formatNowTime > _RANGE[1]) {  // 如果活动就一个时间段
+
+					s = Math.floor((formatActiveTime[1] - nowTime) / 1000);
+
+				} else if (formatNowTime > _RANGE[1] && _RANGE[2] && formatNowTime < _RANGE[2]) {  // 第二个时间段
+
+					s = Math.floor((formatActiveTime[2] - nowTime) / 1000);
+
+				} else if (_RANGE[3] && formatNowTime > _RANGE[3]) {
+
+					s = Math.floor(( formatActiveTime[0] - nowTime) / 1000);
+
+				}
+			}
+
+			s && run(s);
+
+			function run(s) {
+				s--;
+				// var _d = parseInt(s / (3600 * 24));
+				var _h = parseInt((s % (3600 * 24)) / 3600);
+				var _m = parseInt((s % 3600) / 60);
+				var _s = parseInt((s % 3600) % 60);
+
+				console.log(_s);
+
+				if (_h <= 0 && _m <= 0 && _s <= 0) {
+					// 倒计时结束
+				} else {
+					setTimeout(function () {
+						return run(s);
+					}, 1000);
+				}
+			}
+
+		}
+
+
+	</script>
+</head>
+<body>
+</body>
+</html>

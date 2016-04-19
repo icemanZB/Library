@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>怪癖检测</title>
+	<script>
+		/*
+		 * 怪癖检测：目标是识别浏览器的特殊行为，就是想要知道浏览器存在什么缺陷( "怪癖" 也就是 bug )，而且这些问题可能不会被修复
+		 * 由于检测"怪癖"设计运行代码，所以仅检测那些有直接影响的"怪癖"，而且最好在脚本一开始就执行此类检测
+		 */
+
+		// IE8 及更早版本中存在一个 bug，如果某个实例属性与[[Enumerable]]标记为 false 的某个原型属性同名
+		// 那么该实例属性将不会出现在 for-in 循环中
+		// 在正确的 ECMA 中，toString() 应该在 for-in 循环中作为属性返回
+		var hasDontEnumQuirk = function () {
+			var o = {
+				toString: function () {
+				}
+			};
+			for (var prop in o) {
+				if (prop == "toString") {
+					return false;
+				}
+			}
+			return true;
+		}();
+
+		// Safari3 以前的版本会枚举被隐藏的属性
+		// 如果浏览器存在这个 bug，那么使用 for-in 循环枚举带有自定义的 toString() 方法的对象，就会返回两个 toString 的实例
+		var hasEnumShadowsQuirk = function () {
+			var o = {
+				toString: function () {
+				}
+			};
+			var count = 0;
+			for (var prop in o) {
+				if (prop == "toString") {
+					count++;
+				}
+			}
+			return (count > 1);
+		}();
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

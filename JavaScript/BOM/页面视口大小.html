@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>页面视口大小</title>
+	<script>
+		/*
+		 * 在 IE9+、Safari、Firefox 中，outerWidth 和 outerHeight 返回浏览器窗口本身的尺寸( 无论从最外层的 window 对象还是从某个框架访问 )
+		 * 在 Opera 中，这两个属性的值表示页面视图容器的大小( Opera 中单个标签页对应的浏览器窗口 )
+		 * innerWidth、innerHeight 则表示该容器中页面视图区的大小( 减去边框宽度 )
+		 * 在 Chrome 中，outerWidth、outerHeight、innerWidth、innerHeight 返回相同的值，即视口(viewport)大小而非浏览器大小
+		 * IE8 及更早的版本没有提供取得当前浏览器窗口尺寸的属性
+		 * 在 IE、Firefox、Safari、Opera、Chrome 中，document.documentElement.clientWidth 和 document.documentElement.clientHeight 中保存了页面视口的信息
+		 * 在 IE6 中，这些属性必须在标准模式下才有效；如果是混杂模式，就必须使用 document.body.clientWidth 和 document.body.clientHeight 取得相同的信息
+		 * 对于Chrome而言这个两个方法都可以取得视口大小
+		 * 虽然无法确定浏览器窗口本身大小，但是却可以取得页面视口大小
+		 */
+
+		var pageWidth = window.innerWidth;
+		var pageHeight = window.innerHeight;
+		if (typeof pageWidth != "number") {
+			if (document.compatMode == "CSS1Compat") {  // 是否处于标准模式
+				pageWidth = document.documentElement.clientWidth;
+				pageHeight = document.documentElement.clientHeight;
+			} else {
+				pageWidth = document.body.clientWidth;
+				pageHeight = document.body.clientHeight;
+			}
+		}
+
+		console.log(pageWidth, pageHeight);
+
+		/*
+		 * 对于移动设备 window.innerWidth、window.innerHeight 保存着可见视口，移动 IE 浏览器不支持这些属性，
+		 * 可以使用 document.documentElement.clientWidth 和 document.documentElement.clientHeight。
+		 * 在其他移动浏览器中，document.documentElement 度量的是布局视口，即渲染后页面的实际大小( 与可见视口不同，可见视口只是整个页面中的一部分 )
+		 * 移动 IE 浏览器把布局视口的信息保存在 document.body.clientWidth 和 document.body.clientHeight 中
+		 * 由于桌面浏览器间存在差异，最好检测一下是否是移动设备
+		 * */
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

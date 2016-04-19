@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>setInterval的问题</title>
+	<script>
+		// 在实际开发环境下，很少使用 setInterval，原因是后一个 setInterval 调用可能会在前一个 setInterval 调用结束前启动
+		(function () {
+			var num = 0;
+			var max = 10;
+			var intervalId = null;
+
+			function incrementNumber() {
+				num++;
+				// 如果执行次数达到了 max 设定的值，则取消后续尚未执行的调用
+				if (num === max) {
+					clearInterval(intervalId);
+					console.log("Done");
+				}
+			}
+
+			intervalId = setInterval(incrementNumber, 500);
+		})();
+
+		(function () {
+			// 使用 setTimeout 模拟 setInterval
+			var num = 0;
+			var max = 10;
+
+			function incrementNumber() {
+				num++;
+				// 如果执行次数未达到max设定的值，则设置另一次超时调用
+				if (num < max) {
+					setTimeout(incrementNumber, 500);
+				} else {
+					console.log("Done");
+				}
+			}
+
+			setTimeout(incrementNumber, 500);
+		})();
+
+		/*
+		 * setInterval() 重复定时器的问题：1、某些间隔会被跳过 2、多个定时器的代码执行之间的间隔可能会比预期的小
+		 * 假设，某个 onclick 事件处理程序使用 setInterval() 设置了一个 200ms 间隔的重复定时器。如果事件处理程序花了 300ms 多一点的时间完成
+		 * 同时定时器代码也花了差不多的时间，就会出现跳过时间间隔且连续运行定时器代码的情况
+		 * 为了避免这个问题，可以使用链式 setTimeout() 调用
+		 */
+		// 这样做的好处是，在前一个定时器代码执行完之前，不会向队列插入新的定时器代码，确保不会有任何缺失的间隔
+		// 可以保证下一次定时器代码执行之前，至少要等待指定的间隔，避免了连续运行
+		window.onload = function () {
+			var interval = 1000;
+			setTimeout(function () {
+				// 处理中..
+				// 这里使用了 arguments.callee 来获取对当前执行的函数的引用
+				setTimeout(arguments.callee, interval);
+			}, interval);
+			// 这段定时器代码每次执行的时候将一个 <div> 元素向右移动，当左坐标在 200px 的时候停止
+			setTimeout(function () {
+				var div = document.getElementById("myDiv");
+				var left = parseInt(div.style.left) + 5;
+				div.style.left = left + "px";
+				if (left < 200) {
+					setTimeout(arguments.callee, 50);
+				}
+			}, 50);
+		};
+
+	</script>
+</head>
+<body>
+<div id="myDiv" style="width: 50px; height: 50px; background-color: red; position: relative; left: 0;"></div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>window.open()</title>
+	<script>
+		/*
+		 * BOM：Browser Object Model 浏览器对象模型
+		 */
+		window.onload = function () {
+			var aInput = document.getElementsByTagName("input");
+			var opener = null;
+
+			aInput[0].onclick = function () {
+
+				// open( 页面地址，打开方式 ) 打开一个新窗口
+				// 如果 url 为空，则默认打开一个空的页面
+				// 如果打开方式为空，默认为新窗口方式打开
+				// window.open("http://www.baidu.com", "_self");
+
+				opener = window.open(); // 返回值，返回的新开页面的window对象
+
+				// alert(opener == window)  false
+
+				opener.document.body.style.background = "red";
+
+			};
+
+		};
+
+		// 如果有一个名叫 "topFrame" 的窗口或者框架，就会在该窗口或框架加载这个URL；否则就会创建一个新窗口并将其命名为 "topFrame"
+		// 第二个参数也可以是：_self、_parent、_top、_blank
+		// <a href="http://www.baidu.com" target="topFrame"></a>
+		window.open("http://www.baidu.com", "topFrame");
+
+		// window.open() 返回一个新窗口的引用
+		// Firefox 传入第三个参数设置无效
+		var win = window.open("http://www.baidu.com", "topFrame", "height=400,width=400,resizable=yes");
+		// 此时可以调整大小
+		// window.moveTo()、window.moveBy()、window.resizeTo()、window.resizeBy() 在 Opera 和 IE7 以及更高的版本中默认是禁用的
+		// 另外这些方法不适合用于框架，只能对外层的 window 对象使用
+		win.resizeTo(500, 500);
+		win.moveTo(100, 100);
+
+		/*
+		 * window.opener 保存打开它的原始窗口对象，这个属性只在弹出窗口中的最外层 window 对象有定义
+		 * worxWin.opener = null; 就是告诉浏览器新创建的标签页不需要与打开它的标签页通信，可以在独立的进程中运行，标签页之间联系一旦切断，将无法恢复
+		 */
+		// 在打开计算机硬盘中的网页时，IE 会解除对弹出窗口的某些限制，但是在服务器上执行这些代码会受到对弹出窗口的限制
+		// 检测浏览器是否屏蔽程序阻止弹出窗口
+		var blocked = false;
+		try {
+			var wroxWin = window.open("http://www.baidu.com", "topFrame");
+			if (wroxWin == null) {
+				blocked = true;
+			}
+		} catch (ex) {
+			blocked = true;
+		}
+		if (blocked) {
+			alert("The popup was blocked");
+		}
+
+	</script>
+</head>
+
+<body>
+<input type="button" value="打开新窗口"/>
+</body>
+</html>

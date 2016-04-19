@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>load事件</title>
+	<script src="../js/EventUtil.js"></script>
+	<script>
+		// load 事件
+		EventUtil.addHandler(window, "load", function (ev) {
+			// 这里给事件处理程序传入了一个event对象，这个对象中不包含有关这个事件的任何附加信息
+			// 但在DOM的浏览器中，event.target属性值会被设置为document，IE不会为这个事件设置srcElement属性
+			alert("Loaded");
+		});
+
+		EventUtil.addHandler(window, "load", function () {
+			var img = new Image();
+			EventUtil.addHandler(img, "load", function (ev) {
+				// ev: IE8 及之前的版本不会生成 event 对象
+				alert("Image loaded");
+			});
+			// 图片加载失败就会显示警告框，发生 error 事件时，图像下载过程已经结束，不能重新下载了
+			EventUtil.addHandler(img, "error", function (ev) {
+				alert("Image not loaded");
+			});
+			img.src = "smile.gif";
+		});
+
+		// 判断 js文件 是否加载完成，在 IE9、Firexfox、Opera、Chrome、Safari3 及更高的版本中，<script> 元素也会触发load事件
+		EventUtil.addHandler(window, "load", function () {
+			var script = document.createElement("script");
+			EventUtil.addHandler(script, "load", function () {
+				// 大多数浏览器的 ev.target 属性引用的都是 <script> 节点，而在 Firefox3 之前，引用的则是 document
+				alert("Loaded");
+			});
+			script.src = "example.js";
+			document.body.appendChild(script);
+		});
+
+		// IE 和 Opera 支持 <link> 元素上的 load 事件
+		EventUtil.addHandler(window, "load", function () {
+			var link = document.createElement("link");
+			link.type = "text/css";
+			link.rel = "stylesheet";
+			EventUtil.addHandler(link, "load", function () {
+				alert("css loaded");
+			});
+			link.href = "example.css";
+			document.getElementsByTagName("head")[0].appendChild(link);
+		});
+	</script>
+</head>
+<body>
+
+</body>
+</html>

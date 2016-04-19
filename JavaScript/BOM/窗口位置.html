@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>窗口位置</title>
+	<script>
+		/*
+		 * IE、Safari、Opera、Chorme 都提供了 screenLeft 和 screenTop 属性，分别用于表示窗口相对于屏幕左边和上边的距离
+		 * Firefox 则在 screenX 和 screenY 属性中提供了相同的窗口位置信息，Safari、Chrome 也支持这两个属性
+		 * Opera 虽然也支持 screenX 和 screenY 属性，但与 screenLeft 和 screenTop 属性并不对应，所以不要再 Opera 中使用
+		 */
+		var leftPos = (typeof window.screenLeft == "number") ? window.screenLeft : window.screenX;
+		var topPos = (typeof window.screenTop == "number") ? window.screenTop : window.screenY;
+		console.log(leftPos, topPos);
+
+		/*
+		 * 在 IE、Opera 中，screenLeft、screenTop 中保存的是从屏幕左边和上边到由 window 对象表示的页面可见区域的距离。
+		 * 如果 window 对象是最外层对象，而且浏览器窗口紧贴屏幕最上端——即y轴坐标为0，那么 screenTop 的值就是位于页面可见区域上面的浏览器工具栏的像素高度。
+		 * 但是在 Chrome、Firefox、Safari 中 screenY 或 screenX 中保存的是整个浏览器窗口相对于屏幕的坐标值，即在窗口的y轴坐标为0是返回0
+		 * Chrome、Firefox、Safari 始终返回页面中每个框架的 top.screenX 和 top.screenY 值。
+		 * 即使在页面由于被设置了外边距而发生偏移的情况下，相对于 window 对象使用 screenX 和 screenY 每次也都会返回相同的值。
+		 * 而 IE 和 Opera 会给出框架相对于屏幕边界的精确坐标
+		 * 结论：无法再夸浏览器的条件下取得窗口左边和上边精确的坐标值
+		 */
+	</script>
+</head>
+<body>
+
+</body>
+</html>

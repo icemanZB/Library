@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>用户代理检测</title>
+	<script src="../js/client.js"></script>
+	<script>
+		/*
+		 * 用户代理检测：一般被当做一种万不得已才用的做法，优先级排在能力检测和(或)怪癖检测之后(由于电子欺骗 spoofing 原因)
+		 * 识别浏览器引擎：确切知道浏览器名字和版本号不如确切知道它使用的是什么呈现引擎。如果 Firefox、Camino、Netscape 都使用相同的 Gecko，
+		 * 那么它们一定支持相同的特性。类似的，不管是什么浏览器，只要它跟 Safari3 使用的是同一个版本的 WebKit，那么该浏览器也就跟 Safari3 具备同样的功能
+		 * 所以主要检测五大呈现引擎：IE、Gecko、WebKit、KHTML、Opera
+		 * 要正确的识别呈现引擎，关键是检测顺序要正确，所以第一步要识别 opera，因为他用户代理字符串有可能模仿其他浏览器
+		 * 不同浏览器在表示不同的 Windows 操作系统时给出的不同字符串
+		 *
+		 * Windows版本		IE4+					Gecko					Opera<7					Opera7+						WebKit
+		 * 95			|	"Windows 95"		|	"Win95"				|	"Windows 95"		|	"Windows 95"			|	n/a
+		 * 98			|	"Windows 98"		|	"Win98"				|	"Windows 98"		|	"Windows 98"			|	n/a
+		 * NT4.0		|	"Windows NT"		|	"WinNT4.0"			|	"Windows NT 4.0"	|	"Windows NT 4.0"		|	n/a
+		 * 2000		    |	"Windows NT 5.0"	|	"Windows NT 5.0"	|	"Windows 2000"		|	"Windows NT 5.0"		|	n/a
+		 * ME			|	"Win 9x 4.90"		|	"Win 9x 4.90"		|	"Windows ME"		|	"Win 9x 4.90"			|	n/a
+		 * XP			|	"Windows NT 5.1"	|	"Windows NT 5.1"	|	"Windows XP"		|	"Windows NT 5.1"		|	"Windows NT 5.1"
+		 * Vista		|	"Windows NT 6.0"	|	"Windows NT 6.0"	|	n/a					|	"Windows NT 6.0"		|	"Windows NT 6.0"
+		 * 7			|	"Windows NT 6.1"	|	"Windows NT 6.1"	|	n/a					|	"Windows NT NT 6.1"		|	"Windows NT NT 6.1"
+		 */
+
+		if (clinet.engine.ie) { // 如果是IE，client.ie 的值应该大于 0
+			// 针对IE的代码
+		} else if (clinet.engine.gecko > 1.5) {
+			if (clinet.engine.ver === "1.8.1") {
+				// 针对这个版本执行某些操作
+			}
+		}
+		// 判断是否是 WebKit
+		if (clinet.engine.webkit) {
+			if (clinet.browser.chrome) {
+				// 执行针对Chrome的代码
+			} else if (clinet.browser.safari) {
+				// 执行针对Safari的代码
+			}
+		} else if (clinet.engine.gecko) {
+			if (clinet.browser.firefox) {
+				// 执行针对Firefox的代码
+			} else {
+				// 执行针对其他Gecko浏览器代码
+			}
+		}
+
+		if (clinet.system.win) {
+			if (clinet.system.win == "XP") {
+				//说明是XP
+			} else if (clinet.system.win == "Vista") {
+				// 说明是Vista
+			}
+		}
+
+		if (clinet.engine.webkit) {
+			if (clinet.system.ios) {
+				// iOS手机的内容
+			} else if (clinet.system.android) {
+				// Android 手机内容
+			} else if (clinet.system.nokiaN) {
+				// 诺基亚手机内容
+			}
+		}
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

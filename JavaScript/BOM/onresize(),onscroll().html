@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>onresize()、onscroll()</title>
+	<script src="../js/EventUtil.js"></script>
+	<script>
+		// onscroll：当滚动条滚动的时候触发
+		// 在一个时间间隔内，如果滚动的位置和上一次的位置发生了变话，那么就会触发一次
+		// 假设这个时间间隔是 5ms，如果在 5ms 内拉动了一次，那么就触发一次，但是如果在 5ms 内拉动了10次，这个事件也只触发一次
+		var i = 0;
+
+		window.onscroll = function () {
+			document.title = i++;
+		};
+
+		// onresize：当窗口大小发生变化的时候触发
+		window.onresize = function () {
+			document.title = i++;
+		};
+		// resize
+		// 关于何时触发：IE、Safari、Chrome、Opera 会在浏览器窗口变化了1像素时就触发 resize 事件，然后随着变化不断重复变化
+		// Firefox 则只会在用户停止调整窗口大小时才会触发 resize 事件
+		EventUtil.addHandler(window, "resize", function (ev) {
+			// 在 DOM 的浏览器中，event.target 属性值会被设置为 document ，IE 不会为这个事件设置 srcElement 属性
+			alert("Resized");
+		});
+
+		// scroll 事件
+		// 在混杂模式下，可以通过<body>元素的 scrollLeft 和 scrollTop 来监控到这一变化
+		// 在标准模式下，除了 Safari 之外的所有浏览器都会通过 <html> 元素来反映这一变化 ( Safari 仍然基于 <body> 跟踪滚动位置 )
+
+		EventUtil.addHandler(window, "scroll", function (ev) {
+			// 由于 Safari3.1 之前的版本不支持 document.compatMode ，所以会满足第二个条件
+			if (document.compatMode == "CSS1Compat") {
+				console.log(document.documentElement.scrollTop);
+			} else {
+				console.log(document.body.scrollTop);
+			}
+		});
+	</script>
+</head>
+
+<body style="height:2000px;">
+</body>
+</html>

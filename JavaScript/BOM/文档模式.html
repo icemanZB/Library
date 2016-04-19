@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>文档模式</title>
+	<script>
+
+		/*
+		 * 文档模式：页面的文档模式决定了可以使用什么功能。换句话说就是决定了可以使用哪个级别的CSS，可以使用那些 JavaScript Api，以及如何对待文档类型(doctype)
+		 * IE5：以混杂模式渲染页面，IE8及更高版本中的新功能都无法使用
+		 * IE7：以IE7标准模式渲染页面，IE8及更高版本中的新功能都无法使用
+		 * IE8：以IE8标准模式渲染页面，IE9新功能无法使用
+		 * IE9：以IE9标准模式渲染页面
+		 *
+		 * 强制浏览器以某种模式渲染页面，可以使用 HTTP头部信息 X-UA-Compatible
+		 * <meta http-equiv="X-UA-Compatible" content="IE=IEVersion" />
+		 *
+		 * 注意，IE版本(IEVersion)有以下不同的值
+		 * Edge：始终以最新的文档模式来渲染页面。忽略文档类型声明。对于IE8，始终保持以IE8标准模式渲染页面，对于IE9以IE9标准模式渲染页面
+		 * EmulateIE9：如果有文档声明，则以IE9标准模式渲染页面，否则将文档模式设置为IE5
+		 * EmulateIE8：如果有文档声明，则以IE8标准模式渲染页面，否则将文档模式设置为IE5
+		 * EmulateIE7：如果有文档声明，则以IE7标准模式渲染页面，否则将文档模式设置为IE5
+		 * 9：强制以IE9标准模式渲染页面，忽略文档类型声明
+		 * 8：强制以IE8标准模式渲染页面，忽略文档类型声明
+		 * 7：强制以IE7标准模式渲染页面，忽略文档类型声明
+		 * 5：强制将文档模式设置为IE5，忽略文档类型声明
+		 *
+		 * 通过 document.documentMode 属性可以知道给定页面使用的是什么文档模式，这个属性是IE8新增的，返回使用的文档模式的版本号
+		 */
+	</script>
+</head>
+<body>
+
+</body>
+</html>

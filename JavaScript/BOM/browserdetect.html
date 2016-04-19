@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>browserdetect</title>
+	<script src="../js/browserdetect.js"></script>
+	<script>
+
+		console.log(navigator.userAgent); // 展现浏览器信息
+		console.log(navigator.platform); // 浏览器所在系统
+		console.log(BrowserDetect.browser); // 浏览器名称
+		console.log(BrowserDetect.version); // 浏览器版本
+		console.log(BrowserDetect.OS); // 浏览器所在系统
+
+		// 给IE7一下的浏览器做特殊处理
+		if (BrowserDetect.browser == "Internet Explorer" && BrowserDetect.version < 7) {
+			alert("需要做IE低版本的兼容！");
+		}
+
+		if (BrowserDetect.browser == "Internet Explorer" && BrowserDetect.version === 8) {
+			alert("IE8");
+		}
+
+		// alert(BrowserDetect.version);
+
+		var isIe6 = !window.XMLHttpRequest;  // 检测是否是 IE6，这样不太好
+
+		// 如果要检查 IE 浏览器，干脆直接使用
+		var isIE = /msie/.test(navigator.userAgent.toLowerCase());
+		var isMozilla = /firefox/.test(navigator.userAgent.toLowerCase());
+		var isWebkit = /webkit/.test(navigator.userAgent.toLowerCase());
+
+	</script>
+</head>
+
+<body>
+</body>
+
+</html>

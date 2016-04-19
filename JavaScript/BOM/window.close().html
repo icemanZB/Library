@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>window.close()</title>
+	<script>
+		window.onload = function () {
+			var aInput = document.getElementsByTagName("input");
+			var opener = null;
+
+			aInput[0].onclick = function () {
+				opener = window.open();
+			};
+
+			aInput[1].onclick = function () {
+
+				window.close();
+				/*
+				 * ff：无法关闭
+				 * chrome：直接关闭
+				 * IE：询问用户
+				 */
+
+			};
+
+			aInput[2].onclick = function () {
+				opener.close();	// 可以通过已经用 window.open 方法打开的窗口，在用close()关闭，无兼容问题
+			}
+		}
+	</script>
+</head>
+
+<body>
+<input type="button" value="打开新窗口"/>
+<input type="button" value="关闭窗口"/>
+<input type="button" value="关闭新窗口"/>
+</body>
+</html>
