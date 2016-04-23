@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.Deferred().pipe()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+
+		var dfd = $.Deferred();
+
+		setTimeout(function () {
+
+			dfd.resolve("hello");
+
+		}, 1000);
+
+		var newDfd = dfd.pipe(function () {
+			return arguments[0] + " world";
+		});
+
+		newDfd.done(function () {
+			alert(arguments[0]);  // hello world
+		});
+	</script>
+</head>
+<body>
+
+</body>
+</html>

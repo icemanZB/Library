@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.Callbacks()</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+		function aaa() {
+			alert(1);
+		}
+
+		function bbb() {
+			alert(2);
+		}
+		var cb = $.Callbacks("memory");
+
+		cb.add(aaa);
+		cb.fire();
+		// cb.lock(); 只是会锁住后面的 fire()，但是还是会触发 alert(1);alert(2);
+		// 禁止后续的所有操作，此时就会执行 alert(1);
+		cb.disable();
+
+		cb.add(bbb);
+		cb.fire();
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -3296,6 +3296,10 @@ var optionsCache = {};
 // Convert String-formatted options into Object-formatted ones and store in cache
 function createOptions( options ) {
 	var object = optionsCache[ options ] = {};
+	/*
+	 * 用空格分隔单词，匹配空格分隔开，例如："once memory"
+	 * core_rnotwhite = /\S+/g   =>  ["once", "memory"]
+	 */
 	jQuery.each( options.match( core_rnotwhite ) || [], function( _, flag ) {
 		object[ flag ] = true;
 	});
@@ -3328,6 +3332,9 @@ jQuery.Callbacks = function( options ) {
 
 	// Convert options from String-formatted to Object-formatted if needed
 	// (we check in cache first)
+	/* 如果是字符串，就按照空格切分，例如："once memory"
+	 * options : { once : true , memory : true }、optionsCache : {"once memory" : { once : true , memory : true }}
+	 */
 	options = typeof options === "string" ?
 		( optionsCache[ options ] || createOptions( options ) ) :
 		jQuery.extend( {}, options );
@@ -3351,24 +3358,34 @@ jQuery.Callbacks = function( options ) {
 		// Fire callbacks
 		fire = function( data ) {
 			memory = options.memory && data;
-			fired = true;
+			fired = true; /* 说明已经 fire() 过一次了 */
 			firingIndex = firingStart || 0;
 			firingStart = 0;
 			firingLength = list.length;
-			firing = true;
+			firing = true; /* 触发进行时 */
 			for ( ; list && firingIndex < firingLength; firingIndex++ ) {
+				/*
+				 * data[0] 对应的就是执行环境，data[1] 就是 "hello"
+				 * 当每个回调函数中 return false; 或者写了 stopOnFalse 的话，就跳出循环不会往后执行了
+				 */
 				if ( list[ firingIndex ].apply( data[ 0 ], data[ 1 ] ) === false && options.stopOnFalse ) {
 					memory = false; // To prevent further calls using add
 					break;
 				}
 			}
-			firing = false;
+			firing = false;  /* 触发结束 */
 			if ( list ) {
 				if ( stack ) {
 					if ( stack.length ) {
+						/* 这里把 stack 中的第一个取出来，在重新进行 fire() */
 						fire( stack.shift() );
 					}
 				} else if ( memory ) {
+					/*
+					 * var cb = $.Callbacks("once memory"); cb.add( aaa );cb.fire();cb.add( bbb );cb.fire(); // 这句就是执行了空数组了
+					 * 有 "once" 参数的时候，就只执行一次，清空 list ( 等于讲下次在调用 cb.fire()的时候就是执行的是空数组 )，再有 memory 的时候
+					 * 没有 memory 的时候走的是 self.disable();
+					 */
 					list = [];
 				} else {
 					self.disable();
@@ -3379,17 +3396,25 @@ jQuery.Callbacks = function( options ) {
 		self = {
 			// Add a callback or a collection of callbacks to the list
 			add: function() {
+				/* 一上来的时候，list=[] => true */
 				if ( list ) {
 					// First, we save the current length
 					var start = list.length;
+					/* 这里是针对这一的写法 cb.add(aaa,bbb); */
 					(function add( args ) {
 						jQuery.each( args, function( _, arg ) {
 							var type = jQuery.type( arg );
+							/* 如果是 function，就 push 到 list 中 */
 							if ( type === "function" ) {
+								/*
+								 * 看看有没有 unique 参数，有的话，就会走后面 !self.has(arg)
+								 * self.has( arg ) 看看 arg( aaa,bbb ) 在数组中有没有存在
+								 */
 								if ( !options.unique || !self.has( arg ) ) {
 									list.push( arg );
 								}
 							} else if ( arg && arg.length && type !== "string" ) {
+								/* 针对 cb.add( [aaa,bbb] ); 这种情况的  */
 								// Inspect recursively
 								add( arg );
 							}
@@ -3402,6 +3427,11 @@ jQuery.Callbacks = function( options ) {
 					// With memory, if we're not firing then
 					// we should call right away
 					} else if ( memory ) {
+						/*
+						 * 这里有个流程说明下，var memoryCb = $.Callbacks("memory"); memoryCb.add(aaa); memoryCb.fire(); memoryCb.add(ccc);
+						 * 上来先 add 的时候，这里的 memory 是 false，然后memory,fire()，源码中 fire() 的一句话就是 memory = options.memory && data;
+						 * 此时 memory 就存起来了，在 memoryCb.add(ccc); 的时候就会进入这个 if(memory)，然后在调用 fire() 方法
+						 */
 						firingStart = start;
 						fire( memory );
 					}
@@ -3413,7 +3443,9 @@ jQuery.Callbacks = function( options ) {
 				if ( list ) {
 					jQuery.each( arguments, function( _, arg ) {
 						var index;
+						/* 查看这个 arg 在 list 中 存不存在，存在的话并赋值给 index */
 						while( ( index = jQuery.inArray( arg, list, index ) ) > -1 ) {
+							/* 在数组中删除 */
 							list.splice( index, 1 );
 							// Handle firing indexes
 							if ( firing ) {
@@ -3431,6 +3463,9 @@ jQuery.Callbacks = function( options ) {
 			},
 			// Check if a given callback is in the list.
 			// If no argument is given, return whether or not list has callbacks attached.
+			/* 判断在 list 中有没有填加过 fn
+			 * fn 不存在的时候，看看 list 有没有内容，有的话就会有长度，返回 true
+			 */
 			has: function( fn ) {
 				return fn ? jQuery.inArray( fn, list ) > -1 : !!( list && list.length );
 			},
@@ -3442,11 +3477,13 @@ jQuery.Callbacks = function( options ) {
 			},
 			// Have the list do nothing anymore
 			disable: function() {
+				/* 阻止后续的操作 */
 				list = stack = memory = undefined;
 				return this;
 			},
 			// Is it disabled?
 			disabled: function() {
+				/* 是否是禁止的，list = undefined 就是是禁止的 */
 				return !list;
 			},
 			// Lock the list in its current state
@@ -3463,12 +3500,28 @@ jQuery.Callbacks = function( options ) {
 			},
 			// Call all callbacks with the given context and arguments
 			fireWith: function( context, args ) {
+				/*
+				 * fired 第一次调用的时候就是 undefined， !fired = true
+				 * 第二次调用的时候，就要看 stack，stack = !options.once && []
+				 * 如果有了 once 参数，那就返回 false，那么 if 就不会走就只会触发一次 fire()
+				 * 如果没有传的话 stack = []，那就会进 if，可以再次执行 fire()
+				 */
 				if ( list && ( !fired || stack ) ) {
 					args = args || [];
+					/*
+					 * 这里是针对传参的情况  cb.fire("hello");
+					 * args 包含了 作用域，和具体的参数两个值放进了数组中
+					 * args.slice 就是判断是不是数组，是数组的话就直接 args.slice() 返回
+					 */
 					args = [ context, args.slice ? args.slice() : args ];
+					/*
+					 * 在之前内部 fire()的时候，for 循环没有走完 firing = true
+					 * 然后把 args 添加到 stack 中
+					 */
 					if ( firing ) {
 						stack.push( args );
 					} else {
+						/* 这里就把 cb.fire("hello") 中的 "hello" 参数带到了每一个函数中  */
 						fire( args );
 					}
 				}
@@ -3481,6 +3534,7 @@ jQuery.Callbacks = function( options ) {
 			},
 			// To know if the callbacks have already been called at least once
 			fired: function() {
+				/* 判断有没有调用过 fire()，只要调用过一次 fired = true */
 				return !!fired;
 			}
 		};
@@ -3492,34 +3546,54 @@ jQuery.extend({
 	Deferred: function( func ) {
 		var tuples = [
 				// action, add listener, listener list, final state
+				/* 使用数组做映射关系，对应调用回调函数
+				 * jQuery.Callbacks("once memory"); "once" 的作用就是只触发一次 resolve()，之后再触发就不起作用了
+				 * setInterval(function(){
+				 *   dfd.resolve();
+				 * },1000);
+				 */
 				[ "resolve", "done", jQuery.Callbacks("once memory"), "resolved" ],
 				[ "reject", "fail", jQuery.Callbacks("once memory"), "rejected" ],
 				[ "notify", "progress", jQuery.Callbacks("memory") ]
 			],
-			state = "pending",
+			state = "pending", /* 默认是等待的状态 */
 			promise = {
 				state: function() {
 					return state;
 				},
+				/* 不管成功或者失败都会走 always */
 				always: function() {
 					deferred.done( arguments ).fail( arguments );
 					return this;
 				},
+				/* 分别对应的函数是成功、失败、进行 */
 				then: function( /* fnDone, fnFail, fnProgress */ ) {
 					var fns = arguments;
+					/* 这里 return jQuery.Deferred() 是为了 给下面的 pipe() 使用 */
 					return jQuery.Deferred(function( newDefer ) {
 						jQuery.each( tuples, function( i, tuple ) {
 							var action = tuple[ 0 ],
+								/* 找到参数中的每一个函数，判断是不是函数，如果不是函数就是 fn = false */
 								fn = jQuery.isFunction( fns[ i ] ) && fns[ i ];
 							// deferred[ done | fail | progress ] for forwarding actions to newDefer
+							/* 添加回调函数  deferred["done"](function(){}) */
 							deferred[ tuple[1] ](function() {
+								/* 如果是函数，就执行这个函数并且带入 arguments 例如：dfd.resolve("hi"); 此时的 arguments 就是 "hi" */
 								var returned = fn && fn.apply( this, arguments );
 								if ( returned && jQuery.isFunction( returned.promise ) ) {
+									/* 这里是提供给 pipe() 的，会直接出发 done | fail | progress */
 									returned.promise()
 										.done( newDefer.resolve )
 										.fail( newDefer.reject )
 										.progress( newDefer.notify );
 								} else {
+									/*
+									 * 如果返回的是字符串的情况
+									 * var newDfd = dfd.pipe(function () {
+									 *     return arguments[0] + " world";
+									 * });
+									 * fn ? [ returned ] : arguments fn 有的话取 return 的值，没有的话取 arguments
+									 */
 									newDefer[ action + "With" ]( this === promise ? newDefer.promise() : this, fn ? [ returned ] : arguments );
 								}
 							});
@@ -3529,6 +3603,7 @@ jQuery.extend({
 				},
 				// Get a promise for this deferred
 				// If obj is provided, the promise aspect is added to the object
+				/* 当传了 deferred 参数的时候，那就是 promise 所有的内容继承给 deferred，所以 deferred 即拥有自己的状态属性，又有 promise 下的所有方法 */
 				promise: function( obj ) {
 					return obj != null ? jQuery.extend( obj, promise ) : promise;
 				}
@@ -3536,27 +3611,36 @@ jQuery.extend({
 			deferred = {};
 
 		// Keep pipe for back-compat
+		/* 兼容老版本，功能不太一样，但是代码是一样的 pipe 主要是延长 promise*/
 		promise.pipe = promise.then;
 
 		// Add list-specific methods
 		jQuery.each( tuples, function( i, tuple ) {
-			var list = tuple[ 2 ],
-				stateString = tuple[ 3 ];
+			var list = tuple[ 2 ], /* 这里就是得到一个回调对象，jQuery.Callbacks("once memory") */
+				stateString = tuple[ 3 ];  /* 状态 */
 
 			// promise[ done | fail | progress ] = list.add
+			/* 回调对象的 add 方法，赋值给了 promise，tuple[1] => "done" */
 			promise[ tuple[1] ] = list.add;
 
 			// Handle state
 			if ( stateString ) {
 				list.add(function() {
 					// state = [ resolved | rejected ]
+					/* 成功、失败 */
 					state = stateString;
 
 				// [ reject_list | resolve_list ].disable; progress_list.lock
+				/*
+				 * tuples[ i ^ 1 ][ 2 ].disable     ( i ^ 1 ) 就是位运算符  1^1=0、0^1=1
+				 * 也就是类似取反的操作，如果是 done()的状态，那么其余的状态都不会去触发 ( reject、notify )
+				 * tuples[ 2 ][ 2 ].lock = jQuery.Callbacks("memory").lock
+				 */
 				}, tuples[ i ^ 1 ][ 2 ].disable, tuples[ 2 ][ 2 ].lock );
 			}
 
 			// deferred[ resolve | reject | notify ]
+			/* deferred 下面加了三个状态 */
 			deferred[ tuple[0] ] = function() {
 				deferred[ tuple[0] + "With" ]( this === deferred ? promise : this, arguments );
 				return this;
@@ -3565,10 +3649,12 @@ jQuery.extend({
 		});
 
 		// Make the deferred a promise
+		/* deferred 继承了 promise */
 		promise.promise( deferred );
 
 		// Call given func if any
 		if ( func ) {
+			/* 如果延迟对象传了参数，就是立即执行，在把 deferred 在传入，这是在内部使用的 */
 			func.call( deferred, deferred );
 		}
 

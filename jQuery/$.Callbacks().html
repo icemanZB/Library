@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.Callbacks()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		// $.Callbacks() 方便在不同作用域下的函数统一管理
+
+		var cb = $.Callbacks(); // 创建了回调对象，其实就是观察者模式
+
+		function aaa() {
+			console.log(1);
+		}
+		cb.add(aaa);
+
+		(function () {
+
+			function bbb() {
+				console.log(2);
+			}
+
+			cb.add(bbb);
+
+		})();
+
+		function ccc() {
+			console.log(3);
+		}
+
+		cb.add(ccc);
+
+		// cb.remove( ccc );  删除
+
+		cb.fire(); // 执行添加过的两个函数，类似事件绑定
+
+		// document.addEventListener("click",function(){ alert(1); },false);
+		// document.addEventListener("click",function(){ alert(2); },false);
+		// document.addEventListener("click",function(){ alert(3); },false);
+
+		// 参数 once 表示只会触发一次 fire()
+		var onceCb = $.Callbacks("once");
+		onceCb.add(aaa);
+		onceCb.add(ccc);
+
+		onceCb.fire();
+		onceCb.fire();
+
+		// 参数 memory 不管先写 add()，还是后写 add() 都会触发
+		var memoryCb = $.Callbacks("memory");
+
+		memoryCb.add(aaa);
+
+		memoryCb.fire();
+
+		memoryCb.add(ccc);
+
+		// unique 不会重复触发相同的函数
+		var uniqueCb = $.Callbacks("unique");
+
+		uniqueCb.add(aaa);
+		uniqueCb.add(aaa);
+		uniqueCb.fire();
+
+		function ddd() {
+
+			alert("ddd");
+			return false;
+		}
+
+		// 这里只会执行ddd，在之前的函数如果有 return false;的话，后续的函数都不会执行
+		var stopOnFalseCb = $.Callbacks("stopOnFalse");
+
+		stopOnFalseCb.add(ddd);
+		stopOnFalseCb.add(aaa);
+
+		stopOnFalseCb.fire();
+
+		// var cb = $.Callbacks("once memory"); 组合传参
+		function eee(n) {
+			alert('eee' + n);
+			return false;
+		}
+
+		cb.add(eee);
+
+		cb.fire('hello');
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

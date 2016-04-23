@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.Callbacks()</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+		// 防止无限循环
+		var bBtn = true;
+		// 触发过程是，先走了 alert(1); 然后 cb.fire();放到了队列中，在执行 alert(2);
+		// 只后在执行前面在队列中的 cb.fire(); 在执行 alert(1);alert(2);
+		// 这里就是源码中 firing 的控制
+		function aaa() {
+			alert(1);
+
+			if (bBtn) {
+				cb.fire();
+				bBtn = false;
+			}
+
+		}
+
+		function bbb() {
+			alert(2);
+		}
+
+		var cb = $.Callbacks();
+		cb.add(aaa);
+		cb.add(bbb);
+		cb.fire();
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
