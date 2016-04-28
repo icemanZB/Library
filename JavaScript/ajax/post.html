@@ -15,7 +15,7 @@
 						arguments.callee.activeXString = versions[i];
 						break;
 					} catch (ex) {
-						// 跳过
+						// break
 					}
 				}
 
@@ -36,7 +36,7 @@
 				divStatus.innerHTML = "Received" + event.position + " of " + event.totalSize + " bites";
 			}
 		};
-		xhr.timeout = 1000; // 将超时设置为1秒钟 ( 仅适用于 IE8+ )
+		xhr.timeout = 1000; // 将超时设置为 1 秒钟 ( 仅适用于 IE8+ )
 		xhr.ontimeout = function () {
 			alert("Request did not return in a second");
 		};

@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>实现HTTP流</title>
 	<script>
-		// 在 Firefox、Safari、Opera、Chrome 中，通过侦听 readystatechange 事件及检测 readyState 的值是否为3，就可以利用 XHR 对象实现 HTTP 流
+		// 在 Firefox、Safari、Opera、Chrome 中，通过侦听 readystatechange 事件及检测 readyState 的值是否为 3 ，就可以利用 XHR 对象实现 HTTP 流
 
 		function createStreamingClient(url, progress, finished) {
 			var xhr = new XMLHttpRequest(), received = 0;
