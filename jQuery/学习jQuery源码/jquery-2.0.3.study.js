@@ -3665,13 +3665,26 @@ jQuery.extend({
 	// Deferred helper
 	when: function( subordinate /* , ..., subordinateN */ ) {
 		var i = 0,
+			/* arguments(一些方法) 转成一个数组 */
 			resolveValues = core_slice.call( arguments ),
 			length = resolveValues.length,
 
 			// the count of uncompleted subordinates
+			/*
+			 * 未完成的计数器有多少个，当 length = 0 ( 也就是没有传参数的情况 )，remaining = 0
+			 * 当 length !=1，说明传了参数了，那么看 subordinate && jQuery.isFunction( subordinate.promise )
+			 * subordinate 是参数肯定有为true，在判断传入的函数是不是延迟对象，是就返回参数列表的长度
+			 * 多个参数的时候，remaining 肯定是参数的长度
+			 */
 			remaining = length !== 1 || ( subordinate && jQuery.isFunction( subordinate.promise ) ) ? length : 0,
 
 			// the master Deferred. If resolveValues consist of only a single Deferred, just use that.
+		/*
+			 * 当 remaining == 0 的时候，就会创建一个 Deferred 对象
+			 * 当传入了1个参数，subordinate 是一个延迟对象的话，就赋值给 deferred，如果 subordinate 不是延迟对象，就会创建新的 Deferred 对象
+			 * 一个参数的时候就会直接 return deferred.promise(); 其他代码都不走了
+			 * 多个参数的时候，deferred = jQuery.Deferred 对象
+			 */
 			deferred = remaining === 1 ? subordinate : jQuery.Deferred(),
 
 			// Update function for both resolve and progress values
@@ -3681,7 +3694,7 @@ jQuery.extend({
 					values[ i ] = arguments.length > 1 ? core_slice.call( arguments ) : value;
 					if( values === progressValues ) {
 						deferred.notifyWith( contexts, values );
-					} else if ( !( --remaining ) ) {
+					} else if ( !( --remaining ) ) { /* 计数器减到 0 就会触发 resolveWith */
 						deferred.resolveWith( contexts, values );
 					}
 				};
@@ -3690,27 +3703,39 @@ jQuery.extend({
 			progressValues, progressContexts, resolveContexts;
 
 		// add listeners to Deferred subordinates; treat others as resolved
+		/* 多个参数的时候会进 if */
 		if ( length > 1 ) {
+			/* 进行时候的值和作用域 */
 			progressValues = new Array( length );
 			progressContexts = new Array( length );
+			/* 完成时候的作用域 */
 			resolveContexts = new Array( length );
 			for ( ; i < length; i++ ) {
+				/* 判断每一项是不是延迟对象 */
 				if ( resolveValues[ i ] && jQuery.isFunction( resolveValues[ i ].promise ) ) {
 					resolveValues[ i ].promise()
+						/* updateFunc 作用就是 计数器减掉，并且当 remaining = 0 的时候，触发 resolveWith() */
 						.done( updateFunc( i, resolveContexts, resolveValues ) )
+						/* 只要有一个失败就会触发，最后肯定走 fail() */
 						.fail( deferred.reject )
 						.progress( updateFunc( i, progressContexts, progressValues ) );
 				} else {
+					/* 不是延迟对象就减掉一个，过滤掉不是延迟对象的参数 */
 					--remaining;
 				}
 			}
 		}
 
 		// if we're not waiting on anything, resolve the master
+		/*
+		 * 如果我们什么都没有等待，就会触发 resolveWith
+		 * remaining = 0 取反就是 true，也就是未完成的是0个，触发 resolveWith ，说明 done 会立即执行
+		 */
 		if ( !remaining ) {
 			deferred.resolveWith( resolveContexts, resolveValues );
 		}
 
+		/* 返回延迟对象 */
 		return deferred.promise();
 	}
 });
