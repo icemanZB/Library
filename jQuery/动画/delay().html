@@ -16,11 +16,10 @@
 			var $panel = $("#panel");
 
 			$panel.click(function () {
-				$(this).animate({left: "400px", height: "200px", opacity: "1"}, 3000)
-						.delay(1000)
-						.animate({top: "200px", width: "200px"}, 3000)
-						.delay(2000)
-						.fadeOut("slow");
+				$(this).animate({left: "400px", height: "200px", opacity: "1"}, 3000).delay(1000).animate({
+					top  : "200px",
+					width: "200px"
+				}, 3000).delay(2000).fadeOut("slow");
 			});
 		});
 	</script>

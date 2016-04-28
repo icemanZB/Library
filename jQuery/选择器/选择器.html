@@ -6,10 +6,10 @@
 	<script src="../js/jquery-2.0.3.min.js"></script>
 	<script>
 		$(function () {
-			console.log($('strong', 'li')); // 选择父级是 li 的 strong
+			console.log($("strong", "li")); // 选择父级是 li 的 strong
 
 			// $(子，父)，是从父节点里找子节点
-			$('strong', 'li').css('background', 'red').click(function () {
+			$("strong", "li").css("background", "red").click(function () {
 				console.log(1); // 点击 strong 触发
 			});
 

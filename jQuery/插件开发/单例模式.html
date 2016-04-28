@@ -33,13 +33,13 @@
 			// 对外提供插件的入口
 			$.fn.PageSwitch = function (options) {
 				return this.each(function () {
-					var me = $(this), instance = me.data('PageSwitch');  // 单例模式
+					var me = $(this), instance = me.data("PageSwitch");  // 单例模式
 					if (!instance) {
 						instance = new PageSwitch(me, options);
-						me.data('PageSwitch', instance);
+						me.data("PageSwitch", instance);
 					}
 					// 提供外部调用 PageSwitch 对象的 init() 方法
-					if ($.type(options) === 'string') {
+					if ($.type(options) === "string") {
 						return instance[options]();
 					}
 

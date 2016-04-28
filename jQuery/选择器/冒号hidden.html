@@ -17,12 +17,12 @@
 		 */
 		$(function () {
 			// 在 id 为 n1 的 div 标签内查找所有不可见的元素
-			console.log($('#n1 :hidden'));  // #n2 #n5
+			console.log($("#n1 :hidden"));  // #n2 #n5
 
 			// 在 id 为 n1 的 div 标签内查找所有不可见的 p 标签
 			console.log($("#n1 p:hidden")); // #n2
 
-			console.log($('div:hidden').length); // 0 该选择器对 visibility:hidden; 的元素不起作用
+			console.log($("div:hidden").length); // 0 该选择器对 visibility:hidden; 的元素不起作用
 		})
 	</script>
 </head>
@@ -32,10 +32,8 @@
 	<p id="n2" style="display: none;"></p>
 
 	<p id="n3">
-		<span id="n4">CodePlayer</span>
-		<input id="n5" type="hidden" value="#n5">
-		<span id="n6" style="visibility: hidden;">#n6</span>
-		<span id="n7" style="opacity: 0;">#n7</span>
+		<span id="n4">CodePlayer</span> <input id="n5" type="hidden" value="#n5">
+		<span id="n6" style="visibility: hidden;">#n6</span> <span id="n7" style="opacity: 0;">#n7</span>
 	</p>
 </div>
 

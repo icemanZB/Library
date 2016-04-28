@@ -16,7 +16,6 @@
 
 			$p.dequeue("mx"); // 2秒后输出1
 
-
 			function fn1() {
 				console.log(11);
 			}
@@ -30,7 +29,7 @@
 			$p.queue("mx1", fn2);
 
 			$p.dequeue("mx1"); // 立即输出 11
-			$p.dequeue("mx1"); // 4秒后输出2
+			$p.dequeue("mx1"); // 4 秒后输出 2
 
 		})
 	</script>
