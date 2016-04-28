@@ -10,7 +10,7 @@
 		var wait = function (dtd) {
 			var tasks = function () {
 				console.log("执行完毕！");
-				dtd.resolve(); // 改变Deferred对象的执行状态
+				dtd.resolve(); // 改变 Deferred 对象的执行状态
 			};
 
 			setTimeout(tasks, 2000);
@@ -32,10 +32,8 @@
 		console.log(d);
 		d.resolve(); // 报错
 
-
 	</script>
 </head>
 
-<body>
-</body>
+<body></body>
 </html>

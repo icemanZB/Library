@@ -7,12 +7,12 @@
 		window.onload = function () {
 
 			/*
-			 * 我不喜欢this.element, 可以去掉吗？
+			 * 我不喜欢 this.element , 可以去掉吗？
 			 * 现在包装器对象结构类似这样：
 			 * F.prototype = {
-				 element: [NodeList],
-				 each: function() {},
-				 hide: function() {}
+			 *	 element: [NodeList],
+			 *	 each: function() {},
+			 *	 hide: function() {}
 			 * }
 			 *
 			 * element 看上去好碍眼，就不能去掉吗？可以啊，NodeList 是个类数组结构，我们把它以数值索引形式分配到对象中就好啦！
@@ -62,7 +62,6 @@
 </head>
 <body>
 <button id="button">点击我</button>
-<img id="image1" src="img/mm.jpg">
-<img id="image2" src="img/mm2.jpg">
+<img id="image1" src="img/mm.jpg"> <img id="image2" src="img/mm2.jpg">
 </body>
 </html>

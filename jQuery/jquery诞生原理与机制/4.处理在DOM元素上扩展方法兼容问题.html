@@ -31,14 +31,14 @@
 				return document.getElementById(id);
 			};
 			// true 说明看上去返回 DOM 对象，实际确实就是 DOM 对象
-			console.log( new Fn("image1"), new Fn("image1") == document.getElementById("image1") );  // true
+			console.log(new Fn("image1"), new Fn("image1") == document.getElementById("image1"));  // true
 
 			var Fn2 = function (id) {
 				return id;
 			};
 
-			console.log( new Fn2("image2") );  // Fn2{} 返回的是 new 创建的匿名对象，而不是字符串
-			console.log( new Fn2("image2") == "image2" );  // false 说明看上去返回字符串值，实际并不是字符串
+			console.log(new Fn2("image2"));  // Fn2{} 返回的是 new 创建的匿名对象，而不是字符串
+			console.log(new Fn2("image2") == "image2");  // false 说明看上去返回字符串值，实际并不是字符串
 
 			/*
 			 * 回到上面天真的想法。要想使用 prototype.hide 方法中的 this，就不能让 F 函数有乱七八糟的返回值
@@ -62,7 +62,6 @@
 </head>
 <body>
 <button id="button">点击我</button>
-<img id="image1" src="img/mm.jpg">
-<img id="image2" src="img/mm2.jpg">
+<img id="image1" src="img/mm.jpg"> <img id="image2" src="img/mm2.jpg">
 </body>
 </html>

@@ -7,9 +7,9 @@
 		window.onload = function () {
 			/*
 			 * $() 返回的是 new F()，而 new F() 又是返回的对象的引用，让 $.fn.init 返回的 this 依然能够正确指向。
-
+			 *
 			 * var $ = function (selector, context) {
-			 * return new F(selector, context);
+			 *     return new F(selector, context);
 			 * };
 			 * var F = function (selector, context) {
 			 * return this.init(selector, context);
@@ -18,16 +18,16 @@
 			 * 于是一番调整有：
 			 *
 			 * var $ = function(selector, context) {
-			 * return new $.fn.init(selector, context);
+			 *     return new $.fn.init(selector, context);
 			 * };
 			 * var F = function() { };
 			 * $.fn = F.prototype;
 			 * $.fn.init = function(selector, context) {
-			 * // ...
-			 * return this;
+			 *     // ...
+			 *     return this;
 			 * };
 			 * 上面代码显然是有问题的，new 的是 $.fn.init， $.fn.init 的返回值是 this，也就是 $() 的返回值是 $.fn.init 的原型对象
-			 * $.fn.init 的 prototype 原型现在就是个光杆司令啊，正好，$.fn 对应的原型方法，除了 init 没用外，其他 hide()、each() 就是我们需要的。因此，我们需要加上这么一行：
+			 * $.fn.init 的 prototype 原型现在就是个光杆司令啊，正好，$.fn 对应的原型方法，除了 init 没用外，其他 hide()、each() 就是我们需要的。因此，我们需要加上这么一行
 			 * $.fn.init.prototype = $.fn;
 			 */
 			var $ = function (selector, context) {
@@ -74,7 +74,7 @@
 			};
 
 			$.fn.extend({
-				css: function () {
+				css : function () {
 				},
 				attr: function () {
 				},
@@ -98,7 +98,6 @@
 </head>
 <body>
 <button id="button">点击我</button>
-<img id="image1" src="img/mm.jpg">
-<img id="image2" src="img/mm2.jpg">
+<img id="image1" src="img/mm.jpg"> <img id="image2" src="img/mm2.jpg">
 </body>
 </html>

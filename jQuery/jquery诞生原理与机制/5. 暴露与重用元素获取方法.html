@@ -27,12 +27,10 @@
 				new F("image1").hide();
 			};
 
-
 			/*
 			 * 我不喜欢 new，我喜欢 $
-			 * new F("image") 这种写法我好不喜欢，好吧,把 new 什么什么藏在 $ 方法中把
+			 * new F("image") 这种写法我好不喜欢，好吧，把 new 什么什么藏在 $ 方法中把
 			 */
-
 
 			var $ = function (id) {
 				return new F(id);
@@ -49,7 +47,6 @@
 <body>
 <button id="button1">点击我</button>
 <button id="button2">点击我2</button>
-<img id="image1" src="img/mm.jpg">
-<img id="image2" src="img/mm2.jpg">
+<img id="image1" src="img/mm.jpg"> <img id="image2" src="img/mm2.jpg">
 </body>
 </html>
