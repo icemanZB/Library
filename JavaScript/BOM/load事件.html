@@ -7,8 +7,8 @@
 	<script>
 		// load 事件
 		EventUtil.addHandler(window, "load", function (ev) {
-			// 这里给事件处理程序传入了一个event对象，这个对象中不包含有关这个事件的任何附加信息
-			// 但在DOM的浏览器中，event.target属性值会被设置为document，IE不会为这个事件设置srcElement属性
+			// 这里给事件处理程序传入了一个 event 对象，这个对象中不包含有关这个事件的任何附加信息
+			// 但在DOM的浏览器中，event.target 属性值会被设置为 document，IE 不会为这个事件设置 srcElement 属性
 			alert("Loaded");
 		});
 
@@ -25,7 +25,7 @@
 			img.src = "smile.gif";
 		});
 
-		// 判断 js文件 是否加载完成，在 IE9、Firexfox、Opera、Chrome、Safari3 及更高的版本中，<script> 元素也会触发load事件
+		// 判断 js 文件 是否加载完成，在 IE9、Firexfox、Opera、Chrome、Safari3 及更高的版本中，<script> 元素也会触发 load 事件
 		EventUtil.addHandler(window, "load", function () {
 			var script = document.createElement("script");
 			EventUtil.addHandler(script, "load", function () {

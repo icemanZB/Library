@@ -5,27 +5,27 @@
 	<title>秒转时间</title>
 	<script type="text/javascript">
 		var second = 156;
-		console.info(parseInt(second / 60) + '分' + second % 60 + '秒');
+		console.info(parseInt(second / 60) + "分" + second % 60 + "秒");
 
 		var _RANGE = [1115, 1030, 2200, 2230];  // 配置时间节点 ( 每天10:00-10:30及22:00-22:30 )
 		calcTime(_RANGE);
 
 		function calcTime(_RANGE) {
 
-			var nowTime = new Date(); // "2016/03/03 22:10:00"
+			var nowTime   = new Date(); // "2016/03/03 22:10:00"
 			var remainNum = $(".animate-wrap").data("remainNum");
-			nowTime = nowTime.toString() == "Invalid Date" ? null : nowTime;
+			nowTime       = nowTime.toString() == "Invalid Date" ? null : nowTime;
 			if (!nowTime) {
 				alert("请输入正确的时间格式");
 				return;
 			}
 
-			var s = 0;
-			var year = nowTime.getFullYear(),
-					month = nowTime.getMonth() + 1,
-					day = nowTime.getDate(),
-					hour = nowTime.getHours(),
-					minute = nowTime.getMinutes();
+			var s      = 0;
+			var year   = nowTime.getFullYear(),
+			    month  = nowTime.getMonth() + 1,
+			    day    = nowTime.getDate(),
+			    hour   = nowTime.getHours(),
+			    minute = nowTime.getMinutes();
 
 			if (month < 10) month = "0" + month.toString();
 			if (day < 10) day = "0" + day.toString();
@@ -94,6 +94,5 @@
 
 	</script>
 </head>
-<body>
-</body>
+<body></body>
 </html>

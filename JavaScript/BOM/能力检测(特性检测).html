@@ -5,7 +5,7 @@
 	<title>能力检测(特性检测)</title>
 	<script>
 		/*
-		 * 能力检测(特性检测)，就是识别浏览器的能力，采用这种方式不必顾及特定的浏览器，只要确定浏览器支持特定的能力即可
+		 * 能力检测( 特性检测 )，就是识别浏览器的能力，采用这种方式不必顾及特定的浏览器，只要确定浏览器支持特定的能力即可
 		 * 能力检测对于想知道某个特性是否会按照适当的方式行事( 而不是仅仅是某个特性是否存在 )
 		 * 两个重要的概念：1、先检测达成目的的最常用特性，这样可以保证代码最优 2、必须测试实际要用到的特性，一个特性存在，不一定意味着另一个特性也存在
 		 */
@@ -43,7 +43,7 @@
 		}
 		// typeof 需要注意 IE8 及之前的版本会有点问题
 		function hasCreateElement() {
-			// IE8及之前的版本这个函数返回 false，由于 DOM 对象时宿主对象，IE 早期版本是 COM 实现的，所以会返回"object"
+			// IE8及之前的版本这个函数返回 false，由于 DOM 对象时宿主对象，IE 早期版本是 COM 实现的，所以会返回 "object"
 			return typeof document.createElement == "function";
 		}
 
@@ -53,7 +53,7 @@
 		}
 
 		var xhr = new ActiveXObject("Microsoft.XMLHttp");
-		alert(typeof xhr.open);  // IE会返回 unknown
+		alert(typeof xhr.open);  // IE 会返回 unknown
 		alert(isHostMethod(xhr, "open"));
 
 		/*
@@ -67,7 +67,7 @@
 
 		// 确定浏览器是否支持 Netscape 风格的插件
 		var hasNSPlugins = !!(navigator.plugins && navigator.plugins.length);
-		// 确定浏览器是否具有DOM1级规定的能力
+		// 确定浏览器是否具有 DOM1 级规定的能力
 		var hasDOM1 = !!(document.getElementById && document.createElement && document.getElementsByTagName);
 
 	</script>

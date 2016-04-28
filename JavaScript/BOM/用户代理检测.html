@@ -18,14 +18,14 @@
 		 * 98			|	"Windows 98"		|	"Win98"				|	"Windows 98"		|	"Windows 98"			|	n/a
 		 * NT4.0		|	"Windows NT"		|	"WinNT4.0"			|	"Windows NT 4.0"	|	"Windows NT 4.0"		|	n/a
 		 * 2000		    |	"Windows NT 5.0"	|	"Windows NT 5.0"	|	"Windows 2000"		|	"Windows NT 5.0"		|	n/a
-		 * ME			|	"Win 9x 4.90"		|	"Win 9x 4.90"		|	"Windows ME"		|	"Win 9x 4.90"			|	n/a
+		 * ME			|	"Win 9x 4.90"		|	"Win 9x 4.90"		|	"Windows ME"		    |	"Win 9x 4.90"			|	n/a
 		 * XP			|	"Windows NT 5.1"	|	"Windows NT 5.1"	|	"Windows XP"		|	"Windows NT 5.1"		|	"Windows NT 5.1"
 		 * Vista		|	"Windows NT 6.0"	|	"Windows NT 6.0"	|	n/a					|	"Windows NT 6.0"		|	"Windows NT 6.0"
 		 * 7			|	"Windows NT 6.1"	|	"Windows NT 6.1"	|	n/a					|	"Windows NT NT 6.1"		|	"Windows NT NT 6.1"
 		 */
 
-		if (clinet.engine.ie) { // 如果是IE，client.ie 的值应该大于 0
-			// 针对IE的代码
+		if (clinet.engine.ie) { // 如果是 IE，client.ie 的值应该大于 0
+			// 针对 IE 的代码
 		} else if (clinet.engine.gecko > 1.5) {
 			if (clinet.engine.ver === "1.8.1") {
 				// 针对这个版本执行某些操作

@@ -15,8 +15,8 @@
 
 		/*
 		 * 在 IE、Opera 中，screenLeft、screenTop 中保存的是从屏幕左边和上边到由 window 对象表示的页面可见区域的距离。
-		 * 如果 window 对象是最外层对象，而且浏览器窗口紧贴屏幕最上端——即y轴坐标为0，那么 screenTop 的值就是位于页面可见区域上面的浏览器工具栏的像素高度。
-		 * 但是在 Chrome、Firefox、Safari 中 screenY 或 screenX 中保存的是整个浏览器窗口相对于屏幕的坐标值，即在窗口的y轴坐标为0是返回0
+		 * 如果 window 对象是最外层对象，而且浏览器窗口紧贴屏幕最上端——即 y 轴坐标为 0，那么 screenTop 的值就是位于页面可见区域上面的浏览器工具栏的像素高度。
+		 * 但是在 Chrome、Firefox、Safari 中 screenY 或 screenX 中保存的是整个浏览器窗口相对于屏幕的坐标值，即在窗口的y轴坐标为 0 是返回 0
 		 * Chrome、Firefox、Safari 始终返回页面中每个框架的 top.screenX 和 top.screenY 值。
 		 * 即使在页面由于被设置了外边距而发生偏移的情况下，相对于 window 对象使用 screenX 和 screenY 每次也都会返回相同的值。
 		 * 而 IE 和 Opera 会给出框架相对于屏幕边界的精确坐标
