@@ -42,7 +42,7 @@
 			function getRandomNo(scope_no, count) {
 				var i, s_n, ran_n, _result = [];
 
-				s_n = parseInt(scope_no, 10); // 转为10进制
+				s_n = parseInt(scope_no, 10); // 转为 10 进制
 
 				for (i = 0; i < count; i++) {
 					ran_n = Math.floor(Math.random() * s_n);
@@ -80,7 +80,7 @@
 				array_tmp.splice(j, 1);
 			}
 
-			// 获得给定数字的随机数，出错返回-1
+			// 获得给定数字的随机数，出错返回 -1
 			function ranCount(n) {
 				var result = parseInt(n, 10);
 				if (isNaN(result)) {
