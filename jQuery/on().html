@@ -121,7 +121,7 @@
 			});
 			// 当单击 div 元素后，会同时触发 click 事件和 click.plugin 事件。如果只是单击 button 元素，则只触发 click 事件，而不触发 click.plugin 事件
 			// 注意，trigger("click!")后面的感叹号作用是匹配所有不包含在命名空间中的方法
-			// 如果需要两者都被触发： $('div').trigger('click');
+			// 如果需要两者都被触发： $("div").trigger("click");
 			$("button").click(function () {
 				$("div").trigger("click!");    // 注意click后面的感叹号
 			});

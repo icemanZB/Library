@@ -37,10 +37,10 @@
 			$("li.item-1").closest(".level-3").css("background-color", "red");
 
 			// 传递 DOM 元素作为 context，在其中搜索最接近的元素
-			var listItemII = document.getElementById('ii');
+			var listItemII = document.getElementById("ii");
 
 			// 代码会改变 level-2 <ul> 的颜色
-			$('li.item-a').closest('ul', listItemII).css('background-color', 'green');
+			$('li.item-a').closest("ul", listItemII).css("background-color", "green");
 
 			// 通过 closest() 完成事件委托；当被最接近的列表元素或其子后代元素被点击时，会切换黄色背景
 			$("#ul3").bind("click", function (ev) {

@@ -22,18 +22,15 @@
 			 * 差异在于语法：内容和选择器的位置，以及 prepend() 能够使用函数来插入内容。
 			 */
 
-			$('#btn2').click(function () {
+			$("#btn2").click(function () {
 				// 在p之前(p的内部)插入选择到div的元素
 				// 生成的 html ： <p><div>aaaa</div>This is another paragraph.</p>
-				$('div').prependTo('p');
+				$("div").prependTo("p");
 			});
 
 		});
 
-
 		$(document).ready(function () {
-
-
 		});
 	</script>
 </head>

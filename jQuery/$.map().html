@@ -20,10 +20,10 @@
 			}).get());
 
 			// $.map() 方法可将一个数组转换为另一个数组
-			var arr = '1,2,3,4,5,jQuery,CSS,5'.split(',');
+			var arr = "1,2,3,4,5,jQuery,CSS,5".split(",");
 			arr = $.map(arr, function (val, index) {
 				// 和 $.grep() 的区别
-				// return isNaN(val)，得到结果为：[true, true]
+				// return isNaN(val); 得到结果为：[true, true]
 				console.log(index);
 				return isNaN(val) ? val : null;
 			});
@@ -36,8 +36,7 @@
 <p><b>Values: </b></p>
 
 <form>
-	<input type="text" name="name" value="John"/>
-	<input type="text" name="password" value="password"/>
+	<input type="text" name="name" value="John"/> <input type="text" name="password" value="password"/>
 	<input type="text" name="url" value="http://w3school.com.cn/"/>
 </form>
 

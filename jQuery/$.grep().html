@@ -6,12 +6,12 @@
 	<script src="js/jquery-2.0.3.min.js"></script>
 	<script>
 		// grep(array,callback,invert) 方法用于数组元素过滤筛选
-		/**
+		/*
 		 * invert：布尔型可选项，默认值 false，值为 true 或 false
-		 * 如果”invert“为 false 或未设置，则函数返回数组中由过滤函数返回 true 的元素
-		 * 当”invert“为 true，则返回过滤函数中返回 false 的元素集
-		 * */
-		var arr = '1,2,3,4,5,jQuery,CSS,5'.split(',');
+		 * 如果 "invert" 为 false 或未设置，则函数返回数组中由过滤函数返回 true 的元素
+		 * 当"invert" 为 true，则返回过滤函数中返回 false 的元素集
+		 */
+		var arr = "1,2,3,4,5,jQuery,CSS,5".split(",");
 		arr = $.grep(arr, function (val, index) {
 			// val => 数组元素的当前值
 			// index => 当前值的下标
@@ -20,13 +20,13 @@
 		});
 		console.log(arr); // 结果为： ["jQuery", "CSS"]
 
-		var arr2 = [1,2,3,4];
+		var arr2 = [1, 2, 3, 4];
 
-		arr2 = $.grep( arr2 , function( n ){
+		arr2 = $.grep(arr2, function (n) {
 			return n > 2;
-		} , true ); // 第三个参数取的是相反的条件 ( n<=2 )
+		}, true); // 第三个参数取的是相反的条件 ( n<=2 )
 
-		console.log( arr2 );  // [1, 2]
+		console.log(arr2);  // [1, 2]
 	</script>
 </head>
 <body>

@@ -6,7 +6,7 @@
 	<script src="js/jquery-2.0.2.js"></script>
 	<script>
 		/*
-		 * append() 方法在被选元素的结尾(仍然在内部)插入指定内容。
+		 * append() 方法在被选元素的结尾 (仍然在内部) 插入指定内容。
 		 */
 		$(function () {
 
@@ -26,20 +26,20 @@
 				});
 			});
 
-			$('#btn3').click(function () {
+			$("#btn3").click(function () {
 				/*
-				 * $('p').append('div');  这里的 div 只是单纯的文本
+				 * $("p").append("div");  这里的 div 只是单纯的文本
 				 */
 				// 生成的 html ： <p>This is another paragraph.<div>aaaa</div></p><p>This is another paragraph.<div>aaaa</div></p>
-				$('p').append($('div')); // 把 div 元素加入到 p 元素后面 (内部) 剪切
+				$('p').append($("div")); // 把 div 元素加入到 p 元素后面 (内部) 剪切
 			});
 
 			$("#btn4").click(function () {
 				/*
-				 * $('div').append("p","h1");  先插入 p 文本，后插入 h1文本
+				 * $("div").append("p","h1");  先插入 p 文本，后插入 h1文本
 				 */
 				// 生成的 html ： <div>aaaa<p>This is a paragraph.</p><p>This is another paragraph.</p><h1>h1</h1></div>
-				$('div').append($("p"), $("h1")); // 先插入 p 元素，后插入 h1 元素 到 div 内部 ( 剪切 )
+				$("div").append($("p"), $("h1")); // 先插入 p 元素，后插入 h1 元素 到 div 内部 ( 剪切 )
 			});
 
 		});
