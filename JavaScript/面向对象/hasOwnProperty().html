@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>hasOwnProperty()</title>
+	<script>
+		// hasOwnProperty() : 看是不是对象自身下面的属性  ( 挂载在 Object.prototype 上 )
+		var arr = [];
+		arr.num = 10;
+		Array.prototype.num2 = 20;
+
+		console.log(arr.hasOwnProperty("num"));  // true ( num 这个属性只属于 arr，其他人没有 )
+
+		console.log(arr.hasOwnProperty("num2"));  // false ( 所有的数组对象都有 num2，并不是 arr 拥有 )
+
+		console.log(arr.hasOwnProperty == Object.prototype.hasOwnProperty);  // true
+
+		function Person() {
+		}
+		Person.prototype.name = "Nicholas";
+		Person.prototype.age = 29;
+		Person.prototype.job = "Software Engineer";
+		Person.prototype.sayName = function () {
+			console.log(this.name);
+		};
+		var person1 = new Person();
+		// 使用 hasOwnProperty() 方法可以检测一个属性是存在于实例中还是原型中，这个方法是从 Object 继承来的
+		// 只在给定属性存在于对象实例中才会返回 true
+		console.log(person1.hasOwnProperty("name")); // false
+		person1.name = "Greg"; // 为对象实例添加一个属性
+		console.log(person1.name); // Greg  -> 来自实例，屏蔽原型上保存对象中的同名属性
+		console.log(person1.hasOwnProperty("name")); // true
+		// undefined 不是在 [1,,3]对象下的属性
+		console.log( Object.prototype.hasOwnProperty.call([1,,3], 1)  );  // false
+	</script>
+</head>
+
+<body>
+</body>
+</html>

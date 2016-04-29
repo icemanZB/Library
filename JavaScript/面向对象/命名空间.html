@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>命名空间</title>
+	<script>
+		// 命名空间
+		// 命名空间是一个容器，它允许开发人员在一个独特的，特定于应用程序的名称下捆绑所有的功能。
+		// 在 JavaScript 中，命名空间只是另一个包含方法，属性，对象的对象。
+		// 创造的 JavaScript 命名空间背后的想法很简单：一个全局对象被创建，所有的变量，方法和功能成为该对象的属性。使用命名空间也最大程度地减少应用程序的名称冲突的可能性。
+
+		/*
+		 * 全局命名空间
+		 * 首先检查 MYAPP 是否已经被定义( 是否在同一文件中或在另一文件)。
+		 * 如果是的话，那么使用现有的 MYAPP 全局对象，否则创建一个名为 MYAPP 的空对象用来封装方法，函数，变量和对象
+		 */
+		var MYAPP = MYAPP || {};
+		// 子命名空间
+		MYAPP.event = {};
+
+		// 给普通方法和属性创建一个叫做 MYAPP.commonMethod 的容器
+		MYAPP.commonMethod = {
+			regExForName: "", // 定义名字的正则验证
+			regExForPhone: "", // 定义电话的正则验证
+			validateName: function (name) {
+				// 对名字 name 做些操作，你可以通过使用 "this.regExForname"
+				// 访问 regExForName 变量
+			},
+
+			validatePhoneNo: function (phoneNo) {
+				// 对电话号码做操作
+			}
+		};
+
+		// 对象和方法一起申明
+		MYAPP.event = {
+			addListener: function (el, type, fn) {
+				//  代码
+			},
+			removeListener: function (el, type, fn) {
+				// 代码
+			},
+			getEvent: function (e) {
+				// 代码
+			}
+			// 还可以添加其他的属性和方法
+		};
+
+		// 使用 addListner 方法的写法
+		MYAPP.event.addListener("yourel", "type", callback);
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

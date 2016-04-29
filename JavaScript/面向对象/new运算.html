@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>new</title>
+	<script>
+		// new constructor()
+		// new 运算让构造函数产生对象实例，并以该实例作为函数上下文环境中的 this 对象引用，但是不能认为 constructor 后面的括号是函数调用的括号
+		// 所以，不能错误的认为：new 运算是 "产生对象实例，并调用 constructor 函数" —— 尽管看起来是这样的
+
+		function Foo(){
+			var data= this;
+			return {};  // or return new Object();
+		}
+		obj = new Foo();  // obj 会被赋值为一个对象的实例，但这并不是 new 运算产生的，而是 foo() 函数中返回的
+		// 注意使用这种方法的时候，只能通过 return 返回一个引用类型的直接量或对象实例，但不能是值类型的直接量( true、"abc' )之类
+		// 将 Foo() 视为普通函数的方法，虽然带来了一些特殊的效果，但是也破坏了对象的继承链
+	</script>
+</head>
+<body>
+
+</body>
+</html>

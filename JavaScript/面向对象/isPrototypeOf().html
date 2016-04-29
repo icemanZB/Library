@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>isPrototypeOf()</title>
+	<script>
+		/*
+		 * isPrototypeOf() 方法来确定对象之间是否存在关系，只要原型链中出现过的原型，都可以说是该原型链所派生的实例原型
+		 */
+		function Person() {
+		}
+		Person.prototype.name = "Nicholas";
+		Person.prototype.age = 29;
+		Person.prototype.job = "Software Engineer";
+		Person.prototype.sayName = function () {
+			console.log(this.name);
+		};
+		var person1 = new Person(); // 创建 person1 实例
+		var person2 = new Person();
+
+
+		console.log(Person.prototype.isPrototypeOf(person1));  // true
+		console.log(Person.prototype.isPrototypeOf(person2));  // true
+
+		function SuperType() {
+			this.property = true;
+		}
+
+		SuperType.prototype.getSuperValue = function () {
+			return this.property;
+		};
+
+		function SubType() {
+			this.subproperty = false;
+		}
+
+		SubType.prototype = new SuperType();
+
+		SubType.prototype.getSubValue = function () {
+			return this.subproperty;
+		};
+
+		var instance = new SubType();
+		// isPrototypeOf() 只要原型链中出现过的原型，都可以说是该原型链所派生的实例原型
+		// 用来判断指定对象 object 是否存在于另一个对象 instance 的原型链中
+		console.log(Object.prototype.isPrototypeOf(instance)); // true
+		console.log(SuperType.prototype.isPrototypeOf(instance)); // true
+		console.log(SubType.prototype.isPrototypeOf(instance));  // true
+
+		var re = /^\s*/;
+		// 这里定义一个正则表达式对象
+		// 这里检查 RegExp 是不是 re 的原形链对象
+		console.log(RegExp.prototype.isPrototypeOf(re));  // true
+
+		var o = {};
+		console.log(Object.prototype.isPrototypeOf(o));  // true
+		console.log(Object.isPrototypeOf(o));  // false
+		console.log(o.isPrototypeOf(Object.prototype));  // false
+		console.log(o.isPrototypeOf(Object));  // false
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

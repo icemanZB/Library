@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>对象和成员的检查</title>
+	<script>
+		// 对象及成员检查
+		var obj = {};
+		function _in(obj, prop) {
+			if (obj[prop]) return true;
+			return false;
+		}
+		console.log(_in(obj, "myProp"));  // 检测不存在的属性
+		// 检测某些有值的属性，仍会返回 false
+		var propertyNames = [0, "", [], false, undefined, null];
+		for (var i = 0; i < propertyNames.length; i++) {
+			// 即使一个属性存在，如果他的值为 propertyNames 中的任意一个，都将返回 false
+			console.log(_in(obj, propertyNames[i]));
+		}
+		// 不推荐
+		if (window.XMLHttpRequest) {
+		}
+		// 推荐 ( 取不存在的属性将返回undefined )
+		if (typeof(window.XMLHttpRequest) != "undefined") {
+		}
+		// 但这个方法还是有点问题
+		var obj2 = {
+			'aValue': undefined
+		};
+		// 这种情况 aValue 属性是存在的，但是不能通过 typeof 运算来检测它是否存在
+		if (typeof(obj2.aValue) != "undefined") {
+			// ..
+		}
+
+		// 正是这个缘故，在 Web 浏览器中，DOM 的约定是 "如果一个属性没有初始值，则应该置为 null"
+
+		// 如果需要检测 "对象是否具有某个属性"，应当使用 in 运算符
+		// 如果需要检测 "对象是不是一个类的实例"，应当使用 instanceof 运算符
+		// instanceof 运算符将会检测类的继承关系，因此一个子类的实例，在对祖先类做 instanceof 运算时，仍会得到 true
+		function MyObject() {
+		}
+		function MyObjectEx() {
+			// ...
+		}
+		MyObjectEx.prototype = new MyObject();
+		// 实例创建
+		var obj3 = new MyObjectEx();
+		// 检测构造类，显示true
+		console.log(obj3 instanceof MyObjectEx);
+		// 检测祖先类，显示true
+		console.log(obj3 instanceof MyObject);
+
+		// propertyIsEnumerable() 被实现为"只检测对象的非自原型链继承而来的继承属性"
+		// 当某个对象成员不存在或它不可列举时，则对该成员调用 propertyIsEnumerable() 方法返回false
+		// 这个 propertyIsEnumerable() 的一个规范错误，原型链上的(父类)成员也是可以被 for-in 语句列举的，但是 propertyIsEnumerable() 返回 false
+
+		function MyObject2() {
+		}
+		function MyObjectEx2() {
+		}
+		// aCustomMember 是原型链上的(父类的)成员
+		MyObjectEx2.prototype.aCustomMember = "MyObject";
+		// 显示false，因为"继承来的成员"不能被列举
+		var obj1 = new MyObjectEx2();
+		console.log(obj1.propertyIsEnumerable("aCustomMember"));
+		// 列举obj1时，将包括'aCustomMember'
+		for (var propName in obj1) {
+			console.log(propName);
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

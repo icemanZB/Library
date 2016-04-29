@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>求一个字符串的字节长度</title>
+	<script>
+		// 一个英文字符占用一个字节，一个中文字符占用两个字节
+		function GetBytes(str) {
+			var len = str.length, bytes = len;
+
+			for (var i = 0; i < len; i++) {
+				// 遍历判断字符串中每个字符的 Unicode 码，大于 255 则为中文
+				if (str.charCodeAt(i) > 255) bytes++;
+			}
+
+			return bytes;
+		}
+
+		alert(GetBytes("你好,as"));
+	</script>
+</head>
+<body>
+
+</body>
+</html>

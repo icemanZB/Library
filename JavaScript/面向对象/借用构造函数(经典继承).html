@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>经典继承</title>
+	<script>
+		// 借用构造函数( 经典继承 )：为了解决原型中包含引用类型值所带来的问题 ( constructor stealing )
+		// 在子类型构造函数的内部调用超类型构造函数，使用 apply() 和 call() 来改变当前执行环境
+
+		function SuperType(name) {
+			this.colors = ["red", "blue", "green"];
+			// 借用构造函数的优势，可以在子类型构造函数中向超类型构造函数传递参数
+			this.name = name;
+		}
+		function SubType() {
+			// 继承了 SuperType，同时还传递了参数
+			// 实际上在将要创建的 SubType 实例的环境下调用了 SuperType 构造函数( 在 SubType 对象上执行 SuperType() 函数中定义的所有对象初始化代码 )
+			// 在 SubType 构造函数内部调用 SuperType 构造函数时，实际上是为 SubType 的实例设置了 name 属性，为了确保 SuperType 构造函数不会重写子类型的属性
+			SuperType.call(this, "Nicholas");
+			// 可以在调用超类型构造函数后，再添加应该在子类型中定义的属性
+			this.age = 29;
+		}
+
+		var instance = new SubType();
+		console.log(instance.name); // Nicholas
+		console.log(instance.age); // 29
+
+		var instance1 = new SubType();
+		instance1.colors.push('black');
+		console.log(instance1.colors);  // ["red", "blue", "green", "black"]
+
+		var instance2 = new SubType();
+		console.log(instance2.colors);  // ["red", "blue", "green"]
+
+		/*
+		 * 借用构造函数的问题：方法都在构造函数中定义，因此函数复用就无从谈起。而且，在超类型的原型中定义的方法，对子类型而言也是不可见的
+		 * 结果所有类型都只能使用构造函数模式，所以借用构造函数也很少单独使用
+         */
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>类式继承</title>
+    <script>
+        // 类 : JavaScript 是没有类的概念的，把 JavaScript 中的构造函数看做的类
+        // 父类
+        function Aaa() {
+            this.name = [1, 2, 3];
+        }
+        Aaa.prototype.showName = function () {
+            console.log(this.name);
+        };
+
+        // 子类
+        function Bbb() {
+            Aaa.call(this);  // 继承父类的属性
+        }
+        // 属性和方法分开继承避免属性继承，只继承方法
+        var F = function () {
+        };
+        F.prototype = Aaa.prototype;
+        Bbb.prototype = new F();
+        Bbb.prototype.constructor = Bbb;  // 修正指向问题
+
+
+        // 问题 : constructor 指向被修改了 (所以要修正指向问题)
+        // b1.name 如果是个数组的话，因为继承是引用关系，所以改了 b1 的数组，其他对象也被修改了 (属性和方法分开继承)
+        // Bbb.prototype=new Aaa();  // 类式继承 (一句话做到继承)
+
+
+        var b1 = new Bbb();
+        b1.showName();
+        b1.name.push(4);
+        console.log( b1.constructor );  // 如果不修正的话会指向 Aaa
+
+        var b2 = new Bbb();
+        console.log(b2.name);
+
+
+    </script>
+</head>
+
+<body>
+</body>
+</html>

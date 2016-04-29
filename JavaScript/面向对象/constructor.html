@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>constructor</title>
+    <script>
+
+        // constructor：查看对象的构造函数
+
+        function Aaa() {
+        }
+
+        var a1 = new Aaa();
+
+        console.log(a1.constructor);  // function Aaa(){}
+
+        var arr = [];
+        console.log(arr.constructor == Array);  // true
+
+
+        function Bbb() {
+        }
+
+        Bbb.prototype.constructor = Bbb;   // 每一个函数都会有的，都是自动生成的
+
+        // Bbb.prototype.constructor = Array;  这句可以覆盖自动生成的那句
+
+        var b1 = new Bbb();
+
+        console.log(b1.hasOwnProperty == Object.prototype.hasOwnProperty);  // true
+
+
+        function Ccc() {
+        }
+
+        // 会影响 Ccc.prototype.constructor 的指向
+        Ccc.prototype = {
+            constructor: Ccc,  // 修正指向 (一定要写)
+            name: "小明",
+            age: 20
+        };
+
+        var c1 = new Ccc();
+        console.log(c1.constructor);  // 如果不写修正指向的那句 打印出的就是 function Object(){}
+
+
+        function Ddd() {
+        }
+
+        Ddd.prototype.name = 10;
+        Ddd.prototype.constructor = Ddd; // 自己写的也是找不到的
+        // for in 的时候有些属性是找不到的
+        for (var attr in Ddd.prototype) {
+            alert(attr);
+        }
+
+    </script>
+</head>
+
+<body>
+</body>
+</html>

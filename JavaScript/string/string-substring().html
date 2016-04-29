@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>string-substring()</title>
+    <script>
+        /*
+         * substring(start,end) 第一个参数指定字符串的开始位置，第二个参数(在指定的情况下)表示字符串到哪里结束
+         * 其内容是从 start 处到 end-1 处的所有字符，其长度为 stop 减 start
+         *
+         * 说明
+         *	 substring 方法返回的子串包括 start 处的字符，但不包括 end 处的字符
+         *	 如果 start 与 end 相等,那么该方法返回的就是一个空串(即长度为 0 的字符串)
+         *	 如果 start 比 end 大，那么该方法在提取子串之前会先交换这两个参数
+         *	 如果 start 或 end 为负数，那么它将被替换为 0
+         *
+         * 截取带有空格的字符串后的长度是每个空格算一个字符长度
+         *
+         * */
+
+        var str = "0123456789";
+        console.info(str.substring(5)); // "56789"
+        console.info(str.substring(0, 5)); // "01234"
+        console.info(str.substring(-5)); // "0123456789"
+        console.log("123456789".substring(5, 2));  // 345
+        var stringValue="hello world";
+        // stringValue.substring(3,0); 这个方法会将较小的数作为开始位置，较大的数作为结束位置，最终调用的是 substring(0,3);
+        console.log(stringValue.substring(3,-4)); // hel
+    </script>
+</head>
+<body>
+
+</body>
+</html>

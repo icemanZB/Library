@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>原型式继承</title>
+	<script>
+		// 原型式继承：借助原型可以基于已有的对象创建新对象，同时还不必因此创建自定义类型
+		// 在 object 函数内部，先创建了一个临时性的构造函数，然后将传入的对象作为这个构造函数的原型，最后返回了这个临时类型的一个新实例
+		// 从本质上讲，object() 对传入其中的对象执行了一次浅复制，将一个对象可以作为另一个对象的基础
+		// 新对象将 person 对象作为原型，这意味着 person.friends 不仅属性 person 所有，而且也被 anotherPerson 和 yetAnotherPerson 共享
+		function object(o) {
+			function F() {
+			}
+
+			F.prototype = o;
+			return new F();
+		}
+
+		var person = {
+			name : "Nicholas",
+			friends:["shelby","Court","Van"]
+		};
+
+		var anotherPerson = object(person);
+		anotherPerson.name = "Greg";
+		anotherPerson.friends.push("Rob");
+
+		var yetAnotherPerson = object(person);
+		yetAnotherPerson.name = "Linda";
+		yetAnotherPerson.friends.push("Barbie");
+
+		console.log(person.friends); //  ["shelby", "Court", "Van", "Rob", "Barbie"]
+	</script>
+</head>
+<body>
+
+</body>
+</html>

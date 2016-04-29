@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>寄生构造函数</title>
+	<script>
+		// 寄生构造函数：不建议使用；因为返回的对象与构造函数或者与构造函数的原型属性之间没有关系；
+		// 也就是说，构造函数返回的对象与在构造函数外部创建的对象没有什么不同，因此不能依赖 instanceOf 操作符来确定对象类型
+
+		function Person(name, age, job) {
+			return {
+				name: name,
+				age: age,
+				job: job,
+				sayName: function () {
+					console.log(this.name);
+				}
+			};
+		}
+
+		var friend = new Person("Nicholas", 29, "Software Engineer");
+		friend.sayName();  // Nicholas
+		console.log(friend instanceof Person);  // false
+
+		// 应用
+		function SpecialArray() {
+			var arr = [];
+			arr.push.apply(arr, arguments);
+			arr.toPipedString = function () {
+				return this.join("|");
+			};
+			return arr;
+		}
+
+		var colors = new SpecialArray("red", "blue", "green");
+		console.log(colors.toPipedString()); // red|blue|green
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

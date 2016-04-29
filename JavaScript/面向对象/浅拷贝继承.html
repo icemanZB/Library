@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>浅拷贝继承</title>
+	<script>
+		function Animal() {
+		}
+		Animal.prototype.species = "动物";
+		Animal.prototype.arr = ["动物","小鸟"];
+		function extend(Child, Parent) {
+			var p = Parent.prototype;
+			var c = Child.prototype;
+			// 浅拷贝的问题，如果父对象的属性等于数组或另一个对象，那么实际上，子对象获得的只是一个内存地址，而不是真正拷贝，因此存在父对象被篡改的可能
+			for (var i in p) {
+				if (p.hasOwnProperty(i)) {
+					c[i] = p[i];
+				}
+
+			}
+			// 意思是为子对象设一个 uber 属性，这个属性直接指向父对象的 prototype 属性。( uber 是一个德语词，意思是"向上"、"上一层"。)
+			// 这等于在子对象上打开一条通道，可以直接调用父对象的方法。这一行放在这里，只是为了实现继承的完备性，纯属备用性质。
+			c.uber = p;
+		}
+
+		function Cat(name, color) {
+			Animal.apply(this, arguments);
+			this.name = name;
+			this.color = color;
+		}
+		var animal = new Animal();
+		extend(Cat, Animal);
+		var cat1 = new Cat("大毛", "黄色");
+		cat1.arr.push("犀牛");
+		console.log(animal.arr); //  ["动物", "小鸟", "犀牛"]
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>面向对象继承</title>
+    <script>
+        function Animal(age) {
+            this.age = age;
+            // this.species = "动物";　　
+        }
+
+        Animal.prototype.species = "动物";
+
+        function Cat(name, color) {
+
+            // Animal.apply(this, arguments);　
+            this.name = name;
+            this.color = color;
+        }
+        var F = function () {
+        }; // 利用一个空对象作为中介,F是空对象，所以几乎不占内存
+
+        F.prototype = Animal.prototype;// 属性和方法分开继承 避免属性继承,只继承方法 Cat.prototype=new Animal();
+
+        Cat.prototype = new F();
+
+        Cat.prototype.constructor = Cat;  // 修正指向问题
+
+        var cat = new Cat("大毛", "黄色");
+
+        console.info(cat.species); // 动物
+        console.info(cat.color); // 黄色
+        console.info(Animal.prototype.constructor); // Animal
+        console.info(Cat.prototype.constructor == Animal); // false
+        console.info(cat.constructor == Cat.prototype.constructor); // true
+        console.info(cat.constructor == Animal); // false
+
+        //这个extend函数,就是YUI库如何实现继承的方法。
+        function extend(Child, Parent) {
+            var F = function () {
+            }; // 利用一个空对象作为中介,F是空对象，所以几乎不占内存
+
+            F.prototype = Parent.prototype;
+
+            Child.prototype = new F();
+
+            Child.prototype.constructor = Child;
+
+            // 意思是为子对象设一个uber属性，这个属性直接指向父对象的prototype属性。(uber是一个德语词，意思是"向上"、"上一层")
+            // 这等于在子对象上打开一条通道，可以直接调用父对象的方法。这一行放在这里，只是为了实现继承的完备性，纯属备用性质。
+            Child.uber = Parent.prototype;
+
+        }
+
+        function extend2(Child, Parent) {
+
+            var p = Parent.prototype;
+
+            var c = Child.prototype;
+
+            for (var i in p) {
+                c[i] = p[i];
+            }
+
+            c.uber = p;
+        }
+
+
+        extend(Cat, Animal);
+
+        var cat1 = new Cat("大毛", "黄色");
+
+        alert(cat1.species); // 动物
+
+        extend2(Cat, Animal);
+
+        var cat2 = new Cat("大毛", "黄色");
+
+        alert(cat2.species); // 动物
+        console.info(cat2.age);
+    </script>
+</head>
+<body>
+
+</body>
+</html>

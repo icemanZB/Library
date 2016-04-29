@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>动态原型模式</title>
+	<script>
+		/*
+		 * 动态原型模式：把所有信息都封装在了构造函数中，而通过在构造函数中初始化原型(在有必要的情况下)，又保持了同时使用构造函数和原型的优点
+		 * 换句话说，可以通过检查某个应该存在的方法是否有效，来绝对能够是否需要初始化原型
+		 */
+
+		function Person(name, age, job) {
+			// 属性
+			var _this = this;
+			this.name = name;
+			this.age = age;
+			this.job = job;
+			// sayName 不存在，将它添加到原型中，并且只会在初次调用构造函数才会执行
+			// if 语句检查的可以使初始化之后应该存在的任何属性或方法，不必每个属性和方法都去检查
+			// 不能使用对象字面量重写原型
+			if (typeof this.sayName != "function") {
+				Person.prototype.sayName = function () {
+					console.log(_this.name);
+				};
+			}
+		}
+
+		var friend = new Person("Nicholas", 29, "Software Engineer");
+		friend.sayName();
+	</script>
+</head>
+<body>
+
+</body>
+</html>

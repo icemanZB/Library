@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>string-split()</title>
+	<script>
+		// split() 有两个参数，第二个参数用于指定数组的大小
+		// spilt() 中的正则表达式的支持因浏览器而异。匹配项以及带有捕获组的模式，匹配的行为就不大相同了
+		// IE8 之前版本会忽略捕获组，ECMA-626 规定应该把捕获组拼接到结果数组中。IE9 能正确地在结果中包含捕获组
+		// Firefox3.6 之前版本在结果数组未找到匹配项时，会在结果数组中包含空字符串，ECMA-262 规定没有匹配项的捕获组在结果数组中应该用 undefined
+		var colorText="red,blue,green,yellow";
+		// 取得包含逗号字符的数组，注意通过正则表达式指定的分隔符出现在了字符串的开头和末尾，所以第一项和最后一项是两个空字符串
+		console.log(colorText.split(/[^\,]+/));  // ["", ",", ",", ",", ""]
+		// 正则表达式中使用捕获组还有其他微妙的差别，所以一定要在各个浏览器多测试
+		console.log( "2:3:4:5".split(":"));	// 将返回["2", "3", "4", "5"]
+		console.log( "|a|b|c".split("|"));	// 将返回["", "a", "b", "c"]
+
+		// 如果您希望把单词分割为字母，或者把字符串分割为字符，可使用下面的代码：
+		console.log( "hello".split(""));	// 可返回 ["h", "e", "l", "l", "o"]
+		// 只需要返回一部分字符，请使用 howmany 参数
+		console.log( "hello".split("", 3) ); 	// 可返回 ["h", "e", "l"]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

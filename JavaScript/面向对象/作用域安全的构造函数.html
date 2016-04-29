@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>作用域安全的构造函数</title>
+	<script>
+		// 作用域安全的构造函数，首先确认 this 对象是正确类型的实例，如果不是那么会创建新的实例并返回
+		function Person(name, age, job) {
+			if (this instanceof Person) {
+				this.name = name;
+				this.age = age;
+				this.job = job;
+			} else {
+				return new Person(name, age, job);
+			}
+		}
+
+		var person1 = Person("Nicholas", 29, "Software Engineer");
+		console.log(window.name); // ""
+		console.log(person1.name); // Nicholas
+
+		var person2 = Person("Shelby", 34, "Ergonomist");
+		console.log(person2.name); // Shelby
+
+		// 问题：如果使用构造函数窃取模式的继承，且不使用原型链，那么继承很可能被破坏
+		function PolygonQue(sides) {
+			if (this instanceof PolygonQue) {
+				this.sides = sides;
+				this.getArea = function () {
+					return 0;
+				};
+			} else {
+				return new PolygonQue(sides);
+			}
+		}
+
+		function RectangleQue(width, height) {
+			// 由于 Polygon 构造函数时作用域安全的，this 对象并非 Polygon 的实例，所以会返回一个新的 Polygon 对象
+			// Rectangle 构造函数中 this 对象并没有得到增长，同时 Polygon.call() 返回的值也没有用到，所以 Rectangle 实例中就不会有 sides 属性
+			PolygonQue.call(this, 2);
+			this.width = width;
+			this.height = height;
+			this.getArea = function () {
+				return this * width * this.height;
+			};
+		}
+
+		var rectQue = new RectangleQue(5, 10);
+		console.log(rectQue.sides);  // undefined
+
+		// 解决方案：构造函数窃取结合使用原型链或者寄生组合则可以解决这个问题
+		function Polygon(sides) {
+			if (this instanceof Polygon) {
+				this.sides = sides;
+				this.getArea = function () {
+					return 0;
+				};
+			} else {
+				return new Polygon(sides);
+			}
+		}
+
+		function Rectangle(width, height) {
+			Polygon.call(this, 2);
+			this.width = width;
+			this.height = height;
+			this.getArea = function () {
+				return this * width * this.height;
+			};
+		}
+		// 一个 Rectangle 实例也同时是一个 Polygon 实例，所以 Polygon.call() 会照原意执行，最终为 Rectangle 实例添加了 sides 属性
+		// 单纯基于构造函数窃取来实现继承，推荐作用域安全的构造函数作为最佳实践
+		function F() {
+		}
+		F.prototype = Polygon.prototype;
+		Rectangle.prototype = new F();
+		Rectangle.prototype.constructor = Rectangle;
+
+		var rect = new Rectangle(5, 10);
+		console.log(rect.sides); // 2
+	</script>
+</head>
+<body>
+
+</body>
+</html>

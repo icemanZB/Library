@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>string-substr()</title>
+	<script>
+		/*
+		 * substr 方法
+		 * substr  第一个参数指定字符串的开始位置，第二个参数 (在指定的情况下) 表示指定的则是返回的字符个数。
+		 * 语法 : stringObject.substr(start [length ])
+		 * 说明   如果 length 为 0 或负数，将返回一个空字符串
+		 * 	 	  如果没有指定该参数，则子字符串将延续到stringObject的最后
+		 *
+		 * 截取带有空格的字符串后的长度是每个空格算一个字符长度
+		 */
+		var str = "0123456789";
+		var stringValue = "hello world";
+		console.log(str.substr(5)); // "56789"
+		console.log("123456789".substr(2, 5)); // 34567 ( 第二个参数表示取5个字符)
+		// 在IE9 以下的版本，substr()方法传递负值的情况存在问题，它会返回原始的字符串
+		console.log(stringValue.substr(-3));  // rld -> -3 会转为 8 ( 11 + (-3) =8 ) -> stringValue.substr(8);
+		// substr() 方法将负的第一个参数加上字符串的长度，而将负的第二个参数转换为0
+		console.log(stringValue.substr(3, -4));  // "" -4->0 stringValue.substr(3,0); 取0个字符串
+	</script>
+</head>
+<body>
+
+</body>
+</html>

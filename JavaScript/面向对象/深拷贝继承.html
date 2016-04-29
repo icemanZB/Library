@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>深拷贝继承</title>
+	<script>
+		function deepCopy(p, c) {
+			var _c = c || {};
+			for (var attr in p) {
+				if (p.hasOwnProperty(attr)) {
+					if (typeof p[attr] === "object") {
+						_c[attr] = (p[attr].constructor === Array) ? [] : {};
+
+						//  ["北京", "上海", "香港"] [] birthPlaces
+						console.log(p[attr], _c[attr], attr);
+
+						deepCopy(p[attr], _c[attr]);
+
+					} else {
+						/*
+						 * 0 北京
+						 * 1 上海
+						 * 2 香港
+						 */
+						console.log(attr, p[attr]);
+						_c[attr] = p[attr];
+					}
+				}
+			}
+			console.log(_c);
+			return _c;
+		}
+
+		var Chinese = {
+			nation: "中国"
+		};
+		Chinese.birthPlaces = ["北京", "上海", "香港"];
+
+		var Doctor = deepCopy(Chinese);
+		console.log(Doctor);
+		Doctor.birthPlaces.push("厦门");
+		console.log(Doctor.birthPlaces); // ["北京", "上海", "香港", "厦门"]
+		console.log(Chinese.birthPlaces); // ["北京", "上海", "香港"]
+
+
+		(function () {
+			// 上面例子，递归中的步骤
+			var arr = ["北京", "上海", "香港", "杭州"];
+
+			var _arr = [];
+			for (var attr in arr) {
+				if (arr.hasOwnProperty(attr)) {
+					// attr : 0 1 2 3
+					_arr[attr] = arr[attr];
+				}
+			}
+			// 和上面 for 循环意思是一样的
+			for (var i = 0; i < arr.length; i++) {
+				_arr[i] = arr[i];
+			}
+
+			console.log(_arr);
+
+		})();
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

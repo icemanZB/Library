@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>string-search()</title>
+	<script>
+		/*
+		 * search() 方法用于检索字符串中指定的子字符串，或检索与正则表达式相匹配的子字符串
+		 * 如果没有找到任何匹配的子串，则返回 -1
+		 * search() 方法不执行全局匹配，它将忽略标志 g。它同时忽略 regexp 的 lastIndex 属性，并且总是从字符串的开始进行检索
+		 * 这意味着它总是返回 stringObject 的第一个匹配的位置。
+		 */
+		var str = "abcdef";
+		console.log(str.search("de")); // 3  de 在原字符串中从第三个开始
+
+		var str2 = "Visit W3School!";
+		// search() 对大小写敏感
+		console.log(str2.search(/W3School/));  // 6
+
+		console.log(str2.search(/w3school/i));  // 6 使用正则忽略大小写
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

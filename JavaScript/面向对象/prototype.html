@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>prototype</title>
+	<script>
+		// JavaScript 是基于原型 ( prototype-based ) 来实现的面向对象 (OOP) 的编程范式的，但并不是所有的对象都拥有 prototype 这一属性
+		var a = {};
+		console.log(a.prototype);  // => undefined
+
+		var b = function () {
+		};
+		console.log(b.prototype);  // => {}  prototype 是每个 function 定义时自带的属性
+
+		var c = "Hello";
+		console.log(c.prototype);  // => undefined
+
+		var Person = function () {
+		};
+		Person.prototype.type = "Person";
+		Person.prototype.maxAge = 100;
+		/*
+		 * Person 是一个函数类型的变量，因此自带了 prototype 属性，prototype 属性中的 constructor 又指向 Person 本身
+		 * 通过 new 关键字生成的 Person 类的实例 p1 ，通过 __proto__ 属性指向了 Person 的原型。
+		 * 这里的 __proto__ 只是为了说明实例 p1 在内部实现的时候与父类之间存在的关联 ( 指向父类的原型 )
+		 * 在实际操作过程中实例可以直接通过获取父类原型中的属性，从而实现了继承的功能。
+		 */
+		var p = new Person();
+		console.log(p.maxAge);
+		p.name = "rainy";
+		// 如图 prototype.png
+		console.log(Person.prototype.constructor === Person);  // => true
+		// 一个内置的 [[Prototype]] 属性(__proto__)，指向它"父类"的 prototype
+		console.log(p.__proto__ === Person.prototype);         // => true
+		console.log(p.prototype);  // => undefined
+
+
+		// 如图 prototype2.png
+		var Obj = function () {
+		};
+		var o = new Obj();
+		console.log(o.__proto__ === Obj.prototype);  // => true
+		console.log(o.__proto__.constructor === Obj); // => true
+
+		console.log(Obj.__proto__ === Function.prototype); // => true
+		console.log(Obj.__proto__.constructor === Function); // => true
+
+		console.log(Function.__proto__ === Function.prototype); // => true
+		console.log(Object.__proto__ === Object.prototype);     // => false
+		console.log(Object.__proto__ === Function.prototype);   // => true
+
+		console.log(Function.__proto__.constructor === Function);// => true
+		console.log(Function.__proto__.__proto__);               // => {}
+		console.log(Function.__proto__.__proto__ === o.__proto__.__proto__); // => true
+		// prototype 对象也有 __proto__ 属性，向上追溯一直到 null
+		console.log(o.__proto__.__proto__.__proto__ === null);   //=> true
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

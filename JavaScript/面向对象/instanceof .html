@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>instanceof</title>
+	<script>
+		/*
+		 * instanceof (运算符): 对象与构造函数在原型链上是否有关系( 确定原型和实例的关系 )
+		 */
+
+		function Aaa() {
+		}
+
+		var a1 = new Aaa();
+
+		console.log(a1 instanceof Aaa);  // true  是否在同一个原型链上
+		console.log(a1 instanceof Array); // false
+		// 任何对象 instanceof Object 都为 true
+		console.log(a1 instanceof Object);  // true  每一个对象的最外层都是 Object.prototype
+
+		// 类型的判断  (不是最好的方法)
+		var arr = [];
+
+		console.log(arr instanceof Array);
+
+		function SuperType() {
+			this.property = true;
+		}
+
+		SuperType.prototype.getSuperValue = function () {
+			return this.property;
+		};
+
+		function SubType() {
+			this.subproperty = false;
+		}
+
+		SubType.prototype = new SuperType();
+
+		SubType.prototype.getSubValue = function () {
+			return this.subproperty;
+		};
+
+		var instance = new SubType();
+		// 确定原型和实例的关系
+		// 使用 instanceof 操作符，只要用这个操作符来测试实例与原型链中出现过的构造函数，就会返回 true
+		console.log(instance instanceof Object); // true
+		console.log(instance instanceof SuperType); // true
+		console.log(instance instanceof SubType); // true
+		// instance 是 Object、SuperType、SubType 中任何一个类型的实例
+
+	</script>
+</head>
+
+<body>
+</body>
+</html>

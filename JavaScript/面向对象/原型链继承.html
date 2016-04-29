@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>原型链继承</title>
+	<script>
+		// 原型链继承：利用原型让一个引用类型继承另外一个引用类型的属性和方法
+		// 原型链可以用来在同一个对象类型的不同实例之间共享功能
+		function SuperType() {
+			this.property = true;
+			this.colors = ["red", "blue", "green"];
+		}
+
+		SuperType.prototype.getSuperValue = function () {
+			return this.property;
+		};
+
+		function SubType() {
+			this.subproperty = false;
+		}
+
+		// 继承了 SuperType，原型对象等于另一个类型的实例，SubType.prototype 变成了 SuperType 的一个实例( 本质就是重写原型对象 )
+		// 所以 SubType 也拥有了自己的 colors 属性，就类似于 SubType.prototype.colors 一样
+		// 因此所有的 SubType 实例都会共享这个 colors 属性
+		SubType.prototype = new SuperType();
+
+		SubType.prototype.getSubValue = function () {
+			return this.subproperty;
+		};
+
+		/*
+		 * 通过使用原型链实现继承时，不能使用对象字面量创建原型方法，因为这样就会重写原型链
+		 * 此时原型链已经断开 new SubType().getSuperValue() error!
+		 */
+
+		/*
+		 * SubType.prototype = {
+		 *		getSubValue: function () {
+		 *			return this.subproperty;
+		 *		},
+		 *		someOtherMethod: function () {
+		 *			return false;
+		 *		}
+		 *	};
+		 */
+
+		var instance = new SubType();
+		instance.colors.push("black");
+		console.log(instance.colors);  //  ["red", "blue", "green", "black"]
+
+		var instance2 = new SubType();
+		console.log(instance2.colors);  //  ["red", "blue", "green", "black"]
+
+		console.log(instance.getSuperValue()); // true
+		console.log(instance.constructor); // function SuperType(){ this.property = true; }
+
+		/*
+		 * 原型搜索机制：调用 instance.getSuperValue(); 会经历三个搜索步骤
+		 * 1) 搜索实例；2) 搜索 SubType.prototype； 3) 搜索 SuperType.prototype；
+		 */
+
+		// 确定原型和实例的关系
+		// 使用 instanceof 操作符，只要用这个操作符来测试实例与原型链中出现过的构造函数，就会返回 true
+		console.log(instance instanceof Object); // true
+		console.log(instance instanceof SuperType); // true
+		console.log(instance instanceof SubType); // true
+		// instance 是 Object、SuperType、SubType 中任何一个类型的实例
+
+		/*
+		 * 原型链第二个问题：在创建子类型的实例时，不能向超类型的构造函数中传递参数，实际上应该是没有办法在不影响所有对象实例的情况下
+		 * 给超类型的构造函数传递参数，所以实践中很少会单独使用原型链
+		 */
+	</script>
+</head>
+<body>
+
+</body>
+</html>
