@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>js代码语义化</title>
+	<script>
+		/*
+		 * 数据类型判断
+		 */
+		if (Object.prototype.toString.call("iceman") === "[object String]") {
+			// doSomething();
+		}
+		// 好的写法
+		function isType(type) {
+			return function (o) {
+				return Object.prototype.toString.call(o) === "[object " + type + "]";
+			}
+		}
+
+		var isString = isType("String");
+		var isObject = isType("Object");
+		var isArray = isType("Array");
+		isString("I'm Barret Lee.");
+		isArray([1, 2, 3]);
+		isObject({});
+
+		/* 清空一个队列 */
+		var Queue = ["test1", "test2", "test3"];// 常见方式
+		Queue.length = 0;
+		Queue = [];
+		// 推荐，代码具有很强的语义性，从索引为 0 的地方开始，直到队列最后，删除 Queue 中所有的 item
+		Queue.splice(0, Queue.length);
+		// 这种写法的扩展性也更好 Queue.splice(2, 4); // 删除从索引为 2，往后的 4 个元素
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

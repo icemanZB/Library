@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>解码函数</title>
+	<script>
+		// encodeURI() 不会对本身属于 URI 的特殊字符进行编码，例如冒号、正斜杠
+		// encodeURIComponent() 则会对他发现的任何非标准字符进行编码
+
+		var uri= "http://www.wrox.com/illega value.htm#start";
+		console.log(encodeURI(uri));  // http://www.wrox.com/illegal%20value.htm#start
+		console.log(encodeURIComponent(uri)); // http%3A%2F%2Fwww.wrox.com%2Fillegal%20value.htm%23start
+		// 一般来说，使用 encodeURIComponent() 方法的时候要比使用 encodeURI() 更多
+
+		// decodeURI 和 decodeURIComponent() 对应解码
+		var dUri= "http%3A%2F%2Fwww.wrox.com%2Fillegal%20value.htm%23start";
+
+		console.log(encodeURI(dUri));  // http%3A%2F%2Fwww.wrox.com%2Fillegal value.htm%23start
+		console.log(encodeURIComponent(dUri)); // http://www.wrox.com/illega value.htm#start
+
+		// 这些方法代替已经废弃的 escape() 和 unescape()
+		// URI方法能够编码所有 Unicode字符，原来的方法( escape() 和 unescape() )只能正确的编码 ASCII 字符
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

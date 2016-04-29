@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Number()</title>
+	<script>
+		/* Number() 可用于任何类型的数据，与一元加操作符作用一样(+)
+		 * 1、如果是Boolean值，true 和 false 将分别被转换为 1 和 0
+		 * 2、如果是数字值，只是简单的传入和返回
+		 * 3、如果是null值，返回 0
+		 * 4、如果是undefined，返回 NaN
+		 * 5、如果是字符串，遵循以下规则
+		 *    (1)、字符串中只包含数字( 前面带有正负号的情况 )，则将其转换为十进制数值  Number("00011") -> 11
+		 *    (2)、如果字符串中包含有浮点格式，则将其转换为对应的浮点数值
+		 *    (3)、如果字符串中包含有效的十六进制格式，例如："0xf"，则将其转换为相同大小的十进制整数值   Number("0xf") -> 15
+		 *    (4)、如果字符串是空的( 不包含任何字符 )，则将其转换为0  Number("") -> 0
+		 *    (5)、如果字符串中包含除上述格式之外的字符，则将其转换为NaN  Number("hello") -> NaN
+		 *    (6)、如果是对象，则调用对象的 valueOf() 方法，然后依照前面的规则转换返回的值。如果转换的结果是 NaN，则调用对象的 toString() 方法，然后再
+		 *         依次照前面的规则转换返回字符串的值
+		 */
+		(function () {
+			var o = {
+				valueOf: function () {
+					return -1;
+				}
+			};
+			console.log(Number("hello"));  // NaN
+			console.log(Number(""));  // 0
+			console.log(Number(true)); // 1
+			console.log(Number("09")); // 9
+			console.log(Number(null));  // 0
+			console.log(Number(undefined));  // NaN
+			console.log(Number("1.234"));  //  1.234
+			console.log(Number("0xf")); //  15
+			console.log(Number(o));  // -1
+
+		})();
+	</script>
+</head>
+<body>
+
+</body>
+</html>

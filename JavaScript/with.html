@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>with</title>
+	<script>
+		/*
+		 * 众所周知大家对 with 都没什么好感，而且不推荐使用。
+		 * 可以收集到的理由有：
+		 * 下面几条来自 《javascript权威指南》 第 5 版本。
+		 *
+		 *　　1、使用 with 的语句很难优化。
+		 *　　2、使用 with 语句速度要比不使用 with 语句的等价代码的速度慢得多。
+		 *　　3、在 with 语句中的函数定义和变量初始化可能产生令人惊讶，和直觉相抵触的行为。
+		 *　　4、90% (或者更高比例)的 with 应用场景都可以用其他更好的方式代替。
+		 */
+		var box = {
+			name: "Iceman",
+			age: 25,
+			height: 170
+		};
+
+		console.info(box.age);
+
+		with (box) { // 作用 省略对象名
+			console.info(name); //Iceman
+			console.info(age);
+		}
+	</script>
+</head>
+
+<body>
+</body>
+
+</html>

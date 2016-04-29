@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>表达式返回值return</title>
+	<script>
+		// 在 JavaScript 中并不是所有的函数都有 return 语句
+		// 对于没有 return 语句的 function，其调用表达式返回 undefined
+		(function () {
+		})(); // undefined
+
+		(function () {
+			return;
+		})(); // undefined
+
+		// 对象创建表达式本来也应该很简单，返回 new 的对象就可以了
+		typeof new Date(); // "object"
+
+		function Test() {
+			return new Date();
+		}
+		var test = new Test();
+		console.log(test instanceof Test);// false
+		console.log(test); // Mon May 18 2015 15:49:07 GMT+0800
+
+		function Test() {
+			return new Date();
+		}
+		function Test2() {
+			return 2;
+		}
+
+		console.log(new Test2() instanceof Test2); // true
+
+		/*
+		 * 当使用 function 的构造函数创建对象(new XXX)的时候,
+		 * 如果函数 return 基本类型或者没有return ( 其实就是 return undefined )的时候
+		 * new 返回的是对象的实例，如果函数 return 的是一个对象，那么 new 将返回这个对象而不是函数实例。
+		 */
+
+		// 这里千万别把构造函数(使用new)和普通函数调用混淆了，普通函数调用还是该返回什么返回什么的。看个题目
+
+		"foo" == new function () {
+			return String("foo");
+		};  // false
+		"foo" == new function () {
+			return new String("foo");
+		}; // true
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

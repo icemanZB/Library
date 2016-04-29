@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>JSON</title>
+	<script>
+		// JSON 不支持 undefined、变量、函数或对象的实例
+
+		// ECMA5 定义了全局的 JSON 对象，支持的浏览器有 IE8+、Firefox3.5+、Safari4+、Chrome、Opera10.5+
+		// JSON.stringify()、JSON.parse()
+
+		var book = {
+			"title": "Professional JavaScript",
+			"authors": [
+				"Nicholas C. Zakes"
+			],
+			edition: 3,
+			year: 2011
+		};
+		// {"title":"Professional JavaScript","edition":3}
+		var jsonText = JSON.stringify(book, ["title", "edition"]);
+		console.log(jsonText);
+		// {"title":"Professional JavaScript","authors":"Nicholas C. Zakes","year":5000}
+		// Firefox3.5、3.6 对 JSON.stringify()实现有个bug，在讲函数作为方法的第二个参数时，这个函数只能作为过滤器
+		var json = JSON.stringify(book, function (key, value) {
+			switch (key) {
+				case "authors":
+					return value.join(",");
+				case "year":
+					return 5000;
+				case "edition":
+					return undefined;
+				default:
+					return value;
+			}
+		});
+
+		// 检测是否是原生JSON对象
+		var isNativeJSON = window.JSON && Object.prototype.toString.call(JSON) == "[object JSON]";
+		console.log(isNativeJSON);  // true
+
+		/*
+		 * JSON 与 数组的区别
+		 *
+		 * JSON 的下标 是一个字符串；数组的下标是数字
+		 *
+		 * JSON 没有 length；数组有 length
+		 *
+		 */
+		var jsonArr = {a: 12, b: 5, c: 7};
+
+		var arr = [12, 5, 7];
+
+		console.log(jsonArr["a"]);
+
+		console.log(arr[1]);
+
+		console.log(jsonArr.length);  // undefined
+
+		console.log(arr.length);  // 3
+
+		// 针对纯 JSON 数据对象的深复制
+		// 然而使用这种方法会有一些隐藏的坑，它能正确处理的对象只有 Number、String、Boolean、Array 扁平对象，即那些能够被 JSON 直接表示的数据结构。
+		function jsonClone(obj) {
+			return JSON.parse(JSON.stringify(obj));
+		}
+		var clone = jsonClone({ a:1 });
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

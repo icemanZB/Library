@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>伪数组</title>
+	<script>
+		/*
+		 * fakeArr 被成功的转换成了 Array 对象
+		 * 通过 Array.prototype.slice(fakeArr,0) 转换为真正的数组的带有 length 属性的对象，0 可以不传
+		 * [].slice.call() 也是可以的，但以 prototype 的形式执行程序效率更高
+		 * IE的问题 : IE 中无法将 NodeList 转换为真正的数组，会出错，在IE内部定义了一个抽象类 Arraioid Array 和 Arguments 都继承与此，所以可以用 slice
+		 * IE 下的 dom 对象是以 com 对象的形式实现的，js对象与com对象不能进行转换
+		 * 常用的 arguments 对象、document.links、document.forms 等都是非常像数组的，可以使用
+		 * Array.prototype.slice.call(arguments,0)
+		 */
+
+		var fakeArr = {0: "a", 1: "b", length: 2}; // 这是一个标准的伪数组对象
+		var arr1 = Array.prototype.slice.call(fakeArr);
+		console.log(arr1[0]); // a
+		var arr2 = [].slice.call(fakeArr);
+		console.log(arr2[0]); // a
+
+		/*
+		 * fakeArray01 和 fakeArray02 被转换成了真正的数组，但是数组中的值都为 undefined
+		 */
+		var fakeArray01 = {a: "a", b: "b", length: 2}; // 没有 length 下标对应的值
+		var arr01 = Array.prototype.slice.call(fakeArray01);
+		console.log(arr01[0]); // undefined
+		var fakeArray02 = {0: "a", 1: "b", length: "num"};// length 不是数值
+		var arr02 = Array.prototype.slice.call(fakeArray02);
+		console.log(arr02[1]); // undefined
+
+		/*
+		 * 可以看出，slice 并不需要 this 为 array 类型，只需要有 length 属性即可
+		 * 并且 length 属性可以不为 number 类型,当不能转换为数值时，ToUnit32(this.length) 返回 0
+		 * 根据以上结论可以得出 : fakeArray01 被转换成了 lenth 为2的数组,其值都被初始化为 undefined
+		 * fakeArray02 被转换成了 length 为 0 的数组，自然访问下标为1的元素返回 undefined
+		 */
+		// 查看 V8 引擎 array.js 的源码,可以将 slice 的内部实现简化为
+		function slice(start, end) {
+			// this 指向调用的对象，当用了 call 后能够改变 this 的指向，也就是指向传进来的对象，这是关键
+			// 0 就是 start=0，end 没指定，所以返回整个 arguments 这个时候就转换成数组了
+			var len = ToUint32(this.length),
+					result = [];
+			for (var i = start; i < end; i++) {
+				result.push(this[i]);
+			}
+			return result;
+		}
+
+		// Array.prototype.slice.call(arguments,0)
+		// Array 对象代替 arguments 对象 执行 原型上的 slice 方法 并修改了 Array 的 this 指向为 arguments
+
+		// 转成数组的通用函数
+		var toArray = function (obj) {
+			try {
+				return Array.prototype.slice.call(obj);
+			} catch (e) {
+				var arr = [];
+				for (var i = 0, len = obj.length; i < len; i++) {
+					// arr.push(obj[i]);
+					arr[i] = obj[i]; // 这样比 push 快
+				}
+				return arr;
+			}
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

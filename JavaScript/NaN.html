@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>NaN</title>
+	<script>
+		/*
+		 * NaN :  Not a number  非数字，确定参数是否 "不是数值"
+		 *
+		 * isNaN(NaN) -> true、isNaN(10) -> false、isNaN("10") -> false、isNaN("blue") -> true (不能转为数字)
+		 * isNaN(true) ->false、isNaN(false) ->false (能够转为数字 1、0)
+		 *
+		 * 任何一个数字 + NaN = NaN
+		 *
+		 * NaN 和 NaN 是不相等的   console.log(NaN == NaN);   false
+		 *
+		 * 判断是否是 NaN 用 JavaScript 自带的函数 isNaN
+		 *
+		 */
+		(function(){
+			// 如果是数字或者可以隐式转为数字的都为 false
+			// 所以判断是否是数字可以用
+			if (!isNaN(111)) {
+				console.log("是数字");
+			}
+
+			var strNum= "123";
+			if(!isNaN(parseInt(strNum))){
+				console.log(strNum + "，是字符串数字");
+			}
+
+			var box = NaN + 1;
+
+			console.log("与NaN 运算都为：" + box); // 与 NaN 运算都为 NaN
+
+			if(isNaN(NaN)){
+				console.log("是NaN");
+			}
+
+		})();
+
+	</script>
+</head>
+
+<body>
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>toFixed()</title>
+	<script>
+		// toFixed()
+		// 在给 toFixed() 传入0的情况下，IE8及之前版本不能正确舍入范围在 {(-0.94,-0.5],[0.5,0.94)} 之前的值
+		// 对于这个范围内的值，IE会返回0，而不是 -1 或 1
+		console.log(13.37.toFixed(1)); // 13.4
+	</script>
+</head>
+<body>
+
+</body>
+</html>

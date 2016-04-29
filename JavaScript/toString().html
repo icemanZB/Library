@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>toString()</title>
+	<script>
+		(function () {
+			// 一般使用 toString() 方法不传参数，但是数值调用的时候可以传，对应输出二进制、八进制、十六进制
+			var num = 10;
+			console.log(num.toString());  // 10
+			console.log(num.toString(10));  // 10
+			console.log(num.toString(2)); // 1010
+			console.log(num.toString(8)); // 12
+			console.log(num.toString(16)); // a
+			var found = true;
+			console.log(found.toString());  // true
+			var a = null, b = undefined;
+			// toString() 不能用在 null 和 undefined 上
+			console.log(a.toString());  // 报错
+			console.log(b.toString()); // 报错
+		})();
+
+	</script>
+</head>
+<body>
+</body>
+</html>

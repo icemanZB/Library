@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>基本包装类型</title>
+	<script>
+		var value = "25";
+		var number = Number(value);  // 转型函数
+		console.log(typeof number);  // "number"
+		// 使用 new 调用基本包装类型的构造函数，与直接调用同名的转型函数是不一样的
+		var obj = new Number(value);  // 构造函数
+		console.log(typeof obj);  // "object"
+
+		var numberObject = new Number(10);
+		var numberValue = 10;
+		// 对基本包装类型的实例调用 typeof 会返回 "object"，所以不建议实例化 String、Number、Boolean
+		console.log(typeof numberObject); // "object"
+		console.log(typeof numberValue); // "number"
+		console.log(numberObject instanceof Number); // true
+		console.log(numberValue instanceof Number); // false
+		// Number 对象是 Number 类型的实例，而基本类型的数值则不是
+	</script>
+</head>
+<body>
+
+</body>
+</html>

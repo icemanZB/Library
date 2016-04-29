@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Date()</title>
+	<script>
+		// http://web.jobbole.com/83453/
+		// Date() 直接返回当前时间字符串，不管参数是 number 还是任何 string
+		console.log(Date());
+		console.log(Date("sssss"));
+		console.log(Date(1000));
+		// 而 new Date() 则是会根据参数来返回对应的值，无参数的时候，返回当前时间的字符串形式；
+		// 有参数的时候返回参数所对应时间的字符串。 new Date() 对参数不管是格式还是内容都要求，且只返回字符串
+		/*
+		 * new Date() 在参数正常的情况只会返回当前时间的字符串 (且是当前时区的时间)
+		 * new Date() 在解析一个具体的时间的时候，对参数有较严格的格式要求，格式不正确的时候会直接返回 Invalid Date，比如将 number 类的时间戳转换成 string 类的时候也会导致解析出错
+		 * 虽然 new Date() 的返回值是字符串，然而两个 new Date() 的结果字符串是可以直接相减的，结果为相差的毫秒数。
+		 */
+		new Date();
+
+		console.log(new Date(1293879600000));  // 参数：时间戳格式(必须是Number)  Date {Sat Jan 01 2011 11:00:00 GMT+0800}
+		console.log(new Date("2011-01-01T11:00:00")); //  Date {Sat Jan 01 2011 11:00:00 GMT+0800}
+
+		new Date(2011, 0, 1, 11, 0, 0);
+		new Date("jan 01 2011,11 11:00:00");
+		new Date("Sat Jan 01 2011 11:00:00"); // Sat Jan 01 2011 11:00:00 GMT+0800 (中国标准时间)
+		new Date("2011/01/01 11:00:00");
+		console.log(new Date("sss"));  //  Date {Invalid Date}
+		console.log(new Date("2011/01/01T11:00:00"));  //  Date {Invalid Date}
+		console.log(new Date("2011-01-01-11:00:00")); //  Date {Invalid Date}
+		console.log(new Date("1293879600000"));  //  Date {Invalid Date}
+		console.log(new Date("2011-01-01T11:00:00") - new Date("1992/02/11 12:00:12"));  //  596069988000
+
+		// 时间数字字符串格式( RFC2822 标准日期字符串 )
+		// YYYY/MM/DD HH:MM:SS ± timezon(时区用4位数字表示)，eg： 1992/02/12 12:23:22+0800
+		// ISO 8601标准日期字符串
+		// YYYY-MM-DDThh:mm:ss ± timezone(时区用HH:MM表示)
+		// 1997-07-16T08:20:30Z
+		// "Z"表示 UTC 标准时区，即 "00:00"，所以这里表示零时区的 "1997年7月16日08时20分30秒"
+		// 转换成位于东八区的北京时间则为 "1997年7月17日16时20分30秒"
+		// 1997-07-16T19:20:30+01:00
+		// 表示东一区的1997年7月16日19时20秒30分，转换成 UTC 标准时间的话是 1997-07-16T18:20:30Z
+
+		/*
+		 * ISO 8601标准的兼容性比RFC2822差得多，建议使用 RFC2822 形式，然后自己写函数转换
+		 */
+
+		// 不过需要注意的是，在未指定时区的前提下，对于只精确到 day 的日期字符串，RFC2822 返回结果是以当前时区的零点为准，而 ISO8601 返回结果则会以 UTC 时间的零点为标准进行解析。
+		// 然而上面这个只是 ES5 的标准而已，在 ES6 里这两种形式都会变成当前时区的零点为基准
+		// RFC2822
+		new Date('1992/02/13'); // Thu Feb 13 1992 00:00:00 GMT+0800 (中国标准时间)
+		//ISO8601:
+		new Date('1992-02-13'); // Thu Feb 13 1992 08:00:00 GMT+0800 (中国标准时间)
+
+		// 时间格式化函数的效率
+		// 从计算效率上来说，Date.prototype.getTime() ≈ Date.prototype.valueOf()> +Date ≈ Number(Date) >> Date.parse()
+		// 从代码书写效率上来说，对于少量的时间格式化计算，用 +Date() 或者 Number(Date) 即可。
+		// 而若页面内有大量该处理，则建议用 Date 原生的函数 Date.prototype.getTime() 或者 Date.prototype.valueOf()，只有 Date.parse 找不到任何使用的理由。
+
+		// UTC，GMT时间的区别
+
+		// 格林威治标准时间 GMT
+		// GMT即「格林威治标准时间」(Greenwich Mean Time，简称G.M.T.)，指位于英国伦敦郊区的皇家格林威治天文台的标准时间
+		// 因为本初子午线被定义为通过那里的经线。然而由于地球的不规则自转，导致 GMT 时间有误差，因此目前已不被当作标准时间使用。
+
+		// 世界协调时间 UTC
+		// UTC 是最主要的世界时间标准，是经过平均太阳时(以格林威治时间GMT为准)、地轴运动修正后的新时标以及以「秒」为单位的国际原子时所综合精算而成的时间。
+		// UTC 比 GMT 来得更加精准。其误差值必须保持在 0.9 秒以内，若大于 0.9 秒则由位于巴黎的国际地球自转事务中央局发布闰秒，使 UTC 与地球自转周期一致。
+		// 不过日常使用中，GMT 与 UTC 的功能与精确度是没有差别的。
+		// 协调世界时区会使用 "Z" 来表示。而在航空上，所有使用的时间划一规定是协调世界时。而且Z在无线电中应读作 "Zulu"( 可参见北约音标字母 )，协调世界时也会被称为"Zulu time"。
+
+		// 首先需要注意一点，浏览器获取当前用户所在的时区等信息只和系统的日期和时间设置里的时区以及时间有关。
+		// 区域和语言设置影响的是浏览器默认时间函数(Date.prototype.toLocaleString等)显示的格式，不会对时区等有影响。
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>函数绑定</title>
+	<script src="js/EventUtil.js"></script>
+	<script>
+		window.onload = function () {
+			// 函数绑定：函数绑定要创建一个函数，可以在特定的 this 环境中以指定参数调用另一个函数
+			// 该技巧常常和回调函数与事件处理程序一起使用，以便在将函数作为变量传递的同时保留代码执行环境
+
+			var handler = {
+				message: "Event handled",
+				handleClick: function (ev) {
+					console.log(this.message + ev.type);
+				}
+			};
+
+			var btn = document.getElementById("my-btn");
+			EventUtil.addHandler(btn, "click", function (ev) {
+				handler.handleClick(ev);
+			});
+
+			// 一个简单 bind() 函数接收一个函数和一个环境，并返回一个在给定环境中调用给定函数的函数，并将所有参数原封不动传递过去
+			function bind(fn, context) {
+				return function () {
+					// 这里使用的arguments对象是内部函数，而非 bind() 的
+					return fn.apply(context, arguments);
+				}
+			}
+
+			// 所有的参数通过绑定函数直接传给他
+			EventUtil.addHandler(btn, "click", bind(handler.handleClick, handler));
+
+			// 只要将某个函数指针以值的形式进行传递，同时该函数必须在特定环境中执行，被绑定函数的效用就凸现出来了
+			// 他们主要用于事件处理程序以及 setTimeout() 和 setInterval()。
+			// 然而，被绑定函数与普通函数相比有更多的开销，它们需要更多内存，同时也因为多重函数调用稍微慢一点，建议在必要时使用
+
+		};
+	</script>
+</head>
+<body>
+<input type="button" id="my-btn" value="按钮"/>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>连等赋值</title>
+	<script>
+		// b先赋值 5，然后(b=5) 会返回所赋的值( 也就是5 )，然后再赋值给 a
+		// 也就是： a = (b = 5);
+		console.log(a = b = 5);
+
+		/*
+		 * 事实上，解析器在接受到 a.x = a = {n:2} 这样的语句后，会这样做
+		 * 找到 a 和 a.x 的指针。如果已有指针，那么不改变它。如果没有指针，即那个变量还没被申明，那么就创建它，指向 null。
+		 * a 是有指针的，指向 {n:1}；a.x 是没有指针的，所以创建它，指向 null。
+		 * 然后把上面找到的指针，都指向最右侧赋的那个值，即 {n:2}。
+		 *
+		 * http://web.jobbole.com/82684/
+		 */
+
+		(function () {
+			var a = {n: 1};
+			// 连等是先确定所有变量的指针，再让指针指向那个赋值
+			a.x = a = {n: 2};
+			console.log(a);  // {n:2}
+			console.log(a.x); // undefined
+		})();
+
+		(function () {
+			var a = {n: 1};
+			a = {n: 2};
+			a.x = a;
+			console.log(a.x);  // Object{ n:2,x:{}}
+		})();
+
+		// JavaScript 的运算顺序
+		(function () {
+			var a = 10;
+
+			function fn() {
+				a = 20;
+				return 20;
+			}
+
+			var b = a + fn();
+			console.log(b);  // 30 JavaScript 是从左到右运算的
+		})();
+
+		(function () {
+
+			var a, b, c, d;
+			a = b = c = d = {a: 1};
+			// console.log(d); //  Object { a=1}
+			a.x = a = b.y = b = c.z = c = {};
+			//  Object {} Object {} Object {} Object { a:1, x:undefined,y:Object {},z:Object {}}
+			console.log(a, b, c, d);
+
+		})();
+
+		(function () {
+
+			var a = {n: 1};
+			var b = a;
+			console.log(a === b);  // true  a 和 b 是一个引用
+			// a.x = a = {n:2};
+			a = {n: 2};
+			console.log(a === b);  // false 这个 a 已经不是上一个 a 了，是一个新的地址，而 b 才是上一个 a ，a 和 b 的指针不同了
+			// a.x;  // 只是定义了一个属性，并没有赋值操作，因为a = {n:2}也是一个定义过程，当然 a.x 就是 undefined
+			// a.x = a = {n:2};相当于var a.x,a={n:2}
+			console.log(a.x);
+
+		})();
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

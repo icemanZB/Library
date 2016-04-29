@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>解耦应用逻辑</title>
+	<script src="js/EventUtil.js"></script>
+	<script>
+		// 自定义事件
+		// 当代码中存在多个部分在特定时刻相互交互的情况下，自定义事件就非常有用了。这时，如果每个对象都有对其他所有对象的引用，那么整个代码
+		// 就会紧密耦合，同时维护也变得很困难，因为对某个对象的修改也会影响到其他对象。使用自定义事件有助于解耦相关对象，保持功能的隔绝。在
+		// 很多情况中，触发事件的代码和监听事件的代码是完全分离的
+
+		// 解耦应用逻辑/事件处理程序
+		// 问题：首先，除了通过事件之外就再没有方法执行应用逻辑，让调试变得困难；其次，如果一个后续的事件引发同样的应用逻辑，那就必须复制
+		// 功能代码或者将代码抽取到一个单独的函数中
+		function handleKeyPressBad() {
+			var event = EventUtil.getEvent(event);
+			if (event.keyCode == 13) {
+				var target = EventUtil.getTarget(event);
+				var value = 5 * parseInt(target.value);
+				if (value > 10) {
+					document.getElementById("error-img").style.display = "block";
+				}
+			}
+		}
+
+		// 较好的方法是将应用逻辑和事件处理程序相分离，一个事件处理程序应该从事件对象中提取相关信息，并将这些信息传送到处理应用逻辑的方法中
+		function validateValue(value) {
+			value = 5 * parseInt(value);
+			if (value > 10) {
+				document.getElementById("error-img").style.display = "block";
+			}
+		}
+
+		function handleKeyPress(event) {
+			event = EventUtil.getEvent(event);
+			if (event.keyCode == 13) {
+				var target = EventUtil.getTarget(event);
+				validateValue(target.value);
+			}
+		}
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

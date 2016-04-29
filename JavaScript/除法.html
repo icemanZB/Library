@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>除法</title>
+	<script>
+		(function () {
+			console.log(11 / NaN); // NaN
+			console.log(0 / 111);  // 0
+			console.log(0 / 0);  // NaN
+			console.log(0 / Infinity);  // 0
+			console.log(Infinity / Infinity);  // NaN
+			console.log(Infinity / 1); // Infinity
+			console.log(-Infinity / 1); // -Infinity
+			console.log(Infinity / 0); // Infinity
+			console.log(-Infinity / 0); // -Infinity
+			console.log(-22 / 0); // -Infinity
+			console.log(22 / 0); // Infinity
+		})();
+
+	</script>
+</head>
+
+<body>
+</body>
+
+</html>

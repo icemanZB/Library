@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>push和unshift的性能</title>
+	<script>
+		/*
+		 * 可见 unshift 性能非常低，平时还是要慎用 unshift 特别是对大数组
+		 * reverse 性能极高，甚至于没有额外的消耗，可以放心使用
+		 */
+		var arr = [];
+		console.time("push");
+		for (var i = 0; i < 50000; i++) {
+			arr.push(i);
+		}
+		console.timeEnd("push"); // push: 8.720ms
+
+		console.time("unshift");
+		for (var j = 0; j < 50000; j++) {
+			arr.unshift(j);
+		}
+		console.timeEnd("unshift"); // unshift: 1280.563ms
+
+		// 换一种方式达到 unshift 效果
+		// Array 有一个叫做 reverse 的方法，能够把一个数组反转
+		// 先把要放进数组的元素用 push 添加，再执行一次 reverse 就达到了 unshift 的效果
+
+		console.time("reverse");
+		for (var k = 0; k < 50000; k++) {
+			arr.push(k);
+		}
+		arr.reverse();
+		console.timeEnd("reverse"); // reverse: 8.037ms
+	</script>
+</head>
+<body>
+
+</body>
+</html>

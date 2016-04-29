@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>关于this对象</title>
+	<script>
+		var name = "The window";
+
+		var obj = {
+			name: "My Object",
+			getNameFunc: function () {
+				return function () {
+					// this 和 arguments 内部函数在搜索这两个变量时，只会搜索到其活动对象为止，因此永远不可能直接访问外部函数中的这两个变量
+					return this.name;
+				};
+			}
+		};
+
+		console.log(obj.getNameFunc()());  // The window ( 在非严格模式下 )
+
+		var object = {
+			name: "My Object",
+			getNameFunc: function () {
+				return this.name;
+			}
+		};
+
+		console.log(object.getNameFunc());  // My Object
+		console.log((object.getNameFunc)()); // My Object
+		// 由于这个赋值表达式的值是函数本身，所以 this 的值不能得到维持
+		console.log((object.getNameFunc == object.getNameFunc)());  // The window ( 在非严格模式下 )
+
+		// 创建一个作用域安全的构造函数，避免实例属性被加到 window 对象上，这个问题是由 this 对象的晚绑定造成的，在这里 this 被解析成了 window 对象
+		// 由于 window 的 name 属性是用于识别连接目标和 frame 的，所以这里对该属性的偶尔覆盖可能会导致该页面上出现其他错误
+		function Person(name, age, job) {
+			this.name = name;
+			this.age = age;
+			this.job = job;
+		}
+		// 正常情况没问题，当使用 new 调用时，构造函数内用到的 this 对象会指向新创建的对象实例
+		var person = new Person("Nicholas", 29, "Software Engineer");
+		// 当没有使用 new 操作符来调用该构造函数的情况下，由于该 this 对象是在运行时绑定的，所以直接调用 Person()，this 会映射到全局对象 window 上
+		var person2 = Person("Nicholas", 29, "Software Engineer");
+		console.log(window.name);  // Nicholas
+		console.log(window.age);  // 29
+		console.log(window.job);  // Software Engineer
+
+		var length = 10;
+		function fn() {
+			console.log(this.length);
+		}
+
+		var json = {
+			length: 5,
+			method: function (fn) {
+				fn(); // 10
+				arguments[0](); // 2
+			}
+		};
+
+
+		/*
+		 * 我们知道取对象属于除了点操作符还可以用中括号，所以第二次执行时相当于 arguments 调用方法
+		 * this 指向 arguments，而这里传了两个参数，故输出 arguments 长度为 2
+		 */
+
+		json.method(fn, 1);
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

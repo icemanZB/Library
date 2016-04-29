@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>parseFloat()</title>
+	<script>
+		/*
+		 * parseFloat() 显示类型转换
+		 * parseFloat() 与 parseInt() 原理一致，返回的是浮点小数
+		 * 但只解析十进制的值，如果字符串中包含的是一个可解析的整数的数，返回整数
+		 * parseFloat("0xA") -> 0 ( 十六进制的字符串始终转换为0 )
+		 * 若不清楚要转的字符串是整数还是小数，都用 parseFloat 即可
+		 */
+
+		console.log(parseFloat("123blue"));  // 123 ( 整数 )
+		console.log(parseFloat("22.5")); // 3.1
+		console.log(parseFloat("123.4.5")); // 123.4 (第二个小数点无效)
+		console.log(parseFloat("0908.5"));  // 908.5 ( 忽略前面的0 )
+		console.log(parseFloat(123.56));  // 123.56
+		console.log("3.125e7");  // 31250000
+	</script>
+</head>
+<body>
+</body>
+</html>

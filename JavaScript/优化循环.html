@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>优化循环</title>
+	<script>
+		var values = [];
+		function process() {
+		}
+		for (var i = 0; i < values.length; i++) {
+			process(values[i]);
+		}
+		// 优化循环
+		// 这里变量i每次循环之后都会减1；在这过程中，将终止条件从 value.length 的O(n) 调用简化成了 O(1) 的调用
+		for (var k = values.length - 1; k >= 0; k--) {
+			process(values[k]);
+		}
+		// 此处主要的优化时将终止条件和自减操作符组合成了单个语句
+		// 后测试循环必须确保要助理的值至少有一个
+		var m = values.length - 1;
+		if (m > -1) {
+			do {
+				process(values[m]);
+			} while (--m >= 0);
+		}
+
+		// 如果数组的长度是一样的，那么消除循环将更快
+		process(values[0]);
+		process(values[1]);
+		process(values[2]);
+
+		// 如果循环中的迭代次数不能事先确定，那可以考虑使用一种叫做 Duff 装置技术
+		// Duff 装置的基本概念是通过计算迭代次数是否为 8 的倍数将一个循环展开为一系列语句
+		// 假设 values.length > 0
+		var iterations = Math.ceil(values.length / 8);  // 2
+		var startAt = values.length % 8;  // 2
+		var j = 0;  // 循环的索引
+		do {
+			switch (startAt) {
+				case 0:
+					process(values[j++]);
+				case 7:
+					process(values[j++]);
+				case 6:
+					process(values[j++]);
+				case 5:
+					process(values[j++]);
+				case 4:
+					process(values[j++]);
+				case 3:
+					process(values[j++]);
+				case 2:
+					process(values[j++]);
+				case 1:
+					process(values[j++]);
+			}
+			startAt = 0;
+		} while (--iterations > 0);
+
+		/*
+		 * Duff 装置的实现通过将 values 数组中的元素个数除以8来计算出循环需要进行多少次迭代。然后使用向上取整确保结果是整数。如果完全根据除 8
+		 * 来进行迭代，可能会有一些不能被处理到的元素，这个数量保存在 startAt 变量中。首次执行该循环时，会检查startAt变量看有需要多少额外调用。
+		 * 例如，如果数组中有 10 个值，startAt 则等于2，那么最开始的时候 process() 则只会被调用2 次，执行 case 2、case 1 (switch中的贯穿)
+		 * j默认为0， j++ 后变成1，执行到case 1时，j还是1，执行完case 1，j变成2。在接下来的循环中，startAt 被重置为 0，这样之后
+		 * 每次循环都会调用8次 process()，case 0时，j为2，执行完后j为3，然后贯穿下去。 可以提升大数据集的处理速度
+		 */
+
+		// 更快的 Duff 技术，将 do-while 循环分成 2 个单独的循环
+		var dIterations = Math.ceil(values.length / 8);
+		var leftover = values.length % 8;
+		var d = 0;
+		if (leftover > 0) {
+			do {
+				process(values[d++]);
+			} while (--leftover > 0);
+		}
+		do {
+			process(values[d++]);
+			process(values[d++]);
+			process(values[d++]);
+			process(values[d++]);
+			process(values[d++]);
+			process(values[d++]);
+			process(values[d++]);
+			process(values[d++]);
+		} while (--dIterations > 0);
+		// 在这个实现中，剩余的计算部分不会再实际循环中处理，而是在一个初始化循环中进行 % 8的操作。当处理掉了额外的元素，继续执行每次调用 8 次
+		// process() 的主循环，这个方法比原始的 Duff 快 40%
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

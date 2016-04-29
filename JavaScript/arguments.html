@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>arguments</title>
+	<script>
+		function doAdd(num1, num2) {
+			arguments[1] = 10;  // 严格模式会出错
+			// 修改了 arguments[1] 也就修改了 num2 的值，需要注意他们的内存空间是独立的，但是他们的值会同步
+			console.log(num2);  // 10
+			return num1 + num2;
+		}
+
+		doAdd(10, 1);
+		// 如果只传递了一个参数，那么 arguments[1] 设置的值不会反映到命名参数中，num2 为 undefined
+		// 这是因为 arguments 对象的长度是由传入的参数决定的，不是由定义函数时的参数个数决定的
+		doAdd(10);
+
+		function box() {
+			return arguments[0] + "|" + arguments[1] + "|" + arguments[2];
+		}
+
+		console.info(box("Iceman", 25, "IT"));
+
+		/*
+		 * arguments 的应用，任意个参数求和
+		 */
+		function sum() {
+			var sum = 0;
+			for (var i = 0; i < arguments.length; i++) {
+				sum += arguments[i];
+			}
+			return sum;
+		}
+
+		console.log(sum(1, 2, 3));
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

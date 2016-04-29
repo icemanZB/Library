@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>函数声明</title>
+	<script>
+		// 函数声明，它的一个重要特征就是函数声明提升，在执行代码之前会先读取函数声明
+		sayHi();
+		function sayHi() {
+			console.log("Hi!");
+		}
+
+		// 函数表达式，使用之前必须先赋值
+		// sayAge();  // 错误
+		var sayAge = function () {
+			console.log("age!");
+		};
+
+		// 这在 ECMA 中属于无效语法，大多数浏览器会返回第二个声明，忽略 condition
+		// Firefox 会在 condition 为 true，返回第一个声明，这种不应该出现
+		if (true) {
+			(function sayName() {
+				console.log("name");
+			}())
+		} else {
+			(function sayYHo() {
+				console.log("Yo");
+			})()
+		}
+
+		// 可以这样做
+		var sayHi;
+		if (true) {
+			sayHi = function () {
+				console.log("hi");
+			}
+		} else {
+			sayHi = function () {
+				console.log("Yo");
+			}
+		}
+
+		function fn(a) {
+			console.log(a);
+			var a = 2;
+
+			function a() {
+			}
+
+			console.log(a);
+		}
+
+		fn(1); // function(){}   2
+
+		/*
+		 * var和function是会提前声明的,而且 function 是优先于 var 声明的(如果同时存在的话)
+		 * 所以提前声明后输出的 a 是个 function ，然后代码往下执行 a 进行重新赋值了,故第二次输出是 2
+		 */
+
+		/*
+		 * 函数声明优于变量声明
+		 */
+
+		console.log(typeof fn);
+
+		function fn() {
+		}
+
+		var fn;
+
+
+		if (a in window) {
+			var a = 10;
+		}
+		alert(a); // 10
+
+		/*
+		 * function 和 var 会提前声明，而其实{...}内的变量也会提前声明。
+		 * 于是代码还没执行前，a 变量已经被声明，于是 "a" in window 返回 true，所以 a 就会被赋值。
+		 */
+		var x = 1;
+		if (function f() {
+				}) {
+			// alert(f) // ReferenceError: f is not defined
+			x += typeof f;
+		}
+		console.log(x); // "1undefined"
+	</script>
+</head>
+<body>
+
+</body>
+</html>

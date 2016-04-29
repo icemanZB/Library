@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>Math</title>
+	<script>
+		// 向上取整
+		console.info(Math.ceil(3.1));  // 4
+		console.info(Math.ceil(-9.8)); // -9
+
+		// 向下取整
+		console.info(Math.floor(4.5)); // 4
+
+		console.info(Math.abs(6));
+
+		console.info(Math.round(3.4)); // 四舍五入
+
+		console.info(Math.random()); // 0-1 之间的随机数 但不包含0 1
+
+		console.info(Math.floor(Math.random() * 10 + 5)); // 5-14 随机数 总数: 10+5-1
+
+		function selectRandom(start, end) {
+			var total = end - start + 1;
+			return Math.floor(Math.random() * total + start);
+		}
+
+		console.info(selectRandom(5, 10)); // 5-10
+
+	</script>
+</head>
+<body>
+</body>
+</html>

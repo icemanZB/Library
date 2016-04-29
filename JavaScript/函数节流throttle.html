@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>throttle</title>
+	<script>
+		/*
+		 * throttle 就是函数节流的意思。再说的通俗一点就是函数调用的频度控制器，是连续执行时间间隔控制。
+		 * 主要应用的场景比如：鼠标移动，mousemove 事件、DOM 元素动态定位，window 对象的 resize 和 scroll 事件
+		 * 有人形象的把上面说的事件比喻成机关枪的扫射，throttle 就是机关枪的扳机，你不放扳机，它就一直扫射。
+		 * 我们开发时用的上面这些事件也是一样，你不松开鼠标，它的事件就一直触发。
+		 */
+
+		/*
+		 * 在项目中使用 scroll 事件去加载数据，结果 IE 下悲剧了。给了一个简单优化方法，效果明显。
+		 * 只要用户改变窗口大小，会对内部一些元素大小重新计算，可能导致整个页面重新渲染，最终导致大量消耗 CPU
+		 * 比如调用 resize 方法，用户改变窗口大小时会不停的被触发， 低版本的 IE 会可能陷入假死状态。
+		 * window.scroll 事件也是如此，鼠标滚动或拖动滚动条，就会不停的触发scroll事件，如果处理的东西多，低版本的 IE 也会陷入假死状态。
+		 */
+
+		// 基本的优化思路：在一定的时间之内，只执行一次 resize 事件函数。
+		// scroll 事件同理
+
+		/*
+		 * 函数节流的原理，那就是定时器。
+		 * 当触发一个时间时，先 setTimout 让这个事件延迟一会再执行，如果在这个时间间隔内又触发了事件，那我们就 clear 掉原来的定时器，再 setTimeout 一个新的定时器延迟一会执行，就这样。
+		 */
+		(function () {
+			var resizeTimer = null;
+			window.onresize = function () {
+				if (resizeTimer) {
+					clearTimeout(resizeTimer);
+				}
+				resizeTimer = setTimeout(function () {
+					// console.log("window resize");
+				}, 400);
+
+				// console.log(1);
+			};
+		})();
+
+		(function () {
+
+			// 假设有一个<div>元素需要保持它的高度始终等同于宽度
+			// 这段代码有两个问题：首先要计算 offsetWidth 属性，如果该元素或者页面上其他元素有非常复杂的 CSS 样式，那么这个过程将会很复杂
+			// 其次，设置某个元素的高度需要对页面进行回流来令改动生效，如果页面有很多元素同时应用了相当数量的 CSS 话，这个需要很多的计算
+			window.onresize = function () {
+				var div = document.getElementById("myDiv");
+				div.style.height = div.offsetWidth + "px";
+			};
+
+			// 这时可以用到 throttle() 函数
+			function resizeDiv() {
+				var div = document.getElementById("myDiv");
+				div.style.height = div.offsetWidth + "px";
+			}
+
+			window.onresize = function () {
+				throttle(resizeDiv);
+			};
+
+			// throttle() 来简化，这个函数可以自动进行定时器的设置和清除
+			function throttle(method, context) {
+				clearTimeout(method.tId);
+				method.tId = setTimeout(function () {
+					method.call(context);
+				}, 100);
+			}
+
+		})();
+
+		/*
+		 * setTimeout 和 clearTimeout 其实就是一个简单的 throttle，很多好的控制了 resize 事件的调用频度。
+		 */
+
+		/*
+		 * debounce
+		 * debounce 和 throttle 很像，debounce 是空闲时间必须大于或等于一定值的时候，才会执行调用方法。debounce 是空闲时间的间隔控制。
+		 * 比如我们做 autocomplete，这时需要我们很好的控制输入文字时调用方法时间间隔。一般是第一个输入的字符马上开始调用，根据一定的时间间隔重复调用执行的方法。
+		 * 对于变态的输入，比如按住某一个建不放的时候特别有用。
+		 * debounce 主要应用的场景比如：文本输入 keydown 事件，keyup 事件，例如做 autocomplete
+		 * 这类网上的方法有很多，比如 Underscore.js 就对 throttle 和 debounce 进行封装。
+		 * jQuery 也有一个 throttle 和 debounce 的插件：jQuery throttle / debounce，所有的原理时一样的，实现的也是同样的功能。
+		 * 再奉上一个自己一直再用的 throttle和debounce 控制函数
+		 */
+
+		/*
+		 * 频率控制 返回函数连续调用时，fn 执行频率限定为每多少时间执行一次
+		 * @param fn {function}  需要调用的函数
+		 * @param delay  {number}    延迟时间，单位毫秒
+		 * @param immediate  {bool} 给 immediate 参数传递 false 绑定的函数先执行，而不是 delay 后后执行。
+		 * @return {function} 实际调用函数
+		 */
+		var throttle = function (fn, delay, immediate, debounce) {
+			var curr = +new Date(),// 当前时间
+					last_call = 0,
+					last_exec = 0,
+					timer = null,
+					diff, // 时间差
+					context,// 上下文
+					args,
+					exec = function () {
+						last_exec = curr;
+						fn.apply(context, args);
+					};
+
+			return function () {
+				curr = +new Date();
+				context = this;
+				diff = curr - (debounce ? last_call : last_exec) - delay;
+				args = arguments;
+				clearTimeout(timer);
+				if (debounce) {
+					if (immediate) {
+						timer = setTimeout(exec, delay);
+					} else if (diff >= 0) {
+						exec();
+					}
+				} else {
+					if (diff >= 0) {
+						exec();
+					} else if (immediate) {
+						timer = setTimeout(exec, -diff);
+					}
+				}
+				last_call = curr;
+			}
+		};
+
+		/*
+		 * 空闲控制 返回函数连续调用时，空闲时间必须大于或等于 delay，fn 才会执行
+		 * @param fn {function}  要调用的函数
+		 * @param delay   {number}    空闲时间
+		 * @param immediate  {bool} 给 immediate 参数传递 false 绑定的函数先执行，而不是 delay 后后执行。
+		 * @return {function}实际调用函数
+		 */
+
+		var debounce = function (fn, delay, immediate) {
+			return throttle(fn, delay, immediate, true);
+		};
+
+		window.onresize = function () {
+			// debounce(fn, 4000, true)();
+			// throttle(fn, 4000,true)() ;
+		};
+		function fn() {
+			console.log(1);
+		}
+
+
+		// 返回一个函数，如果它被不间断地调用，它将不会得到执行。该函数在停止调用 N 毫秒后，再次调用它才会得到执行。
+		// 如果有传递 "immediate" 参数，会马上将函数安排到执行队列中，而不会延迟。
+		function debounce2(func, wait, immediate) {
+			var timeout;
+			return function () {
+				var context = this, args = arguments;
+				var later = function () {
+					timeout = null;
+					if (!immediate) func.apply(context, args);
+				};
+				var callNow = immediate && !timeout;
+				clearTimeout(timeout);
+				timeout = setTimeout(later, wait);
+				if (callNow) {
+					func.apply(context, args);
+				}
+			};
+		}
+
+		// 用法
+		var myEfficientFn = debounce2(function () {
+			// 所有繁重的操作
+			console.log(11);
+		}, 2000);
+		// window.addEventListener("resize", myEfficientFn);
+
+		// impress 用的是另一个封装函数
+		var throttle3 = function (fn, delay) {
+			var timer = null; // 使用闭包的方法形成一个私有的作用域来存放定时器变量 timer
+			return function () {
+				var context = this, args = arguments;
+				clearTimeout(timer);
+				timer = setTimeout(function () {
+					fn.apply(context, args);
+				}, delay);
+			};
+		};
+		// window.addEventListener("resize", throttle(fn, 100));
+
+		// http://www.alloyteam.com/2012/11/javascript-throttle/#prettyPhoto
+
+		/*
+		 * 怎样拓展深化函数节流
+		 * 函数节流让一个函数只有在你不断触发后停下来歇会才开始执行，中间你操作得太快它直接无视你，这样做就有点太绝了。
+		 * resize 一般还好，但假如你写一个拖拽元素位置的程序，然后直接使用函数节流，你会发现你拖动时元素是不动的，你拖完了，它直接闪到终点去。
+		 * 其实函数节流的出发点，就是让一个函数不要执行得太频繁，减少一些过快的调用来节流。当你改变浏览器大小，浏览器触发 resize 事件的时间间隔是多少？
+		 * 我不清楚，个人猜测是 16ms (每秒64次)，反正跟 mousemove 一样非常太频繁，一个很小的时间段内必定执行，这是浏览器设好的，你无法直接改。
+		 * 而真正的节流应该是在可接受的范围内尽量延长这个调用时间，也就是我们自己控制这个执行频率，让函数减少调用以达到减少计算、提升性能的目的。
+		 * 假如原来是16ms执行一次，我们如果发现 resize 时每 50ms 一次也可以接受，那肯定用 50ms 做时间间隔好一点。
+		 * 而上面的函数节流，它这个频率就不是 50ms 之类的，它就是无穷大，只要你能不间断 resize，刷个几年它也一次都不执行处理函数
+		 */
+		var throttleV2 = function (fn, delay, mustRunDelay) {
+			var timer = null;
+			var t_start;
+			return function () {
+				var context = this, args = arguments, t_curr = +new Date();
+				clearTimeout(timer);
+				if (!t_start) {
+					t_start = t_curr;
+				}
+				if (t_curr - t_start >= mustRunDelay) {
+					fn.apply(context, args);
+					t_start = t_curr;
+				} else {
+					timer = setTimeout(function () {
+						fn.apply(context, args);
+					}, delay);
+				}
+			};
+		};
+		// 意味着，1000ms 的间隔内连续触发的调用，后一个调用会把前一个调用的等待处理掉，但每隔 2000ms 至少执行一次。
+		// 原理也很简单，打时间 tag，一开始记录第一次调用的时间戳，然后每次调用函数都去拿最新的时间跟记录时间比，超出给定的时间就执行一次，更新记录时间。
+		window.addEventListener("resize", throttleV2(fn, 1000, 2000));
+	</script>
+</head>
+<body>
+
+</body>
+</html>

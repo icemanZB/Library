@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>递增递减操作符</title>
+	<script>
+		(function () {
+			var age = 29;
+			// 执行前置递增和递减操作时，变量的值都是在语句被求值以前改变的 (负效应)
+			++age; // age =age +1; 或 num +=1
+			console.log(age);
+			// ++ -- 前置后置的区别
+			// 前置
+			var num1 = 2;
+			var num2 = 20;
+			// 由于先执行了 --num1值就变成了1 + num2 = 21
+			var num3 = --num1 + num2;  // 21
+			// num4 也等于 21 是因为相应的加法操作使用了 --num1 执行完成的值
+			var num4 = num1 + num2;  // 21
+			console.log(num1, num3, num4);
+			// 后置
+			var n1 = 2;
+			var n2 = 20;
+			// 在这里使用了n1的原始值(2)，完成了加法操作
+			var n3 = (n1--) + n2;   // 22
+			var n4 = n1 + n2;  // 21
+			console.log(n1, n3, n4);
+
+			/*
+			 * 1、在应用于一个包含有效数字字符串时，先将其转换为数字值，再执行加减1的操作。字符串变量变成数值变量
+			 * 2、在应用于一个不包含有效数字字符串时，将变量的值设置为 NaN，字符串变量变成数值变量
+			 * 3、在应用于布尔值 false 时，先将其转换为0再执行加减1的操作。布尔值变量变成数值变量
+			 * 4、在应用布尔值 true 时，先将其转换为1再执行加减1的操作。布尔值变量变成数值变量
+			 * 5、在应用于浮点数值时，执行加减1的操作
+			 * 6、在应用于对象时，先调用对象的 valueOf() 方法以取得一个可供操作的值。然后对该值应用前述规则
+			 *   如果结果是NaN，则在调用 toString() 方法后再应用前述规则，对象变量变成数值变量
+			 */
+
+			var s1 = "2", s2 = "z", b = false, f = 1.1;
+			var o = {
+				valueOf: function () {
+					return -1;
+				}
+			};
+
+			s1++;
+			s2++;
+			b++;
+			f--;
+			o--;
+			console.log(s1);  // 3
+			console.log(s2);  // NaN
+			console.log(b);  // 1  (false 转为了 0 )
+			console.log(f); // 0.10000000000000009 精度问题所致
+			console.log(o); // -2
+
+		})();
+
+	</script>
+</head>
+<body>
+</body>
+</html>

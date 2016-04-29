@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>无标题文档</title>
+    <script>
+        window.onload = function () {
+
+            // 可视区尺寸，获取的是看到的部分
+            console.log(document.documentElement.clientHeight);
+            // 文档高度 ( 从顶部到页面内容底部的距离 )
+            // 有兼容问题 IE 认为文档的高度的就是可视区的高度
+            console.log(document.documentElement.offsetHeight);  // 2000+padding+marign=2016
+
+            // 获取内容的高度使用
+            console.log(document.body.offsetHeight);
+
+            document.onclick = function () {
+                // 滚动距离 ( 滚动条滚动的距离 = 可视区顶部到整个页面顶部的距离 )
+
+                document.documentElement.scrollTop = 100;
+
+                // document.body.scrollTop  chrome
+                var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+
+                console.log("滚动距离为：" + scrollTop);
+
+                // scrollHeight : 内容实际宽高 ( 除了边框以外，盒子内部的总高度(padding+height) )
+
+                console.log("内容实际宽高" + oDiv.scrollHeight); // 620=600+10+10
+
+            };
+
+            var oDiv = document.getElementById("div1");
+            oDiv.onscroll = function () {
+                // scrollTop 指的是"元素中的内容"超出"元素上边界"的那部分的高度，向上滚动的数值为 scrollTop
+                // 如果没有内容 scrollTop 数值不变
+                document.title = this.scrollTop;
+            };
+
+        }
+    </script>
+</head>
+
+<body style="height:2000px; margin: 0;">
+<div id="div1" style="width:100px;height:100px;border: 1px solid red; overflow: auto; padding: 10px;">
+    <div style="height: 600px;width: 90px; background: red;"></div>
+</div>
+</body>
+</html>

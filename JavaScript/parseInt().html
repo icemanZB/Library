@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>parseInt()</title>
+	<script>
+		/*
+		 * parseInt() 显示类型转换
+		 * 原理：从左到右开始搜索该字符串，一旦发现不是数字的话就跳出，把前面找到的数字返回出来
+		 * 若解析的字符串里面没有数字，则返回 NaN，若转的字符串有小数则舍去小数部分
+		 * 多数情况下，解析的都是十进制数，因此始终将10作为第二个参数是非常必要的
+		 * parseInt("0xA",16) -> 10 ( 十六进制数 )、parseInt("0xf",16) -> 15 ( 十六进制数 )
+		 * parseInt("070",8) -> 56 ( 八进制数 )
+		 * parseInt("70") -> 70 ( 十进制数 )
+		 */
+		console.log(parseInt("12px")); // 12
+		console.log(parseInt('3.6'));  // 3
+		console.log(parseInt(4.8));  // 4
+		console.log(parseInt(""));  // NaN
+		console.log(parseInt("   111"));  // 111
+		console.log(parseInt("Iceman12")); // NaN
+
+		/*
+		 * http://web.jobbole.com/82037/
+		 * 在IE8下面 parseInt() 默认会把我的"09"当成八进制，但是又发现不是合法的八进制，最后就抛出了0这个 false
+		 * 在chrome(标准浏览器)下，“09”会默认当做十进制来看的，所以 JavaScript 引擎会理所当然的转化成了9这个满意的结果
+		 */
+
+		alert(parseInt("09"));  // IE8 0
+		// 解决方案，将 10 作为第二个参数是非常必要的
+		console.log(parseInt("09", 10));
+		console.log(Number("09"));   // 9
+	</script>
+</head>
+<body>
+</body>
+</html>

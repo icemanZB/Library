@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>apply和call</title>
+	<script>
+		/*
+		 * 每个函数都包含两个非继承而来的方法：apply(this,[]) 和 call(this,argument)
+		 * call方法:
+		 * 语法: call(thisObj,arg1,arg2,argN)
+		 * 定义: 调用一个对象的一个方法，以另一个对象替换当前对象。
+		 * 说明:
+		 * call 方法可以用来代替另一个对象调用一个方法。
+		 * call 方法可将一个函数的对象上下文从初始的上下文改变为由 thisObj 指定的新对象。
+		 * 如果没有提供 thisObj 参数，那么 Global 对象被用作 thisObj。
+		 *
+		 * apply方法:
+		 * 语法: apply(thisObj,[argArray])
+		 * 定义: 应用某一对象的一个方法，用另一个对象替换当前对象。
+		 * 说明:
+		 * 如果 argArray 不是一个有效的数组或者不是 arguments 对象，那么将导致一个 TypeError
+		 * 如果没有提供 argArray 和 thisObj 任何一个参数,那么 Global 对象将被用作 thisObj 并且无法被传递任何参数
+		 *
+		 */
+
+		function add(a, b) {
+			console.info(a + b);
+		}
+		function sub(a, b) {
+			console.info(a - b);
+		}
+
+		/*
+		 * apply用法
+		 * var a1 = sub.apply(add, [4, 2]);
+		 * var a2 = add.apply(sub, [4, 2]);
+		 */
+
+		var a1 = sub.call(add, 4, 2);  // 2
+
+		var a2 = add.call(sub, 4, 2);  // 6
+
+		// add() = add.call();
+		// add.call(null,4,2); // 第一个参数为 null，表示不改变 this 内部指向
+
+		// 在严格模式下，未指定环境对象而调用函数，则 this 值不会转型为 window，除非明确的把函数添加到某个对象或者调用 apply() 或 call()
+		// 否则this值将是undefined
+		window.color = "red";
+		var o = {color: "blue"};
+		function sayColor() {
+			console.log(this.color);
+		}
+		sayColor();  // red
+		console.log(sayColor.call(this) == sayColor.call(window));  // true
+		sayColor.call(o);  // blue
+
+		// 其实可以看出， sayColor() == sayColor.call(this); this指向的是 window，第一个参数就是当前 sayColor 的执行环境
+
+		function Animal() {
+			this.name = "Animal";
+			this.showName = function () {
+				console.info(this.name);
+			}
+		}
+
+		function Cat() {
+			this.name = "Cat";
+		}
+
+		var animal = new Animal();
+
+		var cat = new Cat();
+		// call 的意思是把 animal 的方法放到 cat 上执行，原来cat是没有 showName() 方法
+		// 并改变 animal 中 this 指向为 Cat
+		animal.showName.call(cat, "");  // animal.showName.apply(cat,[]);
+
+		/*
+		 * 什么情况下用 apply，什么情况下用 call
+		 * 在给对象参数的情况下，如果参数的形式是数组的时候，就使用 apply
+		 * 用 call 实现，就是直接指定参数列表对应值的位置
+		 */
+
+		// apply 的一个巧妙的用处，可以将一个数组默认的转换为一个参数列表
+		// [param1,param2,param3] 转换为 (param1,param2,param3)
+		// 利用 apply 的参数数组化来提高
+		// 比如： Math.max()
+		// Math.max(5, 7, 9, 3, 1, 6);   // 9
+		// 但是在很多情况下,我们需要找出数组中最大的元素
+		// var arr = [5,7,9,1]
+		// alert(Math.max(arr))    // 这样却是不行的
+		// 这样写麻烦而且低效
+		function getMax(arr) {
+			var arrLen = arr.length;
+			for (var i = 0, ret = arr[0]; i < arrLen; i++) {
+				ret = Math.max(ret, arr[i]);
+			}
+			return ret;
+		}
+		// 把 Math 对象作为 apply() 的第一个参数，从而正确的设置 this 值
+		console.log(Math.max.apply(Math, arr));
+
+		var arr1 = ["1", "2", "3"];
+
+		var arr2 = ["4", "5", "6"];
+
+		// Array.prototype.push 可以实现两个数组合并
+		// 同样 push 方法没有提供 push 一个数组，但是它提供了 push(param1,param,…paramN)
+		// arr1 调用了 push 方法，参数是通过 apply 将数组转换为参数列表的集合
+		Array.prototype.push.apply(arr1, arr2);
+
+		var fakeArr = {0: "a", 1: "b", length: 2}; // 这是一个标准的伪数组对象
+		var arr0 = Array.prototype.slice.call(fakeArr, 0);
+	</script>
+</head>
+<body>
+
+</body>
+</html>

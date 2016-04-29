@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>setTimeout()</title>
+	<script>
+		// http://web.jobbole.com/83883/
+		/*
+		 * 通过阅读代码不难看出，setTimeout() 方法执行在while() 循环之前，它声明了"希望"在 500ms 之后执行一次匿名函数
+		 * 这一声明，也即对匿名函数的注册，在 setTimeout() 方法执行后立即生效。
+		 * 代码最后一行的 while 循环会持续运行1000ms，通过 setTimeout() 方法注册的匿名函数输出的延迟时间总是大于 1000ms
+		 * 说明对这一匿名函数的实际调用被 while() 循环阻塞了，实际的调用在 while() 循环阻塞结束后才真正执行。
+		 * 即 Javascript 是单线程机制,主线程的语句和方法会阻塞定时任务的运行，执行引擎只有在执行完主线程的语句后，定时任务才会实际执行
+		 * 这期间的时间，可能大于注册任务时设置的延时时间。
+		 * 到这里已经可以彻底理解下面代码的执行流程，执行引擎先将 setTimeout() 方法入栈被执行，执行时将延时方法交给内核相应模块处理。
+		 * 引擎继续处理后面代码，while 语句将引擎阻塞了1秒，而在这过程中，内核 timer 模块在 0.5 秒时已将延时方法添加到任务队列
+		 * 在引擎执行栈清空后，引擎将延时方法入栈并处理，最终输出的时间超过预期设置的时间。
+		 */
+		var start = new Date;
+		setTimeout(function () {
+			var end = new Date;
+			// 延时设置为 500ms，所以输出应该为 Time elapsed: 500 ms。在执行代码过程中，应当是一个由上往下的顺序执行过程
+			// setTimeout() 是先于 while 语句执行的。可是实际上，输出至少是延迟了 1000ms
+			console.log("Time elapsed:", end - start, "ms");  // Time elapsed: 1000 ms
+		}, 500);
+		while (new Date - start < 1000) {
+		}
+
+
+		// start while、end while、fn3、fn1、fn2、another fn2
+		var start2 = new Date;
+		setTimeout(function () {
+			console.log("fn1");
+		}, 20);
+		setTimeout(function () {
+			console.log("fn2");
+		}, 30);
+		setTimeout(function () {
+			console.log("another fn2");
+		}, 30);
+		setTimeout(function () {
+			console.log("fn3");
+		}, 10);
+		console.log("start while");
+		while (new Date - start2 < 1000) {
+		}
+
+		console.log("end while");
+	</script>
+</head>
+<body>
+
+</body>
+</html>

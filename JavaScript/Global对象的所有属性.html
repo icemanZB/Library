@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Global对象的所有属性</title>
+	<script>
+		// 取得 Global 对象的方法
+		var global = function () {
+			return this;
+		}();
+		console.log(global);
+
+		/*
+		 *                          Global对象的所有属性
+		 *
+		 *		属性			    说明			        |		属性			        说明
+		 *		undefined		特殊值undefined		|		Date		       	构造函数Date
+		 *		NaN			    特殊值NaN		    |		RegExp			    构造函数RegExp
+		 *		Infinity		特殊值Infinity		|		Error		       	构造函数Error
+		 *		Object			构造函数Object		|		EvalError	   	    构造函数EvalError
+		 *		Array			构造函数Array		|		RangeError 		    构造函数RangeError
+		 *		Function		构造函数Function		|		ReferenceError		构造函数ReferenceError
+		 *		Boolean			构造函数Boolean		|		SyntaxError		    构造函数SyntaxError
+		 *		String			构造函数String		|		TypeError	    	构造函数TypeError
+		 *		Number			构造函数Number		|		URIError	    	    构造函数URIError
+		 */
+	</script>
+</head>
+<body>
+
+</body>
+</html>

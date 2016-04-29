@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>typeof</title>
+	<script>
+		// typeof 操作符确定一个变量是字符串、数值、布尔值、undefined 的最佳工具，如果是对象或者 null ，返回 "object"
+		console.log(typeof null);  // "object"
+		console.log(typeof function () {
+		}); // "function"
+		// 在 Safari 5 及之前的版本和 Chrome7 及之前的版本 typeof 正则表达式，也返回 "function"
+		// 在 IE 和 Firefox 中，typeof 正则表达式返回 "object"
+
+		console.log(typeof undefined); // "undefined"
+		console.log(typeof true); // "boolean"
+		console.log(typeof 0); //"number"
+		console.log(typeof NaN); //"number"
+		console.log(typeof "string"); //"string"
+
+		console.log(typeof []); //"object"
+		console.log(typeof new Date()); //"object"
+
+		/*
+		 * 有几个看起来比较蹊跷需要我们注意
+		 *
+		 * 1、typeof 是运算符，不是方法，也就是说和加减号一样用，不考虑优先级问题，没必要给操作数加括号，当然加了也没事儿
+		 * 2、typeof 返回值都是小写字符串
+		 * 3、null 的类型不是 null，而是 "object"
+		 * 4、NaN 这个不是数字的类型也是 "number"
+		 * 5、function 明明也是对象，但是 typeof 却给了"function"类型
+		 * 6、其它对象都返回"object"，很没有识别性
+		 */
+		// 具体识别对象类型使用 instanceof 操作符，对于基本类型 instanceof 永远返回 false
+		console.log(1 instanceof Number); // false
+		console.log(new Number(1) instanceof Number); // true
+	</script>
+</head>
+
+<body>
+</body>
+
+</html>

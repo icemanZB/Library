@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title>cookie</title>
+    <script>
+        /*
+         * cookie的优缺点
+         * 优点 : 极高的扩展性和可用性
+         * 	     通过加密和安全传输技术(SSL)，减少 cookie 被破解的可能性
+         * 	     只在 cookie 中存放不敏感数据，即使被盗也不会有重大损失
+         * 	     控制 cookie 的生命期，使之不会永远有效。偷盗者很可能拿到一个过期的 cookie
+         *
+         * 缺点 : cookie 数量和长度的限制。每个 domain 最多只能有 20 条 cookie，每个 cookie 长度不能超过 4KB，否则会被截掉
+         *	 	 安全性问题。如果 cookie 被人拦截了，那人就可以取得所有的 session 信息，即使加密也与事无补，因为拦截者并不需要知道 cookie 的意义，他只要原样转发 cookie 就可以达到目的了
+         *       cookie 不能跨域
+         *
+         * cookie 是存于用户硬盘的一个文件，这个文件通常对应于一个域名，当浏览器再次访问这个域名时，便使这个cookie可用。
+         * 因此，cookie 可以跨越一个域名下的多个网页，但不能跨越多个域名使用。
+         * 可用在保存用户登录状态。跟踪用户行为。定制页面。创建购物车。
+         *
+         *  1.不同的浏览器存放的 cookie 位置不一样，也是不能通用的
+         *  2.cookie 的存储是以域名形式进行区分的
+         *  3.cookie 的数据可以设置名字的
+         *  4.一个域名下存放的 cookie 的个数是有限制的，不同的浏览器存放的个数不一样
+         *  5.每个 cookie 存放的内容大小也是有限制的，不同的浏览器存放大小不一样
+         *  6.cookie 名称不区分大小写，一般最好是看作是区分大小写的，cookie 的名称必须是经过URL编码的 decodeURIComponent()
+         *  7.域：如果没有明确规定，那么这个域会被认作来自设置 cookie 的那个域
+         *  8.路径：对于指定域中的那个路径，应该向服务器发送 cookie。例如：http://www.wrox.com/books/ 中才能访问，那么 http://www.wrox.com 的页面不能访问
+         *  name=value;express=expiration_time;path=domain_path;domain=domain_name;secure
+	     *
+         *
+         * path：设置能够读取 cookie 的顶级目录;
+         * domain：创建 cookie 所在网页所拥有的域名;
+         * secure：默认是 false
+         *
+         * IE6 以及更低版本限制每个域名最多 20 个 cookie、IE7 和之后版本每个域名最多 50 个、Firefox 限制每个域最多 50 个 cookie、Opera 限制每个域最多 30 个 cookie
+         * Safari 和 Chrome 对于每个域的 cookie 数量限制没有硬性规定，当超过单个域名限制之后还要再设置 cookie，浏览器就会清除以前设置的 cookie，IE 和 Opera 会删除最近最少使用过的 cookie
+         * Firefox 看上去好像是随机决定要清除哪个 cookie，所以考虑 cookie 限制非常重要，以免出现不可预期的后果
+         *
+         * 浏览器中对于 cookie 的尺寸也有限制，大多数浏览器都有大约 4096B 的长度限制。为了最佳的浏览器兼容性，最好将整个 cookie 长度限制在 4095B 以内
+         * 尺寸限制影响到一个域下所有的 cookie，而非每个 cookie 单独限制，如果尝试创建超过最大尺寸限制的 cookie，那么该 cookie 会被悄无声息地丢掉
+         *
+         * 子 cookie 是存放在单个 cookie 中的更小段的数据，也就是用 cookie 值来存储多个名称值对
+         * name=name1=value1&name2=value2&name3=value3
+         * 子 cookie 一般也以查询字符串的格式进行格式化，然后这些值可以使用单个 cookie 进行存储和访问，而非对每个名称-值对使用不同的 cookie 存储
+         * 由于所有的 cookie 都会由浏览器作为请求头发送，所以在 cookie 中存储大量信息会影响到特定域的请求性能。cookie 信息越大，完成对服务器请求
+         * 的时间也就越长。尽管浏览器对 cookie 进行了大小限制，不过最好还是尽可能在 cookie 中少存储信息，以免影响性能
+         * */
+        var oDate = new Date();
+        oDate.setDate(oDate.getDate() + 14);
+        // 每个cookie都是一个名/值对
+        /*
+         * 在 cookie 的名或值中不能使用分号(;)、逗号(,)、等号 (=) 以及空格
+         * 使用 encodeURIComponent() 函数进行编码，它能将一些特殊符号使用十六进制表示
+         * 例如空格将会编码为"20%"，从而可以存储于 cookie 值中，而且使用此种方案还可以避免中文乱码的出现
+         * document.cookie="str="+encodeURIComponent("I love ajax");
+         * 相当于 document.cookie="str=I%20love%20ajax";
+         * 在取出值以后需要使用 decodeURIComponent() 行解码才能得到原来的 cookie 值
+         */
+        document.cookie = "user=Iceman;expires=" + oDate.toUTCString(); // 过期时间为14天后，必须是字符串防止在 IE 下兼容问题
+        document.cookie = "userId=828";
+        // 如果要改变一个 cookie 的值，只需重新赋值
+        document.cookie = "userId=929";
+        // 创建一个cookie，在浏览器关闭时自动删除
+        document.cookie = encodeURIComponent("name") + "=" + encodeURIComponent("Nicholas");
+
+        // document.cookie="password=Iceman";
+        // 不设置过期时间，浏览器关闭自动清除 cookie
+
+        // 只能够一次获取所有的 cookie 值
+        console.log(document.cookie); // user=Iceman password=Iceman  获取cookie
+
+        // 封装 cookie
+        function setCookie(name, value, iDay) {
+            var oDate = new Date();
+
+            oDate.setDate(oDate.getDate() + iDay);
+
+            document.cookie = name + "=" + value + ";expirse=" + oDate.toUTCString();
+        }
+
+        function getCookie(name) {
+            var arr = document.cookie.split(";");
+            for (var i = 0; i < arr.length; i++) {
+                var arr2 = arr[i].split("=");
+                if (arr2[0] = name) {
+                    return arr2[1];
+                }
+            }
+
+            return "";  // 没有 cookie 返回空
+        }
+
+        function removeCookie(name) {
+            setCookie(name, 1, -1);
+        }
+
+        setCookie("Username", "Bing", 365);
+
+        getCookie("Username");
+
+    </script>
+</head>
+<body>
+<!--
+    描述：本地的 cookie 火狐能保存下来
+-->
+</body>
+</html>

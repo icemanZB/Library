@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>eval()</title>
+	<script>
+		function test() {
+
+			var val = eval;  // 就是  window.eval("var a= 1 ");
+
+			// eval("var a= 1") 这直接写 下面的 alert 是不能找到 a 的
+			// eval 即使 JavaScript 中的关键字，也是 window 下的属性，直接调用的时候会当做关键字来用
+			// 这个关键字是局部变量，只能在局部范围内起作用
+			// window.eval() 就是 window 下的属性，就可以全局找到，把 eval 存成变量也是一个道理
+			val('var a = 1');
+
+		}
+
+		test();
+
+		alert(a);  // 可以找到 a
+	</script>
+</head>
+<body>
+
+</body>
+</html>

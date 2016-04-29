@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>闭包</title>
+	<script>
+		/*
+		 * 函数声明包含在一对圆括号中，表示它实际上是一个函数表达式，后面的括号会立即调用这个函数
+		 * 注意函数声明后面不能跟圆括号
+		 * 这种做法可以减少闭包占用的内存问题，因为有指向匿名函数的引用，只要函数执行完毕，就可以立即销毁其作用域链
+		 */
+		(function () {
+			// 这里是块级作用域
+		})();
+
+		function outputNumbers(count) {
+			// 在匿名函数中定义的任何变量，都会在执行结束时被销毁
+			// 而在私有作用域中能够访问变量 count，因为这个匿名函数是一个闭包，它能够访问包含作用域中的所有变量
+			(function () {
+				for (var i = 0; i < count; i++) {
+					console.log(i);
+				}
+			})();
+			// 变量i在使用后即被销毁
+			console.log(i); // 错误
+		}
+
+		// outputNumbers(5);
+		window.onload = function () {
+			var aA = document.getElementsByTagName("a");
+			/* for (var i = 0, len = aA.length; i < len; i++) {
+			 *     aA[i].index = i;
+			 *     aA[i].onclick = function () {
+			 *         console.info(this.index + 1);
+			 *     };
+			 * }
+			 */
+
+			// 闭包
+			for (var i = 0, len = aA.length; i < len; i++) {
+				(function (i) {
+					aA[i].onclick = function () {
+						console.info(i + 1);
+					};
+				})(i)
+			}
+		};
+
+		function Foo() {
+			var i = 0;
+			return function () {
+				console.log(i++);
+			}
+		}
+
+		// f1 => return function(){ console.info(i++); }
+
+		var f1 = Foo(), f2 = Foo();
+		f1();  // 0
+		f1();  // 1
+		f2();  // 0
+		f2();  // 1
+		f2();  // 2
+
+
+		// 闭包就是函数的局部变量集合，只是这些局部变量在函数返回后会继续存在。
+		// 闭包就是就是函数的"堆栈"在函数返回后并不释放，我们也可以理解为这些函数堆栈并不在栈上分配而是在堆上分配
+		// 当在一个函数内定义另外一个函数就会产生闭包 比如如下的代码
+
+		function greeting(name) {
+			var text = "Hello " + name; // local variable     // 每次调用时，产生闭包，并返回内部函数对象给调用者
+			return function () {
+				console.log(text);
+			}
+		}
+		var sayHello = greeting("Closure");
+		// 代码的执行结果是：Hello Closure，因为 sayHello() 函数在 greeting 函数执行完毕后，仍然可以访问到了定义在其之内的局部变量 text
+		// 这个就是一个闭包的效果，闭包在 JavaScript 中有多种应用场景和模式，比如 Singleton、Power Constructor 等这些 JavaScript 模式都离不开对闭包的使用。
+
+		/*
+		 * 因此闭包有如下3个特性：
+		 * 1.函数嵌套函数
+		 * 2.函数内部可以引用外部的参数和变量
+		 * 3.参数和变量不会被垃圾回收机制回收，除非代码中把参数和变量或者外部函数强制为 null
+		 *   因为 JavaScript 的垃圾回收原理
+		 *   (1) 在 JavaScript 中，如果一个对象不再被引用，那么这个对象就会被 GC 回收
+		 *   (2) 如果两个对象互相引用，而不再被第3者所引用，那么这两个互相引用的对象也会被回收
+		 */
+		sayHello();  // 通过闭包访问到了局部变量 text
+
+		// 闭包的定义及其优缺点
+
+		// 闭包  是指有权访问另一个函数作用域中的变量的函数，创建闭包的最常见的方式就是在一个函数内创建另一个函数,通过另一个函数访问这个函数的局部变量
+		// 闭包的缺点就是常驻内存，会增大内存使用量，使用不当很容易造成内存泄露。
+
+		function assignHandlerBad() {
+			var el = document.getElementById("demo");
+			el.onclick = function () {
+				console.log(el.id);
+			}
+		}
+		assignHandlerBad();
+
+		// 以上代码创建了作为 el 元素事件处理程序的闭包，而这个闭包又创建了一个循环引用，只要匿名函数存在，el 的引用数至少为1，因些它所占用的内存就永完不会被回收
+
+		function assignHandlerGood() {
+			var el = document.getElementById("demo");
+			var id = el.id;
+			el.onclick = function () {
+				console.log(id);
+			};
+			el = null;
+		}
+		assignHandlerGood();
+
+		// 闭包是 JavaScript 语言的一大特点，主要应用闭包场合主要是为了: 设计私有的方法和变量。
+
+		// 一般函数执行完毕后，局部活动对象就被销毁，内存中仅仅保存全局作用域
+
+		/* 闭包中局部变量是引用而非拷贝 */
+		function say() {
+			// Local variable that ends up within closure
+			var num = 666;
+			var sayAlert = function () {
+				alert(num);
+			};
+			num++;
+			return sayAlert;
+		}
+
+		var sayAlert = say();
+		sayAlert(); // 因此执行结果应该弹出的 667 而非 666。因为对闭包中 alert(num) 中的 num 而言是一个引用，下面的 num++ 之后就变成了667
+
+		/* 多个函数绑定同一个闭包，因为他们定义在同一个函数内。 */
+		function setupSomeGlobals() {
+			// Local variable that ends up within closure
+			var num = 666;
+			// Store some references to functions as global variables
+			gAlertNumber = function () {
+				alert(num);
+			};
+			gIncreaseNumber = function () {
+				num++;
+			};
+			gSetNumber = function (x) {
+				num = x;
+			};
+		}
+		setupSomeGlobals(); // 为三个全局变量赋值
+		gAlertNumber(); //666
+		gIncreaseNumber();
+		gAlertNumber(); // 667
+		gSetNumber(12);//
+		gAlertNumber();//12
+
+		/* 当在一个循环中赋值函数时,这些函数将绑定同样的闭包 */
+		function buildList(list) {
+			var result = [];
+			for (var i = 0; i < list.length; i++) {
+				var item = "item" + list[i];
+				result.push(function () {
+					alert(item + " " + list[i])
+				});
+			}
+			return result;
+		}
+
+		function testList() {
+			var fnlist = buildList([1, 2, 3]);
+			// using j only to help prevent confusion - could use i
+			for (var j = 0; j < fnlist.length; j++) {
+				// testList 的执行结果是弹出 item3 undefined 窗口三次，因为这三个函数绑定了同一个闭包
+				// 而且 item 的值为最后计算的结果，但是当 i 跳出循环时 i 值为 4，所以 list[4] 的结果为 undefined
+				fnlist[j]();
+			}
+		}
+
+
+		/* 外部函数所有局部变量都在闭包内，即使这个变量声明在内部函数定义之后 */
+		function sayAlice() {
+			var sayAlert = function () {
+				alert(alice);
+			};
+			// Local variable that ends up within closure
+			var alice = "Hello Alice";
+			return sayAlert;
+		}
+		var helloAlice = sayAlice();
+		helloAlice(); // 执行结果是弹出"Hello Alice"的窗口。即使局部变量声明在函数 sayAlert 之后,局部变量仍然可以被访问到
+
+		/* 每次函数调用的时候创建一个新的闭包 */
+
+		function newClosure(someNum, someRef) {
+			// Local variables that end up within closure
+			var num = someNum;
+			var anArray = [1, 2, 3];
+			var ref = someRef;
+			return function (x) {
+				num += x;
+				anArray.push(num);
+				alert("num: " + num +
+				"\nanArray " + anArray.toString() +
+				"\nref.someVar " + ref.someVar);
+			}
+		}
+		var closure1 = newClosure(40, {someVar: "closure 1"});
+		var closure2 = newClosure(1000, {someVar: "closure 2"});
+
+		closure1(5); // num:45 anArray[1,2,3,45] ref:"someVar closure1"
+		closure2(-10);// num:990 anArray[1,2,3,990] ref:"someVar closure2"
+
+		/* 闭包中的 this */
+		var name = "Jack";
+		var o = {
+			name: "bingdian",
+			getName: function () {
+				return function () {
+					return this.name;  // this 指向调用该方法的对象
+				};
+			}
+		};
+		console.log(o.getName()());
+		o.getName(); // 返回的是一个匿名函数，调用该匿名函数时 this 指向的是该匿名函数，因此输出的结果为 Jack
+
+	</script>
+</head>
+<body>
+<!-- 实现一段脚本,使得点击对应链接alert出相应的编号 -->
+<a href='#'> 第一个链接 </a> <br/>
+<a href='#'> 第二个链接 </a> <br/>
+<a href='#'> 第三个链接 </a> <br/>
+<a href='#'> 第四个链接 </a> <br/>
+</body>
+</html>

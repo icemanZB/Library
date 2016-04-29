@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Math.random()</title>
+	<script>
+		/*
+		 * Math.random() 可以获得一个大于等于 0 小于 1 的浮点数
+		 * http://taobaofed.org/blog/2015/12/07/some-thing-about-random/
+		 */
+		// 值 = Math.floor(Math.random()*可能值的总数 + 第一个可能的值);
+		// 取 1 到 10 之间的数  Math.floor(Math.random()*10 + 1);
+		// 取 2 到 10 之间的数  Math.floor(Math.random()*9 + 2);
+
+		function selectForm(lowerValue, upperValue) {
+			var choices = upperValue - lowerValue + 1;
+			return Math.floor(Math.random() * choices + lowerValue);
+		}
+
+		var num = selectForm(2, 10);
+		console.log(num);  // 介于 2-10 之间 ( 包括2和10 )
+
+		// 随机取出一项
+		var colors = ["red", "green", "blue", "yellow", "black", "purple", "brown"];
+		console.log(colors[selectForm(0, colors.length - 1)]);
+
+		// 从一个集合中随机选择对象时，使用浮点数离散化后的结果作为选择集的索引
+		var randomIndex = Math.floor(colors.length * Math.random());
+		console.log(colors[randomIndex]);
+
+		/*
+		 * 假设某次抽奖活动，奖品概率设置如下：
+		 * 登山包：0.01、旅行箱：0.03、移动电源：0.06、不中奖（也看成是一种奖品）：0.9
+		 * 即，期望 1000 次抽奖中，约 10 次命中登山包，约 30 次命中旅行箱，约 60 次命中移动电源，约 900 次不中奖
+		 *
+		 * 基本思路：设计一个 updateRandom() 函数，返回一个大于等于 0 小于 1 的浮点数，将 0 到 1 之间等分成四段，每一段对应一个奖品
+		 * 根据函数的返回值来决定命中哪个奖品。那么 updateRandom() 函数的返回值需要满足：
+		 *
+		 * if( p <  current(0.01) / total(1) ) return i(0,1,2,3) / l(4) + n;
+		 *
+		 * 返回值期间 [0, 0.25)，概率 0.01
+		 * 返回值期间 [0.25, 0.5)，概率 0.03
+		 * 返回值期间 [0.5, 0.75)，概率 0.06
+		 * 返回值期间 [0.75, 1)，概率 0.9
+		 */
+		function updateRandom() {
+			var p = Math.random(), n = Math.random() / 4;
+
+			if (p < 0.01)
+				return 0 + n;
+
+			if (p < 0.04)   // 0.01 + 0.03
+				return 0.25 + n;
+
+			if (p < 0.1)  // 0.04 + 0.06
+				return 0.5 + n;
+
+			if (p < 1)
+				return 0.75 + n;
+		}
+		// 使用的时候，依然可以继续采取最熟悉的方式：
+
+		var objects = ["登山包", "旅行箱", "移动电源", "不中奖"];
+		console.log(objects[Math.floor(objects.length * updateRandom())]);
+
+		// 上一段代码演示了如何生成符合指定概率模型的随机浮点数，它的缺限在于模型的数据硬编码在函数体内，维护起来有困难
+		// 如果设计一个工厂函数，根据输入的权重数据来动态创建随机函数，会给实际应用中带来很大便利
+		function randomInProbability(weights) {
+			if (arguments.length > 1) {
+				weights = [].slice.call(arguments);
+			}
+
+			var total, current = 0, parts = [], i = 0, l = weights.length;
+
+			// reduce 方法的简单兼容 (求和)
+			total = weights.reduce ? weights.reduce(function (a, b) {
+				return a + b;
+			}) : eval(weights.join("+"));
+
+			for (; i < l; i++) {
+				current += weights[i];
+				parts.push("if( p < ", current / total, " ) return ", i / l, " + n;");
+			}
+
+			/*
+			 * ["if( p < ", 0.01, " ) return ", 0, " + n;", "if( p < ", 0.04, " ) return ", 0.25, " + n;", "if( p < ", 0.1, " ) return ", 0.5, " + n;", "if( p < ", 1, " ) return ", 0.75, " + n;"]
+			 *
+			 *  if( p < ", 0.01, " ) return ", 0, " + n;
+			 *
+			 *  console.log(["if( p < ", 0.01, " ) return ", 0, " + n;"].join("")); // if( p < 0.01 ) return 0 + n;
+			 */
+
+			return Function("var p = Math.random(), n = Math.random() / " + l + ";" + parts.join(""));
+		}
+
+
+		// 这样一来，就可以很方便得到任意概率模型的随机函数了，还是上面的例子，创建一个 updateRandom() 函数很简单
+
+		/*
+		 * function anonymous() {
+		 *     var p = Math.random(), n = Math.random() / 4;if( p < 0.01 ) return 0 + n;if( p < 0.04 ) return 0.25 + n;if( p < 0.1 ) return 0.5 + n;if( p < 1 ) return 0.75 + n;
+		 * }
+		 */
+
+		console.log(randomInProbability(0.01, 0.03, 0.06, 0.9));
+
+		function getRandom() {
+			var args = Array.prototype.slice.call(arguments);
+			var r = Math.random();
+			for (var i = 0, leng = args.length; i < leng; i++) {
+				r -= args [i];
+				if (r < 0) {
+					return i;
+				}
+			}
+			return i;
+		}
+
+		// console.log(objects[getRandom(0.1, 0.3, 0.2, 0.4)]);
+
+		var model = [];
+
+		for (var i = 0; i < 100; i++) {
+			model.push(2 + Math.sin(Math.PI * 2 * i / 50));
+		}
+
+		var randomInSin = randomInProbability(model);
+
+
+	</script>
+</head>
+<body>
+</body>
+</html>

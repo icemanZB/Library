@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>局部变量和全局变量</title>
+	<script>
+		// 全局变量不能通过 delete 操作符删除，而直接在 window 对象上的定义的属性可以
+		// var 语句添加的 window 属性有个名为[[Configurable]]的特性，这个特性的值被设置为 false ，因此不可以通过 delete 操作符删除
+		var age = 29;
+		window.color = "red";
+		// 在 IE9 以下抛出错误，在其他所有浏览器中都返回 false
+		console.log(delete window.age);
+		// 在 IE9 以下时抛出错误，在其他所有浏览器重返回 true
+		console.log(delete window.color);  // true
+
+		console.log(window.age); // 29 (没有被删除)
+		console.log(window.color); // undefined (已经被删除)
+
+		var f = true;
+		if (f === true) {
+			var a = 10;
+		}
+
+		function fn() {
+			var b = 20;
+			c = 30;
+		}
+
+		fn();
+		console.log(a); // 10
+		console.log(b); // 报错
+		console.log(c); // 30
+
+		/*
+		 * function内的新声明的变量才是局部变量,而没有用var声明的变量在哪里都是全局变量
+		 * 只有 function(){} 内新声明的才能是局部变量，while{…}、if{…}、for(..) 之内的都是全局变量
+		 */
+
+
+		var foo = 1;
+		function bar() {
+			foo = 10;
+			return;
+			function foo() {
+			}
+		}
+		bar();
+
+		console.log(foo); // 1
+
+		/*
+		 * function 内的新声明的变量才是局部变量，而没有用 var 声明的变量在哪里都是全局变量。
+		 * 由于函数会预编译，所以覆盖了定义的 foo 全局变量，成为了局部变量，那么在外界是无法访问的
+		 * 所以就访问到了最外层定义的 var foo=1
+		 */
+
+		var foo = 1;
+		function bar() {
+			foo = 10;
+			return;
+			function foo() {
+				return 3;
+			}
+		}
+		bar();
+
+		console.log(foo);  // 1
+
+		var foo = 1;
+		function bar() {
+			foo = 10;
+			return;
+		}
+		bar();
+
+		console.log(foo); // 10
+	</script>
+</head>
+<body>
+
+</body>
+</html>

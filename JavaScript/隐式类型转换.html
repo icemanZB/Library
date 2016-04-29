@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>隐式类型转换</title>
+	<script>
+		/*
+		 * 隐式转换类型
+		 * 计算机自动的先把 num 和 str 转为相同的类型，在进行比较
+		 * 双等号 先转换类型在比较
+		 * 全等不转换类型直接比
+		 */
+
+		var num = 5;
+		var str = "5";
+
+		console.log(num == str); // true  双等号 先转换类型在比较
+
+		console.log(num === str); // false  全等 不转换类型 直接比
+
+		var a = "12";
+		var b = "5";
+
+		console.log(a + b); // 125 字符串链接
+		console.log(a - b); // 7 做减法之前 先把 a 和 b 转为数字 然后在去相减
+
+	</script>
+</head>
+<body>
+</body>
+</html>

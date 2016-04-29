@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>动态加载脚本</title>
+	<script src="js/browserdetect.js"></script>
+	<script>
+		window.onload = function () {
+			alert(BrowserDetect);
+		};
+
+		var flag = true; // 如果为真加载js脚本
+		if (flag) {
+			loadScript("js/browserdetect.js");
+
+			var script = document.createElement("script");
+			script.type = "text/javascript";
+			// script.appendChild(document.createTextNode('alert("Iceman")')); // IE 不支持这种写法
+			script.text = 'alert("Iceman")';
+			document.getElementsByTagName("head")[0].appendChild(script);
+
+			// 动态加载 css
+			var style = document.createElement("style");
+			style.type = "text/css";
+			// IE不支持
+			// style.appendChild(document.createTextNode('#box {width:200px;height:200px;background:red}'));
+			document.getElementsByTagName("head")[0].appendChild(style);
+			insertRule(document.styleSheets[0], "#box", "width:200px;height:200px;background:red", 0);
+		}
+
+		function loadScript(url) {
+			var script = document.createElement("script");
+			script.type = "text/javascript";
+			script.src = url;
+			document.getElementsByTagName("head")[0].appendChild(script);
+		}
+
+		function insertRule(sheet, selectorText, cssText, position) {
+			// 如果是非IE
+			if (sheet.insertRule) {
+				sheet.insertRule(selectorText + "{" + cssText + "}", position);
+				//如果是IE
+			} else if (sheet.addRule) {
+				sheet.addRule(selectorText, cssText, position);
+			}
+		}
+
+	</script>
+</head>
+
+<body>
+<div id="box">
+	测试
+</div>
+
+</body>
+
+</html>

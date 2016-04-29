@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>递归</title>
+	<script>
+		function factorial(num) {
+			if (num <= 1) {
+				return 1;
+			} else {
+				// 建议使用 arguments.callee，避免 factorial = null 后产生的问题
+				// return num * arguments.callee(num-1);
+				// return num * factorial(num - 1);
+			}
+		}
+		// 经典的递归阶乘函数，以下代码会导致它出错
+		var anotherFactorial = factorial;
+		factorial = null;
+		// 出错，此时 factorial 已经不再是一个函数 ( TypeError: factorial is not a function )
+		// console.log(anotherFactorial(4));
+
+		/*
+		 * 严格模式下，不能通过脚本访问 arugments.callee，可以使用命名函数表达式来达成相同的结果
+		 */
+		// 此代码创建了一个名为 f() 的命名函数表达式，然后赋值给变量 factorial，即便把函数赋值给另一个变量，函数名字f还是有效，所以递归正常
+		var funFactorial = (function f(num) {
+			if (num <= 1) {
+				return 1;
+			} else {
+				return num * f(num - 1);
+			}
+		});
+		var funAnotherFactorial = funFactorial;
+		funFactorial = null;
+		console.log(funAnotherFactorial(4));  // 24
+	</script>
+</head>
+<body>
+
+</body>
+</html>

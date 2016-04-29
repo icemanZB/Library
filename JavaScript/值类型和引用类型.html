@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>值类型和引用类型</title>
+	<script>
+		// 值类型和引用类型，这种分类方式主要约定了变量的使用方法，表达的含义是数据在运算时的使用方式：参与运算的是其值或其引用
+
+		/*
+		 * 数据类型             值/引用类型          备注
+		 * undefined           值类型              无值
+		 * number              值类型
+		 * boolean             值类型
+		 * string              值类型              字符串在赋值运算中会按引用类型的方式来处理
+		 * function            引用类型
+		 * object              引用类型
+		 */
+
+		var str = "abcde";
+		var obj = new String(str);
+
+		function newToString() {
+			return "hello,world!";
+		}
+
+		function func(val) {
+			val.toString = newToString;
+		}
+
+		// 传入值，它的 toString 属性的修改是无意义的
+		func(str);
+		console.log(str);   // abcde
+		// 传入对象的引用，所以它的 toString 属性修改会影响到后来的运算
+		func(obj);
+		console.log(obj);  // String {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", length: 5, [[PrimitiveValue]]: "abcde"}
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
