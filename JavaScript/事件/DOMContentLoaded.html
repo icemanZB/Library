@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>DOMContentLoaded</title>
+	<script>
+		/*
+		 * DOMContentLoaded 事件在形成完整的 DOM 树后就会触发，不理会图像、JavaScript 文件、CSS 文件或者其他资源是否已经下载完毕，并且支持在
+		 * 页面下载的早期添加事件处理程序。尽管这个事件会冒泡到 window，但它的目标实际上是 document
+		 * IE9+、Firefox、Chrome、Safari3.1、Opera9+ 都支持，通常这个事件既可以添加事件处理程序，也可以执行其他 DOM 操作，并且始终在 load 之前触发
+		 */
+		document.addEventListener("DOMContentLoaded", function () {
+			console.log("Content loaded");
+		});
+
+		// 对于不支持 DOMContentLoaded 的浏览器，建议在页面加载期间设置一个时间为 0ms 的超时调用
+		// 在 JavaScript 处理完成后立即运行这个函数，在页面下载和构建期间，只有一个 JavaScript 处理过程，因此超时调用会在该过程结束立即触发
+		setTimeout(function () {
+			// 在此添加事件处理程序
+		}, 0);
+
+		/*
+		 * 0ms 这个时间与 DOMContentLoaded 被触发的时间能否同步，主要还是取决于用户使用的浏览器和页面中的其他代码，
+		 * 为了确保这个方法有效，必须将其作为页面中的第一个超时调用；
+		 * 即便如此也还是无法保证在所有环境中该超时调用一定会早于 load 事件被触发
+		 */
+
+		/*
+		 * readystatechange 事件，其中有个 readState 属性，支持的浏览器有 IE、Firefox4+、Opera
+		 * uninitialized(未初始化)：对象存在但尚未初始化
+		 * loading(正在加载)：对象正在加载数据
+		 * loaded(加载完毕)：对象加载数据完成
+		 * interactive(交互)：可以操作对象了，但还没有完全加载
+		 * complete(完成)：对象已经加载完毕了
+		 * 在与 load 事件一起使用时，无法预测两个事件触发的先后顺序，在包含较多的外部资源时，会在 load 事件触发之前先进入交互阶段；
+		 * 而在包含较少的资源页面中，则很难说 readstatechange 事件会发生在 load 事件前面，所以有必要同时检测交互和完成阶段
+		 */
+		// 达到与使用 DOMContentLoaded 十分相近的结果，但是他们本质上不同，load 事件与 readystatechange 事件并不能保证以相同的顺序触发
+		document.addEventListener("readstatechange", function () {
+			if (document.readyState === "interactive" || document.readyState === "complete") {
+				// 移出相应的事件处理程序以免在其他阶段再执行
+				// 由于事件处理程序使用的是匿名函数，因此使用了 arguments.callee 来引用这个函数
+				EventUtil.removeHandler(document, "readystatechange", arguments.callee);
+				alert("Content loaded");
+			}
+		});
+
+		// 与其他浏览器中一样，除非把动态创建的元素添加到页面中，否则浏览器不会开始下载外部资源
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

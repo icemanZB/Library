@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>touch事件</title>
+	<script src="../js/EventUtil.js"></script>
+	<script>
+		function handleTouchEvent(ev) {
+			// 只跟踪一次触摸
+			if (ev.touches.length === 1) {
+				var output = document.getElementById("output");
+				switch (ev.type) {
+					case "touchstart":
+						output.innerHTML = "Touch started (" + ev.touches[0].clientX + "," + ev.touches[0].clientY + ")";
+						break;
+					case "touchend":
+						output.innerHTML += "<br>Touch ended (" + ev.changedTouches[0].clientX + "," + ev.changedTouches[0].clientY + ")";
+						break;
+					case "touchmove":
+						ev.preventDefault(); // 阻止滚动(触摸移动的默认行为时滚动页面)
+						output.innerHTML += "<br>Touch moveed (" + ev.changedTouches[0].clientX + "," + ev.changedTouches[0].clientY + ")";
+						break;
+				}
+			}
+		}
+
+		EventUtil.addHandler(document, "touchstart", handleTouchEvent);
+		EventUtil.addHandler(document, "touched", handleTouchEvent);
+		EventUtil.addHandler(document, "touchmove", handleTouchEvent);
+
+		// 发生顺序如下：touchstart->mouseover->mousemove(一次)->mousedown->mouseup->click->touchend
+
+		// 手势事件：gesturestart、gesturechange、gestureend
+	</script>
+</head>
+<body>
+<div id="output"></div>
+</body>
+</html>

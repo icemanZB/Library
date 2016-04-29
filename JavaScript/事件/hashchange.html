@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>hashchange</title>
+	<script>
+		// hashchange 事件，以便在 URL 的参数列表( 及URL中"#"后面的所有字符串 )发生变化时触发
+		// 支持的浏览器有 IE8+、Firefox3.6、Safari5+、Chrome 和 Opera10.6+，在这些浏览器中只有 Firefox6+、Chrome 和 Opera支持 oldURL 和 newURL
+		document.addEventListener("hashchange", function (ev) {
+			console.log("Old URL:" + ev.oldURL + "\nNew URL:" + ev.newURL);
+			// 建议使用 location
+			console.log("Current hash:" + location.hash);
+		});
+
+		// 如果IE8是在IE7文档模式下运行，即使功能无效它也会返回 true，所以不能用 ("onhashchange" in window) 检测
+		var isSupported = ("onhashchange in window") && (document.documentMode === undefined || document.documentMode > 7)
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>event</title>
+	<script>
+		/*
+		 * event：事件对象，当一个事件发生的时候，和当前这个对象发生的这个事件有关的一些详细的信息都会被临时保存到一个指定地方 -event 对象，供我们在需要的调用。
+		 *
+		 * 事件对象必须在一个事件调用的函数里面使用才有内容
+		 * 事件函数：事件调用的函数，一个函数是不是事件函数，不在定义的决定，而是取决于这个调用的时候
+		 *
+		 * 兼容
+		 * IE/chrome：event 是一个内置全局对象
+		 * 标准下( chrome ff )：事件对象是通过事件函数的第一个参数传入
+		 *
+		 * 如果一个函数是被事件调用的那么，这个函数定义的第一个参数就是事件对象
+		 */
+
+		function fn1(ev) {
+			var oEvent = ev || window.event;
+
+			for (var attr in oEvent) {
+				if (oEvent.hasOwnProperty(attr)) {
+					console.log(attr + " = " + oEvent[attr]);
+				}
+			}
+			// clientX[Y]：当一个事件发生的时候，鼠标到页面可视区的距离
+			console.log(oEvent.clientX);
+		}
+		// 不是事件调用的函数，event 就是没有内容
+		// fn1();
+
+		window.onload = function () {
+
+			document.onclick = fn1;	// 是事件调用的函数，所以 event 有内容
+
+			// 在事件处理程序内部，对象 this 始终等于 currentTarget 的值，而 target 则只包含事件的实际目标；
+			// 如果直接将事件处理程序指定给了目标元素，则 this、currentTarget、target 包含相同的值；
+			var btn = document.getElementById("btn");
+			btn.onclick = function (event) {
+				var e = window.event || event;
+				var tag = e["target"] || e["srcElement"];
+				console.log(tag.tagName);
+				console.log(event.currentTarget === this);  // true
+				console.log(event.target === this);	// true
+			};
+
+			// 如果事件处理程序在父节点中
+			document.body.onclick = function (event) {
+				// 因为事件处理程序是注册在这个元素上的，所以 event.currentTarget、this 都是等于 document.body
+				console.log(event.currentTarget === document.body);  // true
+				console.log(this === document.body);   // true
+				// =btn 是 click 事件真正的目标，按钮上的事件处理程序时 document.body 冒泡上去的
+				console.log(event.target === document.getElementById("btn"));  // true
+			}
+
+		};
+
+	</script>
+</head>
+
+<body>
+<input type="button" id="btn"/>
+</body>
+</html>

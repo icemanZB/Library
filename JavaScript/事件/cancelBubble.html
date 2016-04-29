@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>cancelBubble</title>
+	<style>
+		#div1 { width: 100px; height: 200px; border: 1px solid red; display: none; }
+	</style>
+	<script>
+		window.onload = function () {
+			/*
+			 * 阻止冒泡：当前要阻止冒泡的事件函数中调用 event.cancelBubble = true;
+			 */
+
+			var oBtn = document.getElementById("btn");
+			var oDiv = document.getElementById("div1");
+
+			oBtn.onclick = function (ev) {
+				var oEvent = ev || event;
+
+				oEvent.cancelBubble = true; // 阻止当前对象的当前事件的冒泡
+
+				oDiv.style.display = "block";
+			};
+			// 这个 mouseover 事件也会冒泡
+			oBtn.onmouseover = function (ev) {
+				var oEvent = ev || event;
+
+				oEvent.cancelBubble = true; // 阻止当前按钮的 mouseover
+			};
+
+			document.onclick = function () {
+				oDiv.style.display = "none";
+			};
+
+			// stopPropagation() 取消冒泡
+			var btn = document.getElementById("myBtn");
+			btn.onclick = function (event) {
+				console.log("Clicked");
+				// IE 不支持事件捕获，所以在夸浏览器的情况下，stopPropagation() 也只能用来阻止事件冒泡
+				event.stopPropagation();  // 调用后不会显示 Body Click
+			};
+			document.body.onclick = function () {
+				console.log("Body Click");
+			}
+
+		}
+	</script>
+</head>
+
+<body>
+<input type="button" value="按钮" id="btn"/>
+<input type="button" value="stopPropagation" id="myBtn"/>
+
+<div id="div1"></div>
+
+</body>
+</html>

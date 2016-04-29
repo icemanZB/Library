@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>事件默认行为</title>
+	<script>
+		/*
+		 * 事件默认行为：当一个事件发生的时候浏览器自己会默认做的事情
+		 * 怎么阻止？
+		 * 当前这个行为是什么事件触发的，然后在这个事件的处理函数中使用 return false;
+		 */
+
+		document.onkeydown = function () {
+			return false;
+		};
+
+		// oncontextmenu：右键菜单事件，当右键菜单 (环境菜单) 显示出来的时候触发
+
+		document.oncontextmenu = function () {
+			return false;
+		};
+
+		window.onload = function () {
+
+			// 阻止链接的默认行为
+			document.getElementById("link").onclick = function (event) {
+				// cancelable 为 true 的事件，才可以使用 event.preventDefault() 来取消默认行为
+				event.preventDefault();
+				// return false;
+			}
+
+		};
+
+	</script>
+</head>
+
+<body style="height: 2000px;">
+<a href="http://www.baidu.com" id="link">阻止链接的默认行为</a>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>事件函数的取消</title>
+	<script>
+		/*
+		 * 第一种事件绑定形式的取消
+		 */
+		function fn1() {
+			alert(1);
+		}
+		function fn2() {
+			alert(2);
+		}
+
+		// document.onclick = fn1;
+		// document.onclick = null;	// 取消事件
+
+		/*
+		 * IE：obj.detachEvent(事件名称,事件函数);
+		 * 标准：obj.removeEventListener(事件名称,事件函数,是否捕获);
+		 */
+
+		// document.attachEvent("onclick", fn1);
+		// document.attachEvent("onclick", fn2);
+		// document.detachEvent("onclick", fn1);
+
+		/*
+		 * addEventListener ("要处理的事件名","做为事件处理程序的函数","true：捕获阶段调用事件处理程序;false：在冒泡阶段调用事件处理程序");
+		 * 通过 addEventListener() 添加的事件处理程序只能使用 removeEventListener()来移除，移除时传入的参数与添加处理程序时使用的参数相同；
+		 * 这就意味着通过 addEventListener() 添加的匿名函数无法删除
+		 */
+
+		document.addEventListener("click", fn1, false);
+		document.addEventListener("click", fn1, true);
+		document.addEventListener("click", fn2, false);
+		document.removeEventListener("click", fn1, false);
+	</script>
+</head>
+
+<body>
+</body>
+</html>

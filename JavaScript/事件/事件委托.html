@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>事件委托</title>
+	<script>
+		window.onload = function () {
+			var list = document.getElementById("myLinks");
+			list.addEventListener("click", function (ev) {
+				ev = window.event || ev;
+				var target = ev.target;
+				console.log(target);
+			});
+		}
+	</script>
+</head>
+<body>
+<ul id="myLinks">
+	<li>Go somewhere</li>
+	<li>Do something</li>
+	<li>Say hi</li>
+</ul>
+</body>
+</html>
