@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>requestAnimationFrame</title>
+	<script src="requestAnimationFrame.js"></script>
+	<script>
+		/*
+		 * 请求动画帧 ( requestAnimationFrame )
+		 * 相当一部分的浏览器的显示频率是 16.7ms，如果我们火力搞猛一点，例如搞个 10ms setTimeout，每第三个图形都无法绘制( 红色箭头指示 )如图
+		 * 显示器 16.7ms 刷新间隔之前发生了其他绘制请求 (setTimeout)，导致所有第三帧丢失，继而导致动画断续显示 ( 堵车的感觉 )，这就是过度绘制带来的问题。
+		 * 不仅如此，这种计时器频率的降低也会对电池使用寿命造成负面影响，并会降低其他应用的性能。
+		 * 这也是为何 setTimeout 的定时器值推荐最小使用 16.7ms 的原因( 16.7 = 1000 / 60, 即每秒60帧 )。
+		 * 而 requestAnimationFrame 就是为了这个而出现的。所做的事情很简单，跟着浏览器的绘制走，如果浏览设备绘制间隔是 16.7ms，那我就这个间隔绘制
+		 * 如果浏览设备绘制间隔是 10ms, 我就 10ms 绘制。这样就不会存在过度绘制的问题，动画不会掉帧
+		 * 内部是这么运作的：浏览器( 如页面 )每次要重绘，就会通知 requestAnimationFrame，进行检测，浏览器只要通知一次就可以了。
+		 * 而 setTimeout 貌似是多个独立绘制，页面最小化了或者被 Tab 切换关灯了页面是不会重绘的，页面中的动画就停止了。页面绘制全部停止，资源高效利用。
+		 * 兼容问题 Android 设备压根就不支持嘛！其他设备基本上跟 CSS3 动画的支持一模一样嘛
+		 * CSS3 transition 或 animation 动画也是走的跟你一样的绘制原理( CSS3 动画在 Tab 切换回来的时候，动画表现并不暂停，
+		 * 通过 Chrome frames 工具测试发现，Tab 切换之后，计算渲染绘制都停止，Tab 切换回来时似乎通过内置 JavaScript 计算了动画位置实现重绘，造成动画不暂停的感觉 )
+		 * FireFox/Chrome 浏览器对 setInterval， setTimeout 做了优化，页面处于闲置状态的时候，如果定时间隔小于1秒钟(1000ms)，则停止了定时器。
+		 * 与 requestAnimationFrame 有类似行为。但如果时间间隔大于或等于 1000ms，定时器依然执行，即使页面最小化或非激活状态
+		 */
+
+		/*
+		 *         setInterval 	requestAnimationFrame
+		 * IE 	    无影响 	           暂停
+		 * Safari 	无影响 	           暂停
+		 * Firefox 	>=1s 	           1s - 3s
+		 * Chrome 	>=1s 	           暂停
+		 * Opera  	无影响 	           暂停
+		 */
+		// 即在重绘屏幕前调用的一个函数，这个函数负责改变下一次重绘时的 DOM 样式，但不知道代码什么时候执行
+		var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame
+				|| msRequestAnimationFrame;
+
+		function updateProgress() {
+			var div = document.getElementById("status");
+			div.style.width = (parseInt(div.style.width, 10) + 5) + "%";
+			if (div.style.left != "100%") {
+				requestAnimationFrame(updateProgress);
+			}
+		}
+		// requestAnimationFrame() 只运行一次传入的函数，因此在需要再次修改UI从而生成动画时，需要再次手工调用它
+		requestAnimationFrame(updateProgress);
+
+		function draw(timestamp) {
+			var diff = timestamp - startTime;  // 计算两次重绘的事件间隔
+			startTime = timestamp; // 使用diff 确定下一步的绘制时间，把 startTIme 重写为这次的绘制时间
+			// 重绘UI
+			mozRequestAnimationFrame(draw);
+		}
+		// 知道距离上次重绘已经过去多长时间
+		var startTime = mozRequestAnimationStartTime;
+		// 用传入回调函数的时间码减去这个时间码，就能计算出在屏幕上重绘下一组变化之前要经过多长时间
+		// 第一次读取的 mozRequestAnimationStartTime 的值，必须在传递给 mozRequestAnimationFrame() 的回调函数外面进行
+		// 如果在回调函数内部读取 mozRequestAnimationStartTime，得到的值与传入的时间码是相等的
+		mozRequestAnimationFrame(draw);
+
+		// Chrome 和 IE 没有提供 mozRequestAnimationStartTime
+		// 假如你不需要知道精确的时间差，可以参考以下模式创建动画循环
+		(function () {
+			function draw(timestamp) {
+				// 计算两次重绘的时间间隔
+				var drawStart = ( timestamp || Date.now() ),
+				    diff      = drawStart - startTime;
+				// 使用diff确定下一步的绘制时间
+				// 把startTime重写为这次的绘制时间
+				startTime = drawStart;
+				// 重绘UI
+				requestAnimationFrame(draw);
+			}
+
+			var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame
+					|| msRequestAnimationFrame;
+			startTime = window.mozAnimationStartTime || Date.now();
+			requestAnimationFrame(draw);
+		})();
+	</script>
+</head>
+<body>
+
+</body>
+</html>

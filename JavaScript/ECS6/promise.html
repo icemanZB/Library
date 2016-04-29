@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>promise</title>
+	<!--
+		让低版本的浏览器兼容 Promise
+		https://github.com/jakearchibald/es6-promise/blob/master/README.md
+	-->
+	<script src="http://s3.amazonaws.com/es6-promises/promise-0.1.1.min.js"></script>
+	<script>
+		/*
+		 * http://web.jobbole.com/84118/
+		 * promise 是  commonJS 下的一个规范，规范的就是 JavaScript 中的异步操作方式
+		 * thenjs  whenjs deferred (jQuery)  , 基于 promise 开发出的实际代码
+		 * ES6 - > ECMAScript 6 中已经加入原生 JavaScript 实现了 promise( 解决异步处理方式 )
+		 */
+		// 通过回调的处理，来保证运行顺序
+		// 缺点：嵌套太多
+		function show(time, fn) {
+			setTimeout(function () {
+				console.log(time + "秒后:");
+				fn();
+			}, time * 1000);
+		}
+
+		show(1, function () {
+			console.log("操作1");
+			show(2, function () {
+				console.log("操作2");
+				show(3, function () {
+					console.log("操作3");
+				});
+			});
+		});
+
+		/*
+		 * 原生 promise：
+		 * 1. 状态  pending(等待) ->  resolve(成功)   reject(拒绝)
+		 * 2. then方法：调用 resolve reject 状态所对应的回调函数
+		 */
+
+		function promiseShow(time) {
+			// 函数有两个参数： resolve( 成功 )，reject ( 失败 可写可不写 )
+			return new Promise(function (resolve) {
+				setTimeout(function () {
+					console.log(time + "秒后:");
+					resolve(); // 成功状态  reject() 失败状态
+				}, time * 1000);
+
+			});
+		}
+		// 对应调用成功的回调函数 ( then )
+		// then(function(){},function(){}); 第二个函数是失败所对应的回调
+		// 现在这样的写法等于创建了 3 个 promise 对象，是同时进行的
+		promiseShow(1).then(function () {
+			console.log("promiseShow同时操作1");
+		});
+		promiseShow(1).then(function () {
+			console.log("promiseShow同时操作2");
+		});
+		promiseShow(1).then(function () {
+			console.log("promiseShow同时操作3");
+		});
+		// 顺序执行
+		promiseShow(1).then(function () {
+			console.log("promiseShow操作3操作1");
+			return promiseShow(2); // 返回新的 promise 对象
+		}).then(function () {
+			console.log("promiseShow操作3操作2");
+			return promiseShow(3);
+		}).then(function () {
+			console.log("promiseShow操作3操作3");
+		});
+		// catch 失败 ( 单独写充当 then 第二个回调函数 )
+		promiseShow(1).then(function () {
+			console.log("成功");
+		}).catch(function () {
+			console.log("失败");
+		});
+
+		function p1() {
+			return new Promise(function (resolve) {
+				setTimeout(function () {
+					console.log("1秒后:");
+					resolve();
+				}, 1000);
+			});
+		}
+		function p2() {
+			return new Promise(function (resolve, reject) {
+				setTimeout(function () {
+					console.log("2秒后:");
+					reject();
+				}, 2000);
+			});
+		}
+		function p3() {
+			return new Promise(function (resolve) {
+				setTimeout(function () {
+					console.log("3秒后:");
+					resolve();
+				}, 3000);
+			});
+		}
+		// Promise.all 等所有的异步的操作都返回正确结果后才调用
+		// Promise.all([]);
+		var p = Promise.all([p1(), p2(), p3()]);
+		p.then(function () {
+			console.log("都成功的状态才会触发");
+		}, function () {
+			console.log("只要有一个失败的就会走");
+		});
+
+		// Promise.race([]) 只要有一个成功就会触发
+		var pRace = Promise.race([p1(), p2(), p3()]);
+
+		pRace.then(function () {
+			console.log("只要有一个成功的状态就会触发");
+		}, function () {
+			console.log("只要有一个失败的就会走");
+		});
+
+	</script>
+</head>
+
+<body></body>
+</html>
