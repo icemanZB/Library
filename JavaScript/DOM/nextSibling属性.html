@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>nextSibling</title>
+	<script>
+		window.onload = function () {
+
+			var oUl = document.getElementById("ul1");
+			var oFirst = oUl.firstElementChild || oUl.firstChild;
+
+			/*
+			 * 元素.nextSibling || 元素.nextElementSibling 下一个兄弟节点
+			 */
+			var oNext = oFirst.nextElementSibling || oFirst.nextSibling;
+			oNext.style.background = "blue";
+
+		}
+	</script>
+</head>
+
+<body>
+<ul id="ul1">
+	<li>11111</li>
+	<li>22222</li>
+	<li>33333</li>
+	<li>44444</li>
+</ul>
+</body>
+</html>

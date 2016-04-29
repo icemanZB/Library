@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>firstChild</title>
+    <script>
+        window.onload = function () {
+
+            var oUl = document.getElementById("ul1");
+            /*
+             * 元素.firstChild：只读属性，第一个子节点
+             * 标准下：firstChild 会包含文本类型的节点
+             * 非标准下：只包含元素节点
+			 *
+             * 元素.firstElementChild：只读属性，标准下获取第一个元素类型的子节点
+			 *
+             * firstChild 在标准和非标准有都有的属性，只是有兼容问题
+             * firstElementChild 只有在标准下有这个属性，非标准没有
+             */
+
+            console.log( oUl.firstChild ); // IE9 下是 objext text、IE8 以下是 object HTMLLIElement
+
+            console.log( oUl.firstElementChild ); // 标准下获取第一个元素节点
+
+            var oFirst = oUl.firstElementChild || oUl.firstChild;
+            oFirst.style.background = "red";
+
+        }
+    </script>
+</head>
+
+<body>
+<ul id="ul1">
+    <li>11111</li>
+    <li>22222</li>
+    <li>33333</li>
+    <li>44444</li>
+</ul>
+</body>
+</html>

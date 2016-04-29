@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>offsetParent</title>
+	<style>
+		div { padding: 40px 50px; }
+
+		#div1 { background: red; }
+
+		/* position:relative;  */
+		#div2 { background: green; zoom: 1; }
+
+		/* position:relative; */
+		#div3 { background: orange; }
+
+
+	</style>
+	<script>
+		window.onload = function () {
+
+			var oDiv3 = document.getElementById("div3");
+
+			// parentNode : 父节点
+			console.log(oDiv3.parentNode.id);  // div2
+
+			/*
+			 * 元素.offsetParent : 只读属性，离当前元素最近的一个有定位属性的父节点
+			 *
+			 * 标准下如果没有定位父级，默认是 body
+			 * IE7以下，如果当前元素没有定位默认是 body，与标准浏览器(包括IE8)一致，如果当前元素有定位则是 html
+			 * IE7以下，如果当前元素的某个父级触发了 layout ，那么 offsetParent 就会被指向到这个触发了 layout 特性的父节点上
+			 *
+			 * 注：body 的 offsetParent 是 null
+			 */
+
+			// 只有在 IE 下有 hasLayout，标准会报错
+			// 当前元素是否触法 haslayout，触法为 true
+			console.log(document.getElementById('div2').currentStyle.hasLayout); // true
+
+			//  标准浏览器下
+			//  如果 div2 有 position:relative; 那么 oDiv3.offsetParent.id 就为 div2
+			//  如果 div2 没有定位，那就是默认 body，就为 body1
+			console.log(oDiv3.offsetParent.id);
+
+		};
+	</script>
+</head>
+
+<body id="body1">
+<div id="div1">
+	<div id="div2">
+		<div id="div3"></div>
+	</div>
+</div>
+</body>
+</html>

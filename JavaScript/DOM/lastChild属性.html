@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>lastChild</title>
+    <script>
+        window.onload = function () {
+
+            var oUl = document.getElementById("ul1");
+
+            /*
+             * 元素.lastChild || 元素.lastElementChild 最后一个子节点
+             */
+            var oLast = oUl.lastElementChild || oUl.lastChild;
+            oLast.style.background = 'yellow';
+
+        }
+    </script>
+</head>
+
+<body>
+<ul id="ul1">
+    <li>11111</li>
+    <li>22222</li>
+    <li>33333</li>
+    <li>44444</li>
+</ul>
+</body>
+</html>

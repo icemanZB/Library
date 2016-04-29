@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>childNodes</title>
+	<script>
+		window.onload = function () {
+
+			var oUl = document.getElementById("ul1");
+
+			/*
+			 * 元素.childNodes：只读属性，子节点列表集合
+			 * 标准下：包含了文本和元素类型的节点，也会包含非法嵌套的子节点
+			 * 非标准下：只包含元素类型的节点，IE7 以下不会包含非法嵌套子节点( 比如在 ul 下多个 p 标签，这就是非法嵌套 )
+			 * IE8 包含非法的子节点，但不包含文本节点
+			 *
+			 * childNodes 中保存着一个 NodeList 对象，它是一种类数组，保存有序节点，它有一个特点是基础 DOM 结构动态执行查询结果，DOM 变化会自动反映在 NodeList 对象中
+			 * someNode.childNodes[0]  == someNode.childNodes.item(0)
+			 *
+			 * <ul id="ul1">
+			 *    <li>11111<span>aa</span></li>
+			 *    <li>22222</li>
+			 *    <li>33333</li>
+			 *    <li>44444</li>
+			 *    <p>pppp</p>  // 这里就是非法嵌套
+			 * </ul>
+			 *
+			 * 所以如果 ul 下有多个 p 标签，那就是 IE8 5 个、标准 11 个、IE7 以下 4个
+			 *
+			 * childNodes 只包含一级子节点，不包含后辈孙级以下的节点
+			 * 实际工作中不推荐使用childNodes，因为有许多兼容问题，建议使用 children
+			 */
+
+			console.log(oUl.childNodes.length); // 9个为标准浏览器，IE9 为 9 个， IE8 为 4 个
+
+			for (var i = 0; i < oUl.childNodes.length; i++) {
+				// 兼容过滤文本节点
+				if (oUl.childNodes[i].nodeType == 1) {
+					oUl.childNodes[i].style.background = "red";
+				}
+			}
+
+			// 此代码会导致无限循环，一般来说尽量少访问 NodeList 的次数
+			/*
+			 * var divs = document.getElementsByTagName("div"),i,div;
+			 * for (i = 0; i < divs.length; i++) {
+			 *     div = document.createElement("div");
+			 *     document.body.appendChild(div);
+			 * }
+			 */
+
+			function convertToArray(nodes) {
+				var arr = null;
+				try {
+					arr = Array.prototype.slice.call(nodes, 0);
+				} catch (ex) {
+					arr = [];
+					for (var i = 0, len = nodes.length; i < len; i++) {
+						arr.push(nodes[i]);
+					}
+				}
+				return arr;
+			}
+
+			console.log(oUl.children);
+
+		}
+	</script>
+</head>
+
+<body>
+<ul id="ul1">
+	<li>11111<span>aa</span></li>
+	<li>22222</li>
+	<li>33333</li>
+	<li>44444</li>
+</ul>
+</body>
+</html>

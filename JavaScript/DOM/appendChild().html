@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>appendChild()</title>
+	<script>
+		window.onload = function () {
+
+			var oText = document.getElementById("text1");
+			var oBtn = document.getElementById("btn");
+			var oUl = document.getElementById("ul1");
+
+			oBtn.onclick = function () {
+
+				var oLi = document.createElement("li");
+
+				oLi.innerHTML = oText.value;
+
+				// 父级.appendChild (要添加的元素) 方法，追加子元素
+
+				oUl.appendChild(oLi);  // 添加到页面中
+
+				/*
+				 * 父级.insertBefore (新的元素，被插入的元素) 方法 在指定元素前面插入一个新元素
+				 * 在 IE 下如果第二个参数的节点不存在，会报错
+				 * 在其他标准浏览器下如果第二个参数的节点不存在，则会以 appendChild() 的形式进行添加
+				 */
+				// oUl.insertBefore( oLi, oUl.children[0] );
+
+				if (oUl.children[0]) {
+					oUl.insertBefore(oLi, oUl.children[0]);
+				} else {
+					oUl.appendChild(oLi);
+				}
+
+			};
+
+		};
+	</script>
+</head>
+
+<body>
+<input type="text" id="text1"/><input type="button" value="留言" id="btn"/>
+<ul id="ul1"></ul>
+</body>
+</html>

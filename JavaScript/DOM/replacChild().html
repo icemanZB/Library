@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>replaceChild()</title>
+	<script>
+		window.onload = function () {
+
+			var oDiv = document.getElementById("div1");
+			var oBtn = document.getElementById("btn");
+			var oP = document.getElementById("p1");
+
+			oBtn.onclick = function () {
+
+				// 父级.replaceChild (新节点，被替换节点) 替换子节点
+				// 相当于把 oDiv 剪切替换掉了 oP
+				document.body.replaceChild(oDiv, oP);
+
+				// appendChild、insertBefore、replaceChild 都可以操作动态创建出来的节点，也可以操作已有节点
+				// 并且他们都是剪切操作
+			};
+		};
+	</script>
+</head>
+
+<body>
+<div id="div1">div1</div>
+<input type="button" value="按钮" id="btn"/>
+<hr/>
+<p id="p1">ppppp</p>
+</body>
+</html>

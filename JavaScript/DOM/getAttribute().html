@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>getAttribute()</title>
+	<script>
+		window.onload = function () {
+
+			var oText = document.getElementById("text1");
+			var oDiv = document.getElementById("oDiv");
+
+			// 元素.getAttribute(属性名称); 获取指定元素的指定属性的值
+
+			console.log(oText.getAttribute("value"));
+
+			/*
+			 * 1.用 . 和 [] 的形式无法操作元素的自定义属性，getAttribute() 可以操作元素的自定义属性
+			 */
+			console.log(oText._name_);  // undefined  在非标准下(IE)，是可以拿到这个值的
+			console.log(oText["_name_"]); // 同上
+
+			console.log(oText.getAttribute("_name_")); // 无兼容问题
+
+			var oImg = document.getElementById("img1");
+			/*
+			 * 2.可以获取元素属性实际的值，IE7 下还是会返回资源的绝对路径
+			 */
+			console.log(oImg.src); // 会获取到当前图片所在的绝对路径
+			console.log(oImg["src"]); // 同上
+
+			console.log(oImg.getAttribute("src"));  // 可以获取元素属性实际的值
+
+			console.log(oImg.style.getAttribute("width"));  // 标准下会报错，IE下支持
+
+			// 在 IE7 及之前的版本 getAttribute() 访问 style 或 onclick ，返回的值与属性的相同 getAttribute("style") 返回一个对象
+			// getAttirbute("onclick") 返回一个函数，IE8 修正了这个问题
+
+			// 一般只有在取得自定义特性值的情况，才会使用 getAttribute()，一般使用对象的属性 ". []"
+			// 所有特性都是属性，直接给属性赋值可以设置特性的值
+			oDiv.id = "someId";
+			oDiv.align = "left";
+			// DOM 元素添加一个自定义的属性，该属性不会自动成为元素的特性
+			oDiv.myColor = "red";
+			oDiv.getAttribute("mycolor"); // null (IE除外) 大多数浏览器中，这个属性都不会自动变成元素的特性，所以通过 getAttribute() 取得同名特性值都会返回 null
+			// 在 IE7 及以前的版本中，setAttribute() 设置 style 和 class ，没有任何效果，IE8 解决了这个问题
+
+		};
+
+
+		// 迭代每一个元素的特性，构造成 name="value" 形式
+		// 针对 attributes 对象中的特性，不同浏览器返回的顺序不同
+		// IE7 及更早的版本会返回 HTML 元素中所有可能的特性，包括没有指定的特性
+		function outputAttributes(element) {
+			var pairs = [], attrName, attrValue, i, len;
+
+			for (i = 0, len = element.attributes.length; i < len; i++) {
+				attrName = element.attributes[i].nodeName;
+				attrValue = element.attributes[i].nodeValue;
+				// 每个特性节点都有一个名为 specified 的属性，这个属性为 true 表示在 HTML 中指定了相应的特性，要么是通过 setAttribute() 方法设置了该特性
+				if (element.attributes[i].specified) {
+					pairs.push(attrName + "=\"" + attrValue + "\"");
+				}
+			}
+			return pairs.join(" ");
+		}
+
+	</script>
+</head>
+
+<body>
+<input type="text" id="text1" value="1111" _name_="妙味"/>
+<img src="bdlogo.gif" id="img1" style="width:100px;"/>
+
+<div id="oDiv"></div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>访问元素的样式</title>
+	<style>
+		#oDiv { background-color: blue; width: 100px; height: 200px; }
+	</style>
+	<script>
+		/*
+		 * CSS属性						JavaScript属性
+		 * background-image			    style.backgroundImage
+		 * color						style.color
+		 * display						style.display
+		 * font-family					style.fontFamily
+		 */
+
+		// 其中一个不能直接转换的 CSS 属性是 float，因为 float 是 JavaScript 中的保留字，所以应该是 cssFloat
+		// Firefox、Safari、Opera、Chrome 都支持，IE支持 styleFloat
+
+		// 给 cssText 赋值会重写整个 style 特性的值
+		window.onload = function () {
+			var oDiv = document.getElementById("oDiv");
+			oDiv.style.cssText = "width:25px;height:100px;background-color:green;";
+
+			// 移出 CSS 支持的浏览器有 IE9+、Firefox、safari、Opera9+、Chrome
+			oDiv.style.removeProperty("border");
+
+			var prop, value, i, len;
+			for (i = 0, len = oDiv.style.length; i < len; i++) {
+				prop = oDiv.style[i]; // oDiv.style.item(i)
+				value = oDiv.style.getPropertyValue(prop);
+				// console.log(prop + " : " + value);
+			}
+
+			// getComputedStyle()方法 两个参数：要取得计算样式的元素和一个伪元素字符串 (:after)，如果不需要伪元素信息，可以为 null
+
+			var computedStyle = document.defaultView.getComputedStyle(oDiv, null);
+
+			console.log(computedStyle.backgroundColor);  // red
+			console.log(computedStyle.width); // 100px
+			console.log(computedStyle.height); // 200px
+			console.log(computedStyle.border); // 在某些浏览器中式 1px solid black
+
+			// IE支持的是 currentStyle
+			var computedStyleIE = oDiv.currentStyle;
+			alert(computedStyleIE.border);  // undefined
+
+			// 所有计算的样式都是只读的，计算后的样式也包含属于浏览器内部样式的信息
+		};
+
+	</script>
+</head>
+<body>
+<div id="oDiv" style="background-color:red;border:1px solid black;"></div>
+</body>
+</html>

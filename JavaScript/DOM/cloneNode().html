@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>cloneNode()</title>
+	<script>
+		window.onload = function () {
+			// cloneNode() 复制后返回的节点副本属于文档所有，并没有为他指定父节点。
+			// IE 中有一个 bug，即它会复制事件处理程序 ( 浅复制测试一下 )，建议在复制之前先删除事件处理程序
+			var oDiv = document.getElementById("oDiv");
+			var deepList = oDiv.cloneNode(true); // 拷贝子节点
+			console.log(deepList.children.length); // 3
+			var showList = oDiv.cloneNode(false); // 只拷贝当前元素的引用
+			console.log(showList.children.length); // 0
+		};
+	</script>
+</head>
+<body>
+<div id="oDiv">
+	<span>1</span>
+	<span>2</span>
+	<span>3</span>
+</div>
+<button id="btn">试一下</button>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>removeAttribute()</title>
+	<script>
+		window.onload = function () {
+
+			var oText = document.getElementById("text1");
+
+			// 元素.removeAttribute(属性名称); 移除指定的元素的指定的属性
+			// removeAttribute() 在IE6不支持
+
+			oText.removeAttribute("value");
+
+		};
+	</script>
+</head>
+
+<body>
+<input type="text" id="text1" value="1111"/>
+</body>
+</html>

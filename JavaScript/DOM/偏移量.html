@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>偏移量</title>
+	<script>
+		/*
+		 * offsetHeight：元素在垂直方向上占用的空间大小，包括元素的高度(可见的)、水平滚动条的高度、上边框高度和下边框高度
+		 * offsetWidth：元素在水平方向上占用的空间大小，包括元素的宽度(可见的)、垂直滚动条的宽度、左边框宽度和右边框宽度
+		 * offsetLeft：元素的左外边框至包含元素的左内边框之间的像素距离
+		 * offsetTop：元素的上外边框至包含元素的上内边框之间的像素距离
+		 * 其中 offsetLeft 和 offsetTop 属性与包含元素有关系 ( offsetParent )
+		 * 这些偏移量属性都是只读的，而且每次访问它们都需要重新计算，避免重复使用  如图 12-1
+		 */
+
+		// 获取某个元素在页面上的偏移量
+		function getElementLeft(element) {
+			var actualLeft = element.offsetLeft;
+			var current = element.offsetParent;
+			while (current !== null) {
+				actualLeft += current.offsetLeft;
+				current = current.offsetParent;
+			}
+			return actualLeft;
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

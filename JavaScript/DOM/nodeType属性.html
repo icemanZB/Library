@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>nodeType</title>
+    <script>
+        window.onload = function () {
+
+            var oUl = document.getElementById("ul1");
+            /*
+             * DOM 节点的类型有很多种
+             * 元素.nodeType：只读属性，当前元素的节点类型
+             *
+             * 元素节点	:	1
+             * 属性节点	:	2
+             * 文本节点  :	3
+             */
+
+            console.log( oUl.nodeType ); // 1 元素节点
+
+            console.log(oUl.childNodes[0].nodeType);  // 3 文本节点
+
+        }
+    </script>
+</head>
+
+<body>
+<ul id="ul1">
+    <li>11111</li>
+    <li>22222</li>
+    <li>33333</li>
+    <li>44444</li>
+</ul>
+</body>
+</html>

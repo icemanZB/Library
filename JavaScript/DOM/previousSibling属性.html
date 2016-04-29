@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>无标题文档</title>
+    <script>
+        window.onload = function () {
+
+            var oUl = document.getElementById("ul1");
+            var oLast = oUl.lastElementChild || oUl.lastChild;
+
+            /*
+             * 元素.previousSibling || 元素.previousElementSibling 上一个兄弟节点
+             */
+            var oPrev = oLast.previousElementSibling || oLast.previousSibling;
+            oPrev.style.background = "orange";
+
+        }
+    </script>
+</head>
+
+<body>
+<ul id="ul1">
+    <li>11111</li>
+    <li>22222</li>
+    <li>33333</li>
+    <li>44444</li>
+</ul>
+</body>
+</html>

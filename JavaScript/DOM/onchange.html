@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>onchange()</title>
+	<script>
+		window.onload = function () {
+
+			var oForm = document.getElementById("form1");
+			var oBtn = document.getElementById("btn");
+
+			// onchange : 当值发生改变的时候触发
+
+			/*
+			 * text : 当光标离开元素的时候再去判断值是否发生了变化，如果发生了变化则触发 onchange 事件
+			 * radio: 标准下点击的时候只要值变了那么就触发，而非标准(IE8以下)下是焦点离开的时候，如果值变了才触发
+			 * checkbox: 同上
+			 * select：选择就触发，没有差异
+			 */
+
+			oForm.username.onchange = function () {
+				alert("值变了");
+			};
+
+			oForm.sex[0].onchange = function () {
+				alert(this.value);
+			};
+
+			for (var i = 0; i < oForm.aihao.length; i++) {
+
+				oForm.aihao[i].onchange = function () {
+
+					if (this.checked) {
+						alert("你选择了：" + this.value);
+					} else {
+						alert("你取消了：" + this.value);
+					}
+
+				}
+
+			}
+
+			oForm.city.onchange = function () {
+				alert(this.value);
+			};
+
+			oBtn.onclick = function () {
+				// radio checkbox   判断是否被选中
+				console.log(oForm.sex[0].checked);
+				for (var i = 0; i < oForm.sex.length; i++) {
+					if (oForm.sex[i].checked) {
+						console.log(oForm.sex[i].value + "被选中了");
+					}
+				}
+			};
+
+		}
+	</script>
+</head>
+
+<body>
+<form id="form1">
+	<input type="text" name="username"/>
+	<input type="radio" name="sex" value="男"/>男
+	<input type="radio" name="sex" value="女" checked/>女
+
+	<input type="checkbox" name="aihao" value="电影"/>电影
+	<input type="checkbox" name="aihao" value="音乐" checked/>音乐
+	<input type="checkbox" name="aihao" value="体育"/>体育
+
+	<!-- 这里的value值和下面option中的selected挂钩，option中有selected的话，当前的value值赋给city中的value -->
+	<select name="city" value="">
+		<option>请选择一个城市</option>
+		<option value="北京">北京</option>
+		<option value="上海" selected>上海</option>
+		<option value="广州">广州</option>
+		<option value="深圳">深圳</option>
+	</select>
+
+	<input type="button" value="按钮" id="btn"/>
+	<input type="submit" value="提交"/>
+</form>
+</body>
+</html>

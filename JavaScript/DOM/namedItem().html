@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>namedItem()</title>
+	<script>
+		window.onload = function () {
+			var images = document.getElementsByTagName("img");
+			var myImg = images.namedItem("myImage");
+			console.log(images);
+			console.log(myImg.src);
+		}
+	</script>
+</head>
+<body>
+<img src="aaa" name="myImage"/><img name="myImage"/><img name="myImage"/>
+</body>
+</html>

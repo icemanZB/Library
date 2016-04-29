@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>scrollTop</title>
+	<script type="text/javascript">
+		window.onload = function () {
+			var oDiv = document.getElementById("wrap");
+			oDiv.onscroll = function () {
+				document.title = this.scrollTop;
+			};
+
+		};
+		window.onscroll = function () {
+			var top = document.documentElement.scrollTop || document.body.scrollTop;
+			// document.title = top;
+			document.title = getPageScroll();
+		};
+
+		// 滚动条位置
+		function getPageScroll() {
+			// 当 html 文档头部包含有 "文档类型声明" 时，需要用 document.documentElement.scrollTop 获得正确的值
+			// 没有 DOCTYPE  使用 document.body.scrollTop
+			var pageScrollTop = window.pageYOffset  // 用于FF
+					|| document.documentElement.scrollTop
+					|| document.body.scrollTop
+					|| 0;
+			return pageScrollTop;
+		}
+
+	</script>
+</head>
+<body style="height:1000px;">
+scrollTop指的是"元素中的内容"超出"元素上边界"的那部分的高度,向上滚动的数值为 scrollTop 如果没有内容 scrollTop 数值不变<br/>
+
+<div style="width:200px;height:200px;background-color:#999999;overflow:auto;" id="wrap">
+	<div style="width:100px;height:300px;background-color:#FFFF00;">
+		这些文字显示在内层元素中。
+	</div>
+</div>
+
+</body>
+</html>

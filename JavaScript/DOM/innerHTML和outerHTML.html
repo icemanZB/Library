@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>innerHTML</title>
+	<script>
+		// innerHTML 的返回值，IE 和 Opera 会将所有标签转换为大写形式，而 Safari、Chrome 和 Firefox 则会原原本本的按照原先文档中的格式返回 HTML
+		// 并不是所有元素都支持 innerHTML，不支持的有<col>、<colgroup>、<frameset>、<head>、<html>、<style>、<table>、<tbody>、<thead>、<tfoot>、<tr>
+		// IE8 及更早的版本 <title> 也没有 innerHTML 属性
+
+		// outerHTML 支持的浏览器有  Firefox7 之前版本、Safari4+、Chrome、Opera8+、IE4+
+		/*
+		 * outerHTML 和 innerHTML 的区别
+		 */
+		var div = document.getElementById("test");
+		div.outerHTML = "<p>This is a paragraph</p>";
+		// 这与下面两行代码一样
+		var p = document.createElement("p");
+		p.appendChild(document.createTextNode("This is a paragraph"));
+		div.parentNode.replaceChild(p, div);
+		/*
+		 * 1）innerHTML 的值是 "<span style="color:red">test1</span> test2"
+         *
+		 * 2）outerHTML 的值是 "<div id="test"><span style="color:red">test1</span> test2</div>"
+		 */
+	</script>
+</head>
+<body>
+<div id="test">
+	<span style="color:red">test1</span> test2
+</div>
+</body>
+</html>

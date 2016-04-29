@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>select选择框</title>
+	<script>
+		window.onload = function () {
+			// 选择框的 change 事件与其他表单字段的 change 事件触发的条件不一样，其他表单字段的 change 事件是在值被修改且焦点离开当前字段时触发
+			// 而选择框的 change 事件只要选中了选项就会触发
+
+			var selectbox = document.forms[0].elements["location"];
+			var text = selectbox.options[0].text; // 选项的文本
+			// 在未指定 value 特性的情况下，IE8 会返回空字符串，而 IE9+、Safari、Firefox、Chrome、Opera 会返回与 text 特性相同的值
+			var value = selectbox.options[0].value;  // 选项的值
+
+			// var selectedOption = selectbox.options[selectbox.selectedIndex];
+			var selectedIndex = selectbox.selectedIndex;
+			var selectedOption = selectbox.options[selectedIndex];
+			console.log("Selected index: " + selectedIndex + "\nSelected text: " + selectedOption.text + "\nSelected value: " + selectedOption.value);
+			// selected 属性的作用是确定用户选择了选择框中哪一项
+			selectbox.options[0].selected = true;
+			// 添加选项
+			var newOption = new Option("Option text", "Option value");
+			// add(要添加的新选项，将位于新选项之后的选项)，如果想在列表的最后添加一项，应该将第二个参数设置为 null
+			// 在 IE 对 add() 方法的实现中，第二个参数是可选的，而且如果指定，该参数必须是新选项之后选项的索引
+			// 兼容 DOM 的浏览器要求必须指定第二个参数，因此为第二个参数传入 undefined
+			selectbox.add(newOption, undefined);
+			// 在 IE 和兼容 DOM 的浏览器中，想将新选项添加到其他位置 (不是最后一个)，就应该使用标准的 DOM 技术和 insertBefore() 方法
+			// 移出选项
+			selectbox.remove(0); // 移出第一个选项
+			// selectbox.options[0] = null; DOM 出现之前浏览器遗留的机制
+			// 删除所有选项，由于移出第一个选项后，所有后续选项都会自动向上移动一个位置，重复删除第一个选项就可以了
+			function clearSelectbox(selectbox) {
+				for (var i = 0, len = selectbox.options.length; i < len; i++) {
+					selectbox.remove(i);
+				}
+			}
+
+			// 移动选项的位置最好使用 insertBefore();
+			var optionToMove = selectbox.options[1];
+			console.log(optionToMove.index); // 当前选项在 option 中的索引
+			selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index - 1]);
+			// 获取并序列化 select 选中的值
+			var optValue = "";
+			var arr = [];
+			for (var i = 0, optLen = selectbox.options.length; i < optLen; i++) {
+				var option = selectbox.options[i];
+				if (option.selected) {
+					optValue = "";
+					// 如果不存在 value 特性，或者存在但为空字符串，都使用选项的文本代替
+					// 检查这个特性，在 DOM 兼容的浏览器中使用 hasAttribute() 方法，在 IE 中使用特性 specified 属性
+					if (option.hasAttribute) {
+						optValue = (option.hasAttribute("value") ? option.value : option.text);
+					} else {
+						optValue = (option.attributes["value"].specified ? option.value : option.text);
+					}
+				}
+				arr.push(encodeURIComponent(selectbox.name) + "=" + encodeURIComponent(optValue));
+			}
+
+		};
+	</script>
+</head>
+<body>
+<select name="location" id="selLocation">
+	<option value="Sunnyvalue,CA">Sunnyvalue</option>
+	<option value="Los Angeles,CA">Los Angeles</option>
+	<option value="Mountain View,CA">Mountain View</option>
+	<option value="">China</option>
+	<option>Australia</option>
+</select>
+
+</body>
+</html>

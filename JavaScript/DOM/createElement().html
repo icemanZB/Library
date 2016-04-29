@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>无标题文档</title>
+	<script>
+		window.onload = function () {
+
+			var oText = document.getElementById("text1");
+			var oBtn = document.getElementById("btn");
+			var oUl = document.getElementById("ul1");
+
+			oBtn.onclick = function () {
+
+				// document.createElement (标签名称)，创建元素
+				// 只是创建了一个元素，如果需要在页面显示，还需指定添加到某个节点里面去
+				var oLi = document.createElement("li");
+
+			};
+
+			// 在IE中 createElement() 方法可以传入完整的元素标签，其他浏览器不支持
+			var div = document.createElement("<div id=\"myNewDiv\" class=\"box\" >");
+			/*
+			 * IE7及更早版本中动态创建元素有些问题
+			 * 1、不能设置动态创建的 <iframe> 元素的 name 特性
+			 * 2、不能通过表单的 reset() 方法重设动态创建的 <input> 元素
+			 * 3、动态创建的 type 特性值为 "reset" 的 <button> 元素重设不了表单
+			 * 4、动态创建一批 name 相同的单选按钮彼此毫无关系
+			 * 上诉这些问题可以通过完整的 html 标签来解决
+			 */
+
+			// 创建一个带 name 特性的 iframe 元素
+			var iframe = document.createElement("<iframe name=\"myframe\"></iframe>");
+			// 创建 input 元素
+			var input = document.createElement("<input type=\"checkbox\">");
+			// 创建 button 元素
+			var button = document.createElement("<button type=\"reset\"></button>");
+			// 创建单选按钮
+			var radio1 = document.createElement("<input type=\"radio\" name=\"choice\" value=\"1\">");
+			var radio2 = document.createElement("<input type=\"radio\" name=\"choice\" value=\"2\">");
+
+		};
+	</script>
+</head>
+
+<body>
+<input type="text" id="text1"/><input type="button" value="留言" id="btn"/>
+<ul id="ul1"></ul>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>innerText</title>
+	<script>
+		var div = document.getElementById("div");
+		// div.innerText 也会对文本进行(小于号、大于号、引号、号) 进行编码
+		div.innerText = div.innerText; // 过滤 HTML 标签
+
+		// 支持的浏览器有 IE4+、Safari3+、Chrome、Opera8+
+		// Firefox 不支持，但是支持 textContent 属性
+
+		// textConetent 支持的浏览器有 IE9+、Safari3+、Chrome、Opera10+、Firefox
+
+		// innerText 和 textContent 区别：innerText 会忽略行内样式和脚本，textConent 则不会
+
+		function getInnerText(element) {
+			return (typeof element.textContent == "string") ? element.textContent : element.innerText;
+		}
+
+		function setInnerText(element, text) {
+			if (typeof element.textContent == "string") {
+				element.textContent = text;
+			} else {
+				element.innerText = text;
+			}
+		}
+
+		// outerText  支持的浏览器有 IE4+、Safari3+、Chrome、Opera8+
+		// outerText 在写模式下，不只是替换调用它的元素子节点，而是会替换整个元素 (包括子节点)
+		div.outerText = "hello world";
+		// 相当于
+		var text = document.createTextNode("hello world");
+		div.parentNode.replaceChild(text, div);
+		// 由于这个属性会导致它的元素不存在，所以不常用
+	</script>
+</head>
+<body>
+<div id="div"></div>
+</body>
+</html>

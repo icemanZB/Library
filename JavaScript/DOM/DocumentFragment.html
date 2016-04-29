@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>DocumentFragment</title>
+	<script>
+		// DocumentFragment 文档片段
+		window.onload = function () {
+			var fragment = document.createDocumentFragment();
+			var oul = document.getElementById("myList");
+			for (var i = 0; i < 3; i++) {
+				var li = document.createElement("li");
+				li.appendChild(document.createTextNode("Item " + (i + 1)));
+				fragment.appendChild(li);
+			}
+			oul.appendChild(fragment);
+		};
+	</script>
+</head>
+<body>
+<ul id="myList"></ul>
+</body>
+</html>
