@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>简单工厂</title>
+    <script>
+        // 工厂应该有厂长来决定到底运行哪条产品线
+        // 但真正的决策者是消费者 ( 子类 )
+        var factory = {}; // 创建工厂
+
+        factory.createClothes = function () {
+            this.quantity = 50;
+        };
+
+        factory.createShoes = function () {
+            console.log("造鞋")
+        };
+
+        factory.transport = function () {
+            console.log("运输");
+        };
+        factory.manager = function (para) {
+            return new factory[para]();  // 构造函数 + 单例模式
+        };
+
+        // 我让厂长去生产50件衣服
+        var me = factory.manager("createClothes");
+        console.log(me.quantity);
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

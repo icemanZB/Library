@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>简单工厂实例</title>
+	<script>
+		// 这是一个简单工厂模式 ( 单例 )
+		var XMLHttpFactory = function () {
+		};
+		/*
+		 * XMLHttpFactory.createXMLHttp() 这个方法根据当前环境具体情况返回一个 XHR 对象
+		 */
+		XMLHttpFactory.createXMLHttp = function () {
+			var XMLHttp = null;
+			if (window.XMLHttpRequest) {
+				XMLHttp = new XMLHttpRequest();
+			} else {
+				XMLHttp = new ActiveXObject("Microsoft.XMLHttp");
+			}
+
+			return XMLHttp;
+		};
+
+		var AjaxHander = function () {
+			var XMLHttp = XMLHttpFactory.createXMLHttp();
+		};
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

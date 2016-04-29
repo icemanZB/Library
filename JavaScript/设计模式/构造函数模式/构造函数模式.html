@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>构造函数模式</title>
+	<script>
+		// 1、用于创建特定类型的对象
+		function Zaomen(huawen) {
+			if (!(this instanceof Zaomen)) {
+				return new Zaomen();
+			}
+			var _huawen = "普通";
+			if (huawen) {
+				_huawen = huawen;
+			}
+			this.suo = "普通锁";
+			this.huawen = _huawen;
+			this.create = function () {
+				return "锁：" + this.suo + "花纹：" + this.huawen;
+			};
+		}
+
+		var xiaozhang = new Zaomen();
+		console.log("小张家的门是：" + xiaozhang.create());
+
+		var xiaoli = new Zaomen("绚丽");
+		console.log("小李家的门是：" + xiaoli.create());
+
+		// 单例模式和构造函数的配合
+		var AA = {
+			Zaomen: function (huawen) {
+				if (!(this instanceof Zaomen)) {
+					return new Zaomen();
+				}
+				var _huawen = "普通";
+				if (huawen) {
+					_huawen = huawen;
+				}
+				this.suo = "普通锁";
+				this.huawen = _huawen;
+				this.create = function () {
+					return "锁：" + this.suo + "花纹：" + this.huawen;
+				};
+			}
+		}
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

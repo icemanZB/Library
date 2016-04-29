@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>通用的惰性单例</title>
+    <script>
+        window.onload = function () {
+            // 创建对象的方法 fn 被当成参数动态传入 getSingle 函数
+            var getSingle = function (fn) {
+                var result;
+                return function () {
+                    // fn 代替 this  改变 fn中的 this 指向为当前的 this
+                    return result || (result = fn.apply(this, arguments));
+                };
+            };
+            var CreateDiv = function () {
+                var div = document.createElement("div");
+                div.innerHTML = "我是弹窗测试";
+                div.style.display = "none";
+                document.body.appendChild(div);
+                return div;
+            };
+            var CreateIframe = getSingle(function () {
+                var iframe = document.createElement("iframe");
+                document.body.appendChild(iframe);
+                return iframe;
+            });
+            // 创建单例
+            var createSingleDiv = getSingle(CreateDiv);
+
+            document.getElementById("btn").onclick = function () {
+                // 调用单例方法
+                var createDiv = createSingleDiv();
+                var createIframe = CreateIframe();
+                createDiv.style.display = "block";
+            };
+        };
+    </script>
+</head>
+<body>
+<button id="btn">请点击我</button>
+</body>
+</html>

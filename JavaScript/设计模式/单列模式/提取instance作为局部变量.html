@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>单列模式</title>
+    <script>
+		var Singleton = function(name) {
+			this.name = name;
+		};
+		Singleton.prototype.getName = function() {
+			console.log(this.name);
+		};
+		/*
+		 * 这里是匿名函数自执行的方式，先创建了局部变量 instance ( 预编译 )
+		 * 由于调用的时候是 getInstance() 那么匿名函数里面就返回一个函数，方便外界调用
+		 * 那么 instance 自然就成为了局部变量，由于变量预编译的关系，第二次调用的时候
+		 * 不在去解析这一行 var instance = null; 而直接走了 return 里面的函数
+		 * 此时的 instance 是上次调用完以后赋值的 Singleton 实例
+		 */
+		Singleton.getInstance = (function() {
+			var instance = null;
+			return function(name) {
+				if (!instance) {
+					instance = new Singleton(name);
+				}
+				return instance;
+			}
+		})();
+
+		var a = Singleton.getInstance("aa");
+		var b = Singleton.getInstance("bbb");
+
+		console.log(a);  // Singleton {name: "aa", instance: null}
+		console.log(b);  // Singleton {name: "aa", instance: null}
+    </script>
+</head>
+<body>
+
+</body>
+</html>

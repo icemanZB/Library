@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>单例模式</title>
+	<script>
+		// 1、独立的对象建2个，一个小王、一个小李
+		// 2、让小李跟小王通过门铃进行通信
+		// 3、先看下小王家有没有门，如果有门就直接通过门铃通讯，如果没有门则先创建门
+		// 4、两个单例之间的通信
+		var xiaowang = (function () {
+			var xiaowangjia = function (message) {
+				this.menling = message;
+			};
+			var men;
+			return {
+				sendMessage: function (message) {
+					if (!men) {
+						men = new xiaowangjia(message);
+					}
+					return men;
+				}
+			};
+
+		})();
+		var xiaoli = {
+			callXiaowang: function (msg) {
+				var _xw = xiaowang.sendMessage(msg);
+				console.log(_xw.menling);
+				_xw = null; // 门铃都用完了，就不用了，为 null 等待垃圾回收
+			}
+		};
+
+		xiaoli.callXiaowang("didi");
+	</script>
+</head>
+<body>
+
+</body>
+</html>

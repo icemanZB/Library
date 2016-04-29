@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>构造函数</title>
+    <script>
+        function Person(name, age) {
+            this.name = name;
+            this.age = age;
+            this.run = function () {
+                return this.name + this.age;
+            };
+        }
+
+        Person.prototype.name = "Marry";
+
+        var man = new Person("Iceman", 25);
+        var woman = new Person("Vicky", 25);
+
+        var test = man.run;
+        console.log(test()); // undefined
+        console.log(test.call(man));  // Iceman25
+
+        /*
+         * 原型方法指向过程
+         * 1. 先查找构造函数实例里面的属性或方法，如果有就立刻返回
+         * 2. 如果构造函数实例里面没有，则去它的原型对象里找，如果有就立刻返回
+         */
+        console.info(man.name);  // Iceman
+
+        console.info(man.age == woman.age); // true
+        console.info(man.run() == woman.run()); // false 因为他们比较的是引用地址
+        console.info(man.prototype);  // undefined 这个属性是一个对象，访问不到
+        // 这个属性是一个指针指向 prototype 原型对象，IE不支持不建议使用
+        // 它的作用就是指向构造函数的原型属性 constructor，通过这两个属性可以访问到原型里面的属性和方法
+        console.info(man.__proto__);
+        console.info(man.constructor); // 构造属性，可以获取构造函数本身
+
+        // 判断原型中有的属性
+        function isProperty(obj, attr) {
+            return !obj.hasOwnProperty(attr) && (attr in obj);
+
+        }
+    </script>
+</head>
+<body>
+
+</body>
+</html>

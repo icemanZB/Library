@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>简单的单列模式</title>
+    <script>
+        /*
+         * 单例模式的含义是：保证一个类只有一个实例，并提供一个访问它的全局访问点。
+         * 实现的方法是：使用一个变量来标志当前是否已经为某个类创建过对象，如果创建了
+         * 则在下一次获取该类的实例时，直接返回之前创建的对象，否则就创建一个对象。
+         * 这就确保了一个类只有一个实例对象。
+         */
+        var Singleton = function (name) {
+            this.name = name;
+        };
+        Singleton.prototype.getName = function () {
+            console.log(this.name);
+        };
+        Singleton.getInstance = function (name) {
+            console.log(this.instance);  // 第一次 undefined 第二次 Singleton {name: "aa", instance: null}
+            /*
+             * this.instance 不存在的情况下，说明是第一次 new Singleton(name)
+             * 那就创建实例，并赋值给 this.instance 返回出去
+             * 第二次调用的时候 this.instance 中已经保存了 Singleton 对象
+             * 所以就不会执行 new Singleton(name) 直接返回出去
+             */
+            // 使用 this.instance 该标志来判断是否创建了一个实例
+            if (!this.instance) {
+                this.instance = new Singleton(name);
+            }
+            return this.instance;
+        };
+        var a = Singleton.getInstance("aa");
+        var b = Singleton.getInstance("bbb");
+
+        console.log(a);  // Singleton {name: "aa", instance: null}
+        console.log(b);  // Singleton {name: "aa", instance: null}
+        console.log(a === b);  // true
+        a.getName();  // aa
+        b.getName();  // aa
+        a.test = "test";
+        console.log(b.test); // test
+    </script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>工厂模式</title>
+	<script>
+		// 创建单个对象有个明显的缺点：使用同一个接口创建很多对象，会产生大量的重复代码，为了解决这个问题，需要使用工厂模式的一种变体
+		// 工厂模式抽象了创建具体对象的过程
+		// 工厂模式虽然解决了创建多个相似对象的问题，但却没有解决对象识别的问题 (即怎么样知道一个对象的类型)
+
+		function createPerson(name, age, job) {
+			var o = new Object();
+			o.name = name;
+			o.age = age;
+			o.job = job;
+			o.sayName = function () {
+				console.log(this.name);
+			};
+			return o;
+		}
+
+		var person1 = createPerson("Nicholas", 29, "Software Engineer");
+		var person2 = createPerson("Greg", 27, "Doctor");
+		console.log(person1.constructor == createPerson); // false
+		person1.sayName();
+		person2.sayName();
+	</script>
+</head>
+<body>
+
+</body>
+</html>

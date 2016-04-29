@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>惰性单例</title>
+    <script>
+        /*
+         * 惰性单例的含义是：在需要的时候才创建对象实例
+         */
+        window.onload = function () {
+            // 惰性单例
+            var CreateDiv = (function () {
+                var div;
+                return function () {
+                    if (!div) {
+                        div = document.createElement("div");
+                        div.innerHTML = "我是弹窗测试";
+                        div.style.display = "none";
+                        document.body.appendChild(div);
+                    }
+                    return div;
+                }
+            })();
+            document.getElementById("btn").onclick = function () {
+                var createDiv = CreateDiv();
+                createDiv.style.display = "block";
+            };
+        };
+    </script>
+</head>
+<body>
+<button id="btn">请点击我</button>
+</body>
+</html>

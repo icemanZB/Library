@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>建造者模式</title>
+	<script>
+		// 1、发送一个请求 ( 白富美 )
+		// 2、$.ajax 建造者模式 ( 包工头 )
+		// 3、工人 就是一些回调函数
+		// 4、包工头是一个接口，他不干活，他只对外说我能盖房子
+		/*
+		 * $.ajax({
+		 *   url:"a.php",
+		 *   success:function(){
+		 *   }
+		 * })
+		 */
+
+		// 1、产出的东西是房子
+		// 2、baogongtou  调用工人进行开工，而且他要很清楚工人具体的某一个大项
+		// 3、工人是盖房子的，工人可以建卧室、客厅、厨房
+		function Fangzi() {
+			this.woshi = "";
+			this.keting = "";
+			this.chufang = "";
+		}
+
+		function Baogongtou() {
+			this.gaifangzi = function (gongren) {
+				gongren.jian_woshi();
+				gongren.jian_chufang();
+				gongren.jian_keting();
+			};
+		}
+
+		function Gongren() {
+			this.jian_woshi = function () {
+				console.log("卧室我盖好了");
+			};
+			this.jian_keting = function () {
+				console.log("客厅建好了");
+			};
+			this.jian_chufang = function () {
+				console.log("厨房建好了");
+			};
+			// 交工
+			this.jiaogong = function () {
+				var _fangzi = new Fangzi();
+				_fangzi.woshi = "ok";
+				_fangzi.keting = "ok";
+				_fangzi.chufang = "ok";
+				return _fangzi;
+			};
+		}
+
+		var gongren = new Gongren();
+		var baogongtou = new Baogongtou();
+		baogongtou.gaifangzi(gongren);
+		// 主人要房子
+		var myfangzi = gongren.jiaogong();
+	</script>
+</head>
+<body>
+
+</body>
+</html>

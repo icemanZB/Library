@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>代理模式</title>
+	<script>
+		// 代理模式需要3方
+		// 买家
+		function Maijia() {
+			this.name = "小明";
+		}
+		// 中介
+		function Zhongjie() {
+
+		}
+		// 中介就负责卖房
+		Zhongjie.prototype.maifang = function () {
+			// 买家支付给中介，中介给卖家
+			new Fangdong(new Maijia()).maifang("20万");
+		};
+		// 房东 ( 坐等收钱 )
+		function Fangdong(maijia) {
+			this.maijia_name = maijia.name;
+			// 卖房
+			this.maifang = function (money) {
+				console.log("收到了来自【" + this.maijia_name + "】" + money);
+			};
+		}
+
+		new Zhongjie().maifang(); // 让中介给我们干活
+	</script>
+</head>
+<body>
+
+</body>
+</html>

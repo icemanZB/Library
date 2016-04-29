@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>使用代理实现单例模式</title>
+    <script>
+        window.onload = function () {
+            var CreateDiv = function (html) {
+                this.html = html;
+                this.init();
+            };
+            CreateDiv.prototype.init = function () {
+                var div = document.createElement("div");
+                div.innerHTML = this.html;
+                document.body.appendChild(div);
+            };
+            // 具体的管理单例的逻辑
+            var ProxySingletonCreateDiv = (function () {
+                var instance;
+                return function (html) {
+                    if (!instance) {
+                        instance = new CreateDiv(html);
+                    }
+                    return instance;
+                }
+            })();
+
+            // 页面上就创建了一个 div
+            var a = new ProxySingletonCreateDiv("aa");
+            var b = new ProxySingletonCreateDiv("bbb");
+            console.log(a === b); // true
+        };
+    </script>
+</head>
+<body>
+
+</body>
+</html>

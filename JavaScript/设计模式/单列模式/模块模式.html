@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>模块模式</title>
+	<script>
+		// 模块模式：为单例创建私有变量和特权方法
+		// 所谓单例( singleton ) 指的就是只有一个实例的对象，JavaScript 是以对象字面量的方式来创建单例对象
+
+		var singleton = {
+			name  : "value",
+			method: function () {
+			}
+		};
+
+		// 模块模式通过单例添加私有变量和特权方法
+		var singletonModle = function () {
+			// 私有变量和私有函数
+			var privateVariable = 10;
+
+			function privateFunction() {
+				return false;
+			}
+
+			// 特权/公有方法和属性 ( 定义的是单例的公共接口 )
+			// 需要对单例进行某些初始化，同时又需要维护其私有变量时非常有用的
+			return {
+				publicProperty: true,
+				publicMethod  : function () {
+					privateVariable++;
+					return privateFunction();
+				}
+			}
+		};
+
+		console.log(singletonModle().publicProperty);  // true
+
+		// 增强的模块模式：适合那些单例必须是某种类型的实例，同时还必须添加某些属性和方法对其加以增强
+
+		function CustomType() {
+		}
+
+		var singletonUp = function () {
+			// 私有变量和私有函数
+			var privateVariable = 10;
+
+			function privateFunction() {
+				return false;
+			}
+
+			// 创建对象
+			var obj = new CustomType();
+			obj.publicProperty = true;
+			obj.publicMethod = function () {
+				privateVariable++;
+				return privateFunction();
+			};
+			return obj;
+		}();
+
+		console.log(singletonUp.publicMethod());  // false
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
