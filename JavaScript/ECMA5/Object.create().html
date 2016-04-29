@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Object.create()</title>
+	<script>
+		/* ecma5 新增 Object.create() 方法规范化了原型式继承，接收两个参数：一个用作新对象原型的对象，(可选)一个为新对象定义额外属性的对象
+		 * 在传入一个参数的情况下，Object.create() 与 object() 方法的行为相同
+		 * 这个方法的浏览器有 IE9+、Firefox 4+、Safari 5+、Opera12+、Chrome
+		 */
+		var person = {
+			name: "Nicholas",
+			friends: ["shelby", "Court", "Van"]
+		};
+
+		var anotherPerson = Object.create(person);
+		anotherPerson.name = "Greg";
+		anotherPerson.friends.push("Rob");
+
+		var yetAnotherPerson = Object.create(person);
+		yetAnotherPerson.name = "Linda";
+		yetAnotherPerson.friends.push("Barbie");
+
+		console.log(person.friends); //  ["shelby", "Court", "Van", "Rob", "Barbie"]
+
+		// Object.create() 方法第二个参数 和 Object.defineProperties() 方法的第二个参数格式相同
+		// 在没有必要兴师动众的创建构造函数，而只想让一个对象与另一个对象保持类似的情况，可以使用这个模式
+		var man = Object.create(person, {
+			age: {
+				value: 27,
+				writable: true,
+				enumerable: true
+			},
+			newDataProperty: {
+				value: 101,
+				writable: true,
+				enumerable: true,
+				configurable: true
+			},
+			newAccessorProperty: {
+				set: function (x) {
+					this.newaccpropvalue = x;
+				},
+				get: function () {
+					return this.newaccpropvalue;
+				},
+				enumerable: true,
+				configurable: true
+			}
+		});
+		man.newAccessorProperty = 10;
+		console.log(man);
+		console.log(man.age);  // 27
+		console.log(man.newAccessorProperty);  // 10
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

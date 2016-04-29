@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Object.defineProperty()</title>
+	<script>
+		/*
+		 * Object.defineProperty( 属性所在的对象属性名，一个描述符对象 ) 可以修改默认的特性，设置其中一个或多个值，可以修改对应的特性值
+		 * 描述符 (descriptor) 对象的属性必须是：[[configurable]]、[[enumerable]] ( 可枚举的 )、[[writable]]、[[value]] ( 数据属性 )
+		 * 不要再 IE8 中使用，在不支持 Object.defineProperty(); 方法的浏览器中不能修改 [[configurable]]、[[enumerable]]
+		 * 支持 Object.defineProperty() 方法的浏览器有 IE9+(IE8只是部分实现)、Firefox 4+、Safari 5+、Opera12+、Chrome
+		 */
+
+		// 这个例子创建了一个名为 name 的属性，他的值 "Nicholas" 是只读的，如果尝试为它指定新值，则在非严格模式下，赋值操作将被忽略
+		// 在严格模式下，赋值操作将会导致抛出错误。类似的规则也适用于不可配置的属性
+		var person = {};
+		Object.defineProperty(person, "name", {
+			writable: false,
+			value: "Nicholas"
+		});
+
+		console.log(person.name); // Nicholas
+		person.name = "Greg";
+		console.log(person.name); // Nicholas
+
+		// 把 configurable 设置为false，表示不能从对象中删除属性。如果对这个属性调用 delete，则在非严格模式下什么也不会发生
+		// 在严格模式下会导致错误
+
+		Object.defineProperty(person, "age", {
+			configurable: false,
+			value: "28"
+		});
+
+		console.log(person.age); // 28
+		delete person.age;
+		console.log(person.age); // 28
+		// 一旦把属性定义为不可配置的，就不能再把它变回可配置了。
+		Object.defineProperty(person, "name", {
+			// configurable: true, // 抛出错误
+			// value: "Nicholas"
+		});
+		// 可以多次调用 Object.defineProperty() 方法修改同一个属性，但在把 configurable 特性设置为 false 之后就会有限制了
+
+		// 在调用 Object.defineProperty() 方法时，如果不指定 configurable、enumerable、writable 特性的默认值都是 false
+
+		/*
+		 * 访问属性的4个特性：[[configurable]]、[[enumerable]]、[[Get]] ( 在读取的时候调用，默认为 undefined )、[[Set]] ( 在写入的时候调用，默认为 undefined )
+		 */
+		var book = {
+			_year: 2004,
+			pages: 100,
+			edition: 1  // 版本
+		};
+		Object.defineProperty(book, "year", {
+			get: function () {
+				return this._year;
+			},
+			set: function (newValue) {
+				if (newValue > 2004) {
+					this._year = newValue;
+					this.edition += newValue - 2004;
+				}
+			}
+		});
+		book.year = 2005;
+		console.log(book.edition); // 2
+
+		// 在这个方法之前，要创建访问器属性，一般都使用两个非标准的方法：__defineGetter__() 和 __defineSetter__() 即将被废弃
+
+		book.__defineGetter__("pages", function () {
+			return this.pages;
+		});
+		book.__defineSetter__("pages", function (newPages) {
+			console.log(newPages);
+		});
+
+		book.pages = 200;
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

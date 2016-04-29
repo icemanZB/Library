@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>some()</title>
+	<script>
+		/*
+		 * ECMA5 数组新方法 some()
+		 * 对数组中的每一项运行给定的函数，如果该函数对任一项返回 true，则返回 true
+		 * some() 方法只要传入的函数对数组中的某一项返回 true，就会返回 true
+		 * 浏览器兼容：IE9+、firefox 2+、Safari3+、Opera9.5+ 和 chrome
+		 */
+		var num = [1, 2, 3, 4, 5, 4, 3, 2, 1];
+
+		var someRes = num.some(function (item, index, array) {
+
+			return (item > 2);
+
+		});
+
+		console.log(someRes); // true
+
+		if (typeof Array.prototype.some != "function") {
+			Array.prototype.some = function (fn, context) {
+				var passed = false;
+				if (typeof fn === "function") {
+					for (var k = 0, length = this.length; k < length; k++) {
+						if (passed === true) break;
+						passed = !!fn.call(context, this[k], k, this);
+					}
+				}
+				return passed;
+			};
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

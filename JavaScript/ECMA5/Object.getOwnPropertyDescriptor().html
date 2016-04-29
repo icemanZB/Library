@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Object.getOwnPropertyDescriptor()</title>
+	<script>
+		/*
+		 * 读取属性的特性，Object.getOwnPropertyDescriptor(属性所在的对象，读取描述符的属性名称)，可以取得给定属性的描述符，返回值是一个对象
+		 * 如果是访问器属性，这个对象的属性有 configurable、enumerable、get、set
+		 * 如果是数据属性，这个对象的属性有 configurable、enumerable、writable、value
+		 * 支持 Object.getOwnPropertyDescriptor() 这个方法的浏览器有 IE9+、Firefox 4+、Safari5+、Opera12+、Chrome
+		 */
+
+		// Ojbect.getOwnPropertyDescriptor() 方法只能用于实例属性，要取得原型属性的描述符
+		// 必须直接在原型对象上调用 Object.getOwnPropertyDescriptor() 方法
+
+		var book = {
+			edition: 1
+		};
+
+		Object.defineProperties(book, {
+			_year: {
+				value: 2004
+			},
+			year: {
+				// TypeError: property descriptors must not specify a value or be writable when a getter or setter has been specified
+				// value:1222, 报错，不能同时设置 value 和 (get、set)，属性描述符必须指定一个值或可写的时候
+				get: function () {
+					return this._year;
+				},
+				set: function (newValue) {
+					if (newValue > 2004) {
+						this._year = newValue;
+						this.edition += newValue - 2004;
+					}
+				}
+			}
+		});
+		// 获取属性的特性
+		var descriptor = Object.getOwnPropertyDescriptor(book, "_year");
+		console.log(descriptor.value); // 2004
+		console.log(descriptor.configurable);  // false
+		console.log(typeof descriptor.get);  // undefined
+
+		var des = Object.getOwnPropertyDescriptor(book, "year");
+		console.log(des.value); // undefined
+		console.log(des.enumerable);  // false 是否可以 for-in 循环，定义在 Object.defineProperties() 中是不会被循环到的
+		console.log(typeof des.get);  // "function"
+
+		console.log(book.year);  // 2004
+
+		// 对于数据属性 _year，value 等于最初的值，configurable 是 false，而 get 等于 undefined
+		// 对于访问器属性 year,value 等于 undefined，enumerable 是 false，而 get 是指向 getter 函数的指针
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

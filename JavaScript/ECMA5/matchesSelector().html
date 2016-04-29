@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>matchesSelector()</title>
+	<script>
+		// matchesSelector(); 传入CSS选择符，如果调用元素与该选择符匹配，返回 true
+		// 在取得某个元素引用的情况下，使用这个方法能够方便的检测它是否会被 querySelector() 或 querySelectorAll() 方法返回
+
+		function matchesSelector(element, selector) {
+			if (element.matchesSelector) {
+				return element.matchesSelector(selector);
+			} else if (element.msMatchesSelector) {
+				return element.msMatchesSelector(selector);
+			} else if (element.mozMatchesSelector) {
+				return element.mozMatchesSelector(selector);
+			} else if (element.webkitMatchesSelector) {
+				return element.webkitMatchesSelector(selector);
+			} else {
+				throw new Error("Not supported.");
+			}
+		}
+
+		if (matchesSelector(document.body, "body.page1")) {
+			// 执行操作
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

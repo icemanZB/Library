@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>reduce()、reduceRight()</title>
+	<script>
+		/*
+		 * ECMA5 数组新方法 reduce()、reduceRight()
+		 * reduce() 方法从数组的第一项开始，逐个遍历到最后
+		 * reduceRight() 方法则从数组的最后一项开始，向前遍历到第一项
+		 * 这两个方法都接受两个参数：一个在每一项上调用的函数和(可选)作为归并基础的初始值，传给 reduce() 和 reduceRight() 的函数接收 4 个参数：
+		 * 前一个值、当前值、项的索引和数组对象。这个函数返回的任何值都会作为第一个参数自动传给下一项。第一次迭代发生在数组的第二项上，因此
+		 * 第一个参数是数组的第一项，第二个参数就是数组的第二项
+		 * 浏览器兼容：IE9+、firefox3+、Safari4+、Opera10+ 和 chrome
+		 */
+
+		// reduce() 方法可以执行求数组中所有值之和的操作
+
+		var values = [1, 2, 3, 4, 5];
+		var sum = values.reduce(function (prev, cur, index, array) {
+			return prev + cur;
+		});
+		// 第一次执行回调函数，prev 是 1，cur 是 2。第二次，prev 是3 ( 1+2 的结果 )，cur 是3 ( 数组的第三项 ) loop...
+		console.log(sum); // 15
+
+		// reduceRight() 作用类似、
+		var valuesRight = [1, 2, 3, 4, 5];
+		var sumRight = valuesRight.reduceRight(function (prev, cur, index, array) {
+			return prev + cur;
+		});
+		// 第一次执行回调函数，prev 是 5，cur 是 4。
+		console.log(sumRight); // 15
+
+
+		var data = [1, 2, 3, 4];
+		/*
+		 * 初始设置
+		 * index = 3, previous = initialValue = 4, current = 3
+		 *
+		 * 第一次迭代
+		 * index = 2, previous = (4- 3) = 1, current = 2
+		 *
+		 * 第二次迭代
+		 * index = 1, previous = (1 - 2) = -1, current = 1
+		 *
+		 * 第三次迭代
+		 * index = 0, previous = (-1 + 1) = 0, current = undefined (退出)
+		 */
+		var specialDiff = data.reduceRight(function (previous, current, index) {
+			if (index == 0) {
+				return previous + current;
+			}
+			return previous - current;
+		});
+
+		console.log(specialDiff); // 0
+
+
+		// 有了 reduce，我们可以轻松实现二维数组的扁平化：
+		var matrix = [
+			[1, 2],
+			[3, 4],
+			[5, 6]
+		];
+
+		// 二维数组扁平化
+		var flatten = matrix.reduce(function (previous, current) {
+			return previous.concat(current);
+		});
+
+		console.log(flatten); // [1, 2, 3, 4, 5, 6]
+
+		if (typeof Array.prototype.reduce != "function") {
+			Array.prototype.reduce = function (callback, initialValue) {
+				var previous = initialValue, k = 0, length = this.length;
+				if (typeof initialValue === "undefined") {
+					previous = this[0];
+					k = 1;
+				}
+
+				if (typeof callback === "function") {
+					for (k; k < length; k++) {  // 这里从下标1开始，也就是第二个元素开始循环
+						this.hasOwnProperty(k) && (previous = callback(previous, this[k], k, this));
+					}
+				}
+				return previous;
+			};
+		}
+
+		[1, 2, 3, 4, 5].reduce(function (prev, cur, index, array) {
+			return prev + cur;
+		});
+
+		console.log([1, "ad", 3, 4].hasOwnProperty("5"));  // 判断下标索引是否超了，下标 5 对应的内容不存在
+		console.log(Object.prototype.hasOwnProperty.call([1, "ad", undefined, 4], "2"));  // true
+	</script>
+</head>
+<body>
+
+</body>
+</html>

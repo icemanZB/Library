@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>querySelector</title>
+	<style>
+		div {
+			width: 100px;
+			height: 100px;
+		}
+	</style>
+	<script>
+		/*
+		 * IE 6 7  不支持
+		 * 支持的浏览器 IE8+、Firefox3.5+、Safari3.1+、Chrome、Opera10+
+		 */
+
+		window.onload = function () {
+			var oDiv = document.querySelector("#div1");
+			// OR
+			document.querySelector("div");
+			// OR
+			document.querySelector(".box"); // 只能选择一组中的第一个元素
+			// OR
+			document.querySelector("[title=hello]");
+
+			document.querySelector("body");  // 取得 body 元素
+			document.querySelector("#div1"); // 取得 ID 为 myDiv 的元素
+
+			document.body.querySelector("a.button");  // 取得类为 "button" 的第一个图像元素
+
+			oDiv.style.background = "red";
+
+		};
+	</script>
+</head>
+<body>
+<div id="div1" class="box" title="hello"></div>
+<div class="box">div2</div>
+<a href="#" class="button"><span></span></a>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>indexOf()</title>
+	<script>
+		/*
+		 * ECMA5 数组新方法 indexOf()、lastIndexOf()
+		 * 两个参数：1) 要查找的项   2) ( 可选 ) 表示查找起点位置的索引
+		 * 在比较第一个参数和数组中的每一项时，会使用全等 "==="
+		 * 浏览器兼容：IE9+、firefox 2+、Safari3+、Opera9.5+ 和 chrome
+		 */
+		var arr = ["George", "John", "Thomas", "James", "Adrew", "Martin", 23, "James"];
+		console.log(arr.indexOf('James'));  // 3 (索引)
+		console.log(arr.indexOf('James', 5));  // 7
+		console.log(arr.indexOf('23')); // -1 ( 因为是全等(===)，所以没有找到返回-1 )
+		console.log(arr.lastIndexOf(23));  // 6 ( 从后往前找，返回找到元素的位置 )
+
+
+		if (typeof Array.prototype.indexOf != "function") {
+			Array.prototype.indexOf = function (searchElement, fromIndex) {
+				var index = -1;
+				fromIndex = fromIndex * 1 || 0;  // fromIndex * 1 是字符串转数字的简单方法
+
+				for (var k = 0, length = this.length; k < length; k++) {
+					if (k >= fromIndex && this[k] === searchElement) {
+						index = k;
+						break;
+					}
+				}
+				return index;
+			};
+		}
+
+		if (typeof Array.prototype.lastIndexOf != "function") {
+			Array.prototype.lastIndexOf = function (searchElement, fromIndex) {
+				var index = -1, length = this.length;
+				fromIndex = fromIndex * 1 || length - 1;
+
+				for (var k = length - 1; k > -1; k -= 1) {
+					if (k <= fromIndex && this[k] === searchElement) {
+						index = k;
+						break;
+					}
+				}
+				return index;
+			};
+		}
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

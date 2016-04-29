@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>浅复制</title>
+	<script>
+		function copy(obj) {
+			var copy = Object.create(Object.getPrototypeOf(obj));  // 获取一个对象的原型并转为Object
+			var propNames = Object.getOwnPropertyNames(obj);  // Object.getOwnPropertyNames() 得到所有实例属性，无论是否可枚举
+
+			propNames.forEach(function (name) {
+				var desc = Object.getOwnPropertyDescriptor(obj, name);  // 读取属性的特性
+				Object.defineProperty(copy, name, desc);  // 设置属性
+			});
+
+			return copy;
+		}
+
+		var obj1 = {
+			a: 1, b: 2, obj: {
+				c: 3,
+				d: 4
+			}
+		};
+
+		var obj2 = copy(obj1);
+		console.log(obj2);
+
+		var obj3 = {
+			a: 1, b: 2, obj: {
+				f: 5
+			}
+		};
+		console.log(copy.call(obj1, obj3));  // 覆盖了原来的对象中的对象，测试时浅复制
+	</script>
+</head>
+<body>
+
+</body>
+</html>

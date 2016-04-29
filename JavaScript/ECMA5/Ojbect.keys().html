@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Ojbect.keys()</title>
+	<script>
+		// Ojbect.keys() 获取得对象上所有可枚举的实例属性，这个方法接收一个对象作为参数，返回一个包含所有可枚举属性的字符串数组
+		// 支持的浏览器有 IE9+、Firefox 4+、Safari 5+、Opera12+、Chrome
+		function Person() {
+			this.school = "w3school";
+		}
+		Person.prototype.name = "Nicholas";
+		Person.prototype.age = 29;
+		Person.prototype.job = "Software Engineer";
+		Person.prototype.sayName = function () {
+			console.log(this.name);
+		};
+		// 获取原型上可枚举的属性
+		var keys = Object.keys(Person.prototype);
+		console.log(keys); //  ["name", "age", "job", "sayName"]
+		// 获取实例对象上的属性
+		var p1 = new Person();
+		p1.name = "Rob";
+		p1.age = 31;
+		var p1Keys = Object.keys(p1);
+		console.log(p1Keys); //  ["school", "name", "age"]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

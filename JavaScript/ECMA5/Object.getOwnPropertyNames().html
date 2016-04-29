@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Object.getOwnPropertyNames()</title>
+	<script>
+		// Object.getOwnPropertyNames() 得到所有实例属性，无论是否可枚举
+		// 支持的浏览器有IE9+、Firefox 4+、Safari 5+、Opera12+、Chrome
+		// Ojbect.keys() 和 Object.getOwnPropertyNames() 都可以代替 for-in 循环
+		function Person() {
+		}
+		Person.prototype.name = "Nicholas";
+		Person.prototype.age = 29;
+		Person.prototype.job = "Software Engineer";
+		Person.prototype.sayName = function () {
+			console.log(this.name);
+		};
+		var keys = Object.getOwnPropertyNames(Person.prototype);
+		console.log(keys);  // ["constructor"(不可枚举), "name", "age", "job", "sayName"]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

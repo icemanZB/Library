@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>getElementsByClassName()</title>
+	<script>
+		window.onload = function () {
+			// getElementsByClassName(); 这个方法返回的是 NodeList 和 getElementsByTagName() 一样都有性能问题
+			// 支持的浏览器有 IE9+、Firefox3+、Safari3.1+、Chrome、Opera9.5+
+			var allCurrentUsernames = document.getElementsByClassName("username current");
+			console.log(allCurrentUsernames);
+			// 取得 ID 为 myDiv 的元素中带有类名 "selected" 的所有元素
+			var selected = document.getElementById("myDiv").getElementsByClassName("selected");
+		};
+	</script>
+</head>
+<body>
+<div id="myDiv"></div>
+<div class="username current"></div>
+<div class="current"></div>
+</body>
+</html>

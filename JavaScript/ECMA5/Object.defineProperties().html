@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Object.defineProperties()</title>
+	<script>
+		// Object.defineProperties() 方法可以通过描述符一次定义多个属性
+		// 支持 Object.defineProperties() 这个方法的浏览器有 IE9+、Firefox 4+、Safari 5+、Opera12+、Chrome
+		var book = {
+			edition: 1
+		};
+
+		Object.defineProperties(book, {
+			_year: {
+				value: 2004
+			},
+			pages: {
+				value: 100
+			},
+			year: {
+				get: function () {
+					return this._year;
+				},
+				set: function (newValue) {
+					if (newValue > 2004) {
+						this._year = newValue;
+						this.edition += newValue - 2004;
+						this.pages = 200;
+					}
+
+				}
+			}
+		});
+
+		book.year = 2005;
+		console.log(book.edition); // 2
+		console.log(book.pages);  //  100 ( 直接读取的是 value 属性的值 )
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Object.getPrototypeOf()</title>
+	<script>
+		// Object.getPrototypeOf() 获取一个对象的原型
+		// 这个方法的浏览器有 IE9+、Firefox 3.5+、Safari 5+、Opera12+、Chrome
+		function Person() {
+		}
+		Person.prototype.name = "Nicholas";
+		Person.prototype.age = 29;
+		Person.prototype.job = "Software Engineer";
+		Person.prototype.sayName = function () {
+			console.log(this.name);
+		};
+		var person1 = new Person(); // 创建 person1 实例
+		console.log(Object.getPrototypeOf(person1) == Person.prototype);  // true
+		console.log(Object.getPrototypeOf(person1).name);  // Nicholas
+	</script>
+</head>
+<body>
+
+</body>
+</html>

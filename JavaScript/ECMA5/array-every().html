@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>every()</title>
+	<script>
+		/*
+		 * ECMA5 数组新方法 every()
+		 * 对数组中的每一项运行给定的函数，如果该函数对每一项都返回 true，则返回 true
+		 * 对于 every() 来说，传入的函数必须每一项都返回 true，才会返回 true，否则就返回 false
+		 * 浏览器兼容：IE9+、firefox 2+、Safari3+、Opera9.5+ 和 chrome
+		 */
+		var num = [1, 2, 3, 4, 5, 4, 3, 2, 1];
+
+		var everyRes = num.every(function (item, index, array) {
+
+			return (item > 2);
+
+		});
+
+		console.log(everyRes); // false
+
+		if (typeof Array.prototype.every !== "function") {
+			Array.prototype.every = function (fn, context) {
+				var passed = true;
+				if (typeof fn === "function") {
+					for (var k = 0, length = this.length; k < length; k++) {
+						if (passed === false) break;
+						passed = !!fn.call(context, this[k], k, this);
+					}
+				}
+				return passed;
+			};
+		}
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

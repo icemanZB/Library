@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>querySelectAll</title>
+	<script>
+		window.onload = function () {
+
+			// 获取一组元素
+			// querySelectorAll() 不会不断的对文档进行搜索，这样可以避免一些性能问题
+			var oDiv = document.querySelectorAll(".box");
+
+			console.log(oDiv.length);
+
+			// 取得某 div 中所有 em 元素( 类似 getElementByTagName("em") )
+			// document.getElementById("myDiv").querySelectorAll("em");
+
+			document.querySelectorAll(".selected");  // 取得类为 "selected"的所有元素
+
+			var strongs = document.querySelectorAll("p strong");  // 取得所有 p 元素中的所有 strong 元素
+			var i, len, strong;
+			for (i = 0, len = strongs.length; i < len; i++) {
+				strong = strongs[i]; // 或者 strongs.item(i)
+				strong.className = "important";
+			}
+
+			// http://www.zhangxinxu.com/wordpress/2015/11/know-dom-queryselectorall/
+
+			console.log( document.querySelectorAll("#my-id div div") ); // div.inner
+
+			// CSS选择器是独立于整个页面的! 所以是3个，帮 jQuery 的 find() 方法是不同的
+			// 查询 #my-id 的子元素，同时满足整个页面下 div div 选择器条件的 DOM 元素们
+			// 在全局视野下 div.lonely, div.outer, div.inner 全部都满足 div div 这个选择器条件，于是最终返回的长度为 3
+			console.log( document.querySelector("#my-id").querySelectorAll("div div"));  // [div.lonely, div.outer, div.inner]
+
+			// 其实，要想 querySelectorAll 后面选择器不受全局影响也是有办法的，就是使用目前还处于实验阶段的：scope 伪类
+			// 其作用就是让 CSS 是在某一范围内使用。此伪类在CSS中使用是大头，但是也可以在 querySelectorAll 语句中使用
+			console.log( document.querySelector("#my-id").querySelectorAll(":scope div div") ) ; // [div.inner]
+		};
+	</script>
+</head>
+<body>
+<div class="box">div1</div>
+<div class="box">div2</div>
+
+<div id="my-id">
+	<div class="lonely"></div>
+	<div class="outer">
+		<div class="inner"></div>
+	</div>
+</div>
+
+</body>
+</html>

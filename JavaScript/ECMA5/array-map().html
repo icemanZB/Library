@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>map()</title>
+	<script>
+		/*
+		 * ECMA5 数组新方法 map()
+		 * 对数组中的每一项运行给定函数，返回一个数组，而这个数组的每一项都是在原始数组中的对应项上运行传入函数的结果
+		 * 浏览器兼容：IE9+、firefox 2+、Safari3+、Opera9.5+ 和 chrome
+		 */
+		var num = [1, 2, 3, 4, 5, 4, 3, 2, 1];
+		// 给数组中的每一项*2，然后返回这些乘积组成的数组
+		var mapRes = num.map(function (item, index, array) {
+
+			return item * 2;
+
+		});
+		console.log(mapRes);  // [2, 4, 6, 8, 10, 8, 6, 4, 2]
+
+		// 实现兼容的时候必须注意：对于数组中被删除 ( delete ) 或者根本从未赋值的索引项，map 中第一个函数参数是不会执行的。
+		// 所以要加一个判断
+		if (typeof Array.prototype.map != "function") {
+			Array.prototype.map = function (fn, context) {
+				var arr = [];
+				if (typeof fn === "function") {
+					for (var k = 0, length = this.length; k < length; k++) {
+						// 这样写与原生的也是有区别
+						arr.push(fn.call(context, this[k], k, this));
+					}
+				}
+				return arr;
+			};
+		}
+
+		Array.prototype.myMap = function (fn, context) {
+			context = context || window;
+			var ary = [];
+			for (var i = 0; i < this.length; i++) {
+				ary[i] = fn.apply(context, [this[i], i, this]);
+			}
+			return ary;
+		};
+		// 以字面量方式新创建数组的时候，连续的逗号，会形成数字索引不连续，注意一定要用 console.dir 方法
+		var arr = [1, 2, , , 3];
+
+		/*
+		 * console.dir(arr.myMap(function (e, i, a) {
+		 * 	  return e * 2;
+		 * }));  // 调用自己写的代码结果 [2, 4, NaN, NaN, 6]
+		 */
+
+		// 原生的 map 方法跳过了那些从未赋值的索引对应的项
+		console.log(arr.map(function (e, i, a) {
+			return e * 2;
+		}));  // 调用原生的结果   [2, 4, undefined, undefined, 6]
+
+		// 利用 delete 操作符删除数组中的某项
+		// delete 操作符用于删除对象中某个属性，而 JavaScript 中，数组就是对象的一种，数组的索引就是其属性名，对应的项就是属性值。
+		// 用 delete 删除后，数组中的这对属性名值对( 又称键值对 )就不存在了，这时候对其采用遍历方法，当然不会针对不存在名值对进行调用了
+		// 有一点要特别注意，数组中被删除的项或者从未定义的项，与人为将其值设置为 undefined 的项，尽管如果强行访问，结果都是 undefined，但是是不太一样的
+		// 比如这样一个数组[1,,undefined]，该数组中不存在索引为 1 的项，但是却存在索引为 2 的项，可以用 console.dir 输出看出区别。
+		console.dir([1, , undefined]);  // 0:1 , 2:undefined
+
+		// 既然数组的索引可以被跳过，那数组的length属性还能反映其长度吗？
+
+		// 数组的 length 属性并不能反应数组中元素的数目，在绝大多数情况( 即没有人工干预 length 属性，且数组中没有跳过的索引 )，它只是刚好，刚好等于最大的索引加一
+		// 当我们从对象的角度来看待数组时，像 0、1、2、3、4、5、6 等等这些数字索引和 length 一样，都只是数组对象的属性。
+		// 用 delete 操作符删除数组任意一项，或者将任意一项值赋值为 undefined，length 不改变
+		// 当人为地设置数组的 length 属性值时，length 随之改变，同时索引不小于该值的都会被从数组中彻底删除。
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

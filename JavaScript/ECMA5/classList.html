@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>classList</title>
+	<script>
+		window.onload = function () {
+			var oDiv = document.getElementById("oDiv");
+			// classList h5 新增了一种操作类名的方式 支持的浏览器有 Firefox3.6+、Chrome
+			console.log(oDiv.classList);
+
+			oDiv.classList.remove("user"); // 删除 .user
+			oDiv.classList.add("current"); // 添加 .current
+			oDiv.classList.toggle("user"); // 切换 user
+			// 确定元素中是否包含指定的类名
+			if (oDiv.classList.contains("bd") && !oDiv.classList.contains("disbaled")) {
+				// dosometing..
+			}
+			// 迭代类名
+			for (var i = 0, len = oDiv.classList.length; i < len; i++) {
+				// dosomething(oDiv.classList[i]);
+			}
+		};
+	</script>
+</head>
+<body>
+<div id="oDiv" class="a b c"></div>
+</body>
+</html>

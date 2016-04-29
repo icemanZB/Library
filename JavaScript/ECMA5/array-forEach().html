@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>forEach()</title>
+	<script>
+		/*
+		 * ECMA5 数组新方法 forEach()
+		 * 本质上与使用for循环迭代数组一样
+		 * 浏览器兼容：IE9+、firefox 2+、Safari3+、Opera9.5+ 和 chrome
+		 */
+		var num = [1, 2, 3, 4, 5, 4, 3, 2, 1];
+
+		num.forEach(function (item, index, array) {
+			console.log(item);
+		});
+
+		// forEach 除了接受一个必须的回调函数参数，还可以接受一个可选的上下文参数( 改变回调函数里面的 this 指向 )
+
+		var database = {
+			users      : ["张含韵", "江一燕", "李小璐"],
+			sendEmail  : function (user) {
+				if (this.isValidUser(user)) {
+					console.log("你好，" + user);
+				} else {
+					console.log("抱歉，" + user + "，你不是本家人");
+				}
+			},
+			isValidUser: function (user) {
+				return /^张/.test(user);
+			}
+		};
+
+		database.sendEmail("张");  // 这里不会报错的，this 指向没有被修改
+
+		// 给每个人法邮件
+		database.users.forEach(  // database.users 中人遍历
+				database.sendEmail,    // 发送邮件
+				database               // 使用 database 代替上面的 this.isValidUser，否则会报错，因为是个闭包，this 指向被修改为了 window
+		);
+
+		// forEach 不会遍历空位置的元素的
+
+		var array = [1, 2, 3];
+
+		delete array[1]; // 移除 2
+		console.log(array); // "1,,3"
+
+		console.log(array.length); // 3
+
+		array.forEach(function (item, index, array) {
+			console.log(item);  // 1 3
+		});
+
+		[1, undefined, 2].forEach(alert);  // 1 undefined 2
+
+		if (typeof Array.prototype.forEach != "function") {
+			Array.prototype.forEach = function (fn, context) {
+				for (var k = 0, length = this.length; k < length; k++) {
+					if (typeof fn === "function" && Object.prototype.hasOwnProperty.call(this, k)) {
+						fn.call(context, this[k], k, this);
+					}
+				}
+				// for - in 也可以达到相同的效果，过滤掉"空位置的值"
+				/*
+				 * for (var k in this) {
+				 *	  if (typeof fn === "function") {
+				 *		  fn.call(context, this[k], k, this);
+				 *	  }
+				 * }
+				 */
+			};
+		}
+		// undefined 不是在 [1,,3]对象下的属性
+		console.log(Object.prototype.hasOwnProperty.call([1, , 3], 1)); // false
+		console.log(Object.prototype.hasOwnProperty.call([1, undefined, 3], 1));  // true
+
+		// for-each 还可以遍历 DOM
+		var eleDivs = document.getElementsByTagName("div");
+		Array.prototype.forEach.call(eleDivs, function (div) {
+			console.log(div);
+		});
+	</script>
+</head>
+<body>
+
+</body>
+</html>
