@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>链式运动框架</title>
+	<style>
+		#div1 { width: 100px; height: 100px; background: red; }
+	</style>
+	<script>
+		function getStyle(obj, name) {
+			if (obj.currentStyle) {
+				return obj.currentStyle[name];
+			} else {
+				return getComputedStyle(obj, null)[name];
+			}
+		}
+
+		function startMove(obj, attr, iTarget, fnEnd) {
+			clearInterval(obj.time);
+			obj.time = setInterval(function () {
+				var cur = 0;
+
+				if (attr == 'opacity') {
+					cur = Math.round(parseFloat(getStyle(obj, attr)) * 100);
+				} else {
+					cur = parseInt(getStyle(obj, attr));
+				}
+
+				var speed = (iTarget - cur) / 6;
+
+				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+
+				if (cur == iTarget) {
+					clearInterval(obj.time);
+
+					if (fnEnd) fnEnd();
+
+				} else {
+					if (attr == 'opacity') {
+						obj.style.filter = 'alpha(opacity=' + cur + speed + ')';
+						obj.style.opacity = (cur + speed) / 100;
+					} else {
+						obj.style[attr] = cur + speed + 'px';
+					}
+				}
+			}, 30);
+		}
+
+		window.onload = function () {
+			var oDiv = document.getElementById("div1");
+
+			oDiv.onmouseover = function () {
+				startMove(oDiv, "width", 300, function () {
+					startMove(oDiv, "height", 300);
+				});
+			};
+		}
+	</script>
+</head>
+<body>
+<div id="div1">
+	运动框架不能同时动
+</div>
+</body>
+</html>

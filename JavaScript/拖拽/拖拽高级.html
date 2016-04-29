@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>拖拽高级</title>
+	<style>
+		#div1 {
+			width: 200px;
+			height: 200px;
+			background: red;
+			position: absolute;
+		}
+	</style>
+	<script>
+		window.onload = function () {
+			var oDiv = document.getElementById("div1");
+			var disX = 0;
+			var disY = 0;
+			oDiv.onmousedown = function (ev) {
+				var oEvent = ev || event;
+				disX = oEvent.clientX - oDiv.offsetLeft;
+				disY = oEvent.clientY - oDiv.offsetTop;
+
+				if (oDiv.setCapture) {
+					oDiv.onmousemove = mouseMove;
+
+					oDiv.onmouseup = mouseUp;
+
+					oDiv.setCapture(); // IE 7 下文字就不会被选中 其实就是文字或图片得不到事件
+				} else {
+					document.onmousemove = mouseMove;
+					document.onmouseup = mouseUp;
+				}
+
+				function mouseMove(ev) {
+					var oEvent = ev || event;
+					var oDivLeft = oEvent.clientX - disX;
+					var oDivTop = oEvent.clientY - disY;
+					oDiv.style.left = oDivLeft + "px";
+					oDiv.style.top = oDivTop + "px";
+				}
+
+				function mouseUp(ev) {
+					this.onmousemove = null;
+					this.onmouseup = null;
+					if (oDiv.releaseCapture) {
+						oDiv.releaseCapture(); // 释放捕获
+					}
+				}
+
+				return false; // 阻止默认事件，解决火狐的 bug
+			};
+		};
+	</script>
+</head>
+
+<body>
+IE 7 中的文字会被选中 ，
+<br/>如果不加 return false chrome ff 也会有这样的问题 asdsadad
+<br/>
+<div id="div1">
+	asdsadad asdsadad asdsadad
+</div>
+asdsadadasdsadadasdsadad
+</body>
+
+</html>

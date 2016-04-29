@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>带框的拖拽</title>
+	<style>
+		#div1 {
+			width: 200px;
+			height: 200px;
+			background: red;
+			position: absolute;
+		}
+
+		.box { border: 1px dashed black; position: absolute; }
+	</style>
+	<script>
+		// 拖拽空 div 低版本的火狐有 bug
+		window.onload = function () {
+			var oDiv = document.getElementById("div1");
+			var disX = 0;
+			var disY = 0;
+			oDiv.onmousedown = function (ev) {
+				var oEvent = ev || event;
+				disX = oEvent.clientX - oDiv.offsetLeft;
+				disY = oEvent.clientY - oDiv.offsetTop;
+
+				var oBox = document.createElement("div");
+
+				oBox.className = "box";
+				// 减掉 border 的宽度
+				oBox.style.width = oDiv.offsetWidth - 2 + "px";
+				oBox.style.height = oDiv.offsetHeight - 2 + "px";
+				// 给 box 定位，防止按下的时候 box 还在左上角
+				oBox.style.left = oDiv.offsetLeft + "px";
+				oBox.style.top = oDiv.offsetTop + "px";
+
+				document.body.appendChild(oBox);
+
+				if (oDiv.setCapture) {
+					oDiv.onmousemove = mouseMove;
+
+					oDiv.onmouseup = mouseUp;
+
+					oDiv.setCapture(); // IE 7 下文字就不会被选中，其实就是文字或图片得不到事件
+				} else {
+					document.onmousemove = mouseMove;
+					document.onmouseup = mouseUp;
+				}
+
+				function mouseMove(ev) {
+					var oEvent = ev || event;
+					var oDivLeft = oEvent.clientX - disX;
+					var oDivTop = oEvent.clientY - disY;
+					oBox.style.left = oDivLeft + "px";
+					oBox.style.top = oDivTop + "px";
+				}
+
+				function mouseUp(ev) {
+					this.onmousemove = null;
+					this.onmouseup = null;
+					oDiv.style.left = oBox.offsetLeft + "px";
+					oDiv.style.top = oBox.offsetTop + "px";
+
+					document.body.removeChild(oBox);
+
+					if (oDiv.releaseCapture) {
+						oDiv.releaseCapture(); // 释放捕获
+					}
+				}
+
+				return false; // 阻止默认事件，解决火狐的 bug
+			};
+		}
+	</script>
+</head>
+
+<body>
+<div id="div1"></div>
+</body>
+
+</html>

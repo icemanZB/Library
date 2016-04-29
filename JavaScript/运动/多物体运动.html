@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>多物体运动</title>
+	<style>
+		div {
+			width: 100px;
+			height: 50px;
+			background: red;
+			margin: 10px;
+		}
+	</style>
+	<script>
+		window.onload = function () {
+			var aDiv = document.getElementsByTagName("div");
+
+			for (var i = 0; i < aDiv.length; i++) {
+
+				aDiv[i].timer = null; // 把定时器作为一个物体的属性存起来
+
+				aDiv[i].onmouseover = function () {
+					startMove(this, 400);
+				};
+				aDiv[i].onmouseout = function () {
+					startMove(this, 100);
+				};
+			}
+		};
+
+		function startMove(obj, iTarget) {
+			// 先关闭上一个定时器的问题
+			// 整个程序就一个定时器，比如第一个 div 开始动了
+			// 第二个 div 鼠标移入了前一个定时器就被干掉了
+			// 那么自然就卡在那里了
+			// 所以最大的问题就是整个程序就只有一个定时器
+			// 把定时器作为一个物体的属性加上，那么每个物体都有一个定时器在
+			// 当关闭定时器的时候是关闭物体上的定时器，开也是物体上的定时器
+			// 那么他们之间就可以完全互不干扰的运行
+
+			clearInterval(obj.timer);
+
+			obj.timer = setInterval(function () {
+				var speed = (iTarget - obj.offsetWidth) / 6;
+
+				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+
+				if (obj.offsetWidth == iTarget) {
+					clearInterval(obj.timer);
+				} else {
+					obj.style.width = obj.offsetWidth + speed + "px";
+				}
+
+			}, 30);
+		}
+	</script>
+</head>
+
+<body>
+<div></div>
+<div></div>
+<div></div>
+</body>
+
+</html>

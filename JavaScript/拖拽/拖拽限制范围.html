@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>拖拽限制范围</title>
+	<style>
+		#div1 {
+			width: 100px;
+			height: 100px;
+			background: red;
+			position: absolute;
+		}
+
+		#div2 {
+			width: 400px;
+			height: 300px;
+			background: #CCCCCC;
+			position: relative;
+		}
+	</style>
+	<script>
+		// 拖拽空div 低版本的火狐有 bug
+		window.onload = function () {
+			var oDiv = document.getElementById("div1");
+			var oDiv2 = document.getElementById("div2");
+			var disX = 0;
+			var disY = 0;
+			oDiv.onmousedown = function (ev) {
+				var oEvent = ev || event;
+				disX = oEvent.clientX - oDiv.offsetLeft;
+				disY = oEvent.clientY - oDiv.offsetTop;
+
+				document.onmousemove = function (ev) {
+					var oEvent = ev || event;
+					// 存储 div 当前的位置
+					var oDivLeft = oEvent.clientX - disX;
+					var oDivTop = oEvent.clientY - disY;
+
+					if (oDivLeft < 0) {
+						oDivLeft = 0;
+					} else if (oDivLeft > oDiv2.offsetWidth - oDiv.offsetWidth) {
+						oDivLeft = oDiv2.offsetWidth - oDiv.offsetWidth;
+					}
+
+					if (oDivTop < 0) {
+						oDivTop = 0;
+					} else if (oDivTop > oDiv2.offsetHeight - oDiv.offsetHeight) {
+						oDivTop = oDiv2.offsetHeight - oDiv.offsetHeight;
+					}
+
+					oDiv.style.left = oDivLeft + "px";
+					oDiv.style.top = oDivTop + "px";
+				};
+
+				document.onmouseup = function () {
+					document.onmousemove = null;
+					document.onmouseup = null;
+				};
+				return false; // 阻止默认事件，解决火狐的bug
+			};
+		};
+	</script>
+</head>
+
+<body>
+<div id="div2">
+	<div id="div1">
+
+	</div>
+</div>
+</body>
+
+</html>

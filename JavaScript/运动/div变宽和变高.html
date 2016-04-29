@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>div变宽和变高</title>
+	<style>
+		div {
+			width: 200px;
+			height: 200px;
+			margin: 20px;
+			float: left;
+			background: yellow;
+			border: 1px solid #CCCCFF;
+		}
+	</style>
+	<script>
+		window.onload = function () {
+			var oDiv1 = document.getElementById("div1");
+
+			oDiv1.onmouseover = function () {
+				startMove(this, "width", 400);
+			};
+			oDiv1.onmouseout = function () {
+				startMove(this, "width", 200);
+			};
+			var oDiv2 = document.getElementById("div2");
+
+			oDiv2.onmouseover = function () {
+				startMove(this, "height", 400);
+			};
+			oDiv2.onmouseout = function () {
+				startMove(this, "height", 200);
+			};
+		};
+
+		function getStyle(obj, name) {
+			if (obj.currentStyle) {
+				return obj.currentStyle[name];
+			} else {
+				return getComputedStyle(obj, null)[name];
+			}
+		}
+
+
+		function startMove(obj, attr, iTarget) {
+			clearInterval(obj.time);
+			// offsetWidth 若现在样式表中有 border 他会把他算进去
+			// 那剪出来的就错了，越减越大
+			obj.time = setInterval(function () {
+
+				var cur = parseInt(getStyle(obj, attr));
+
+				var speed = (iTarget - cur) / 6;
+
+				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+
+				if (cur == iTarget) {
+					clearInterval(this.time);
+				} else {
+					obj.style[attr] = cur + speed + "px";
+				}
+			}, 30);
+		}
+	</script>
+</head>
+
+<body>
+<div id="div1">变宽</div>
+<div id="div2">变高</div>
+</body>
+
+</html>

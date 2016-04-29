@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>拖拽初级</title>
+	<style>
+		#div1 {
+			width: 200px;
+			height: 200px;
+			background: red;
+			position: absolute;
+		}
+	</style>
+	<script>
+		window.onload = function () {
+			var oDiv = document.getElementById("div1");
+			var disX = 0;
+			var disY = 0;
+			oDiv.onmousedown = function (ev) {
+				var oEvent = ev || event; // 浏览器兼容
+				disX = oEvent.clientX - oDiv.offsetLeft; // 横向的位置就是鼠标的位置 -div 的位置
+				disY = oEvent.clientY - oDiv.offsetTop;
+
+				oDiv.onmousemove = function (ev) {
+					var oEvent = ev || event;
+					oDiv.style.left = oEvent.clientX - disX + "px"; // 当前鼠标的位置 -disX
+					oDiv.style.top = oEvent.clientY - disY + "px";
+				};
+				oDiv.onmouseup = function () {
+					oDiv.onmousemove = null;
+					oDiv.onmouseup = null; // 不留垃圾，鼠标抬起本来也就没有用了
+				};
+
+			};
+
+		};
+	</script>
+</head>
+
+<body>
+<div id="div1">
+
+</div>
+</body>
+
+</html>
