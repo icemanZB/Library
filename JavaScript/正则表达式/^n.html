@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// ^n 匹配任何以n开头的字符串
+
+		// 基本语法：new RegExp("^n") 或直接量 /^n/
+
+		var str = "my name is longen";
+
+		// 匹配以 my 开头的字符串
+
+		console.log(str.match(/^my/g)); // ["my"]
+
+		// 匹配以 na 开头的字符串，没匹配到返回 null
+
+		console.log(str.match(/^na/g)); // null
+
+		// ^ 以字符串开始的地方匹配，不匹配任何字符
+
+		// 表达式 ^aaa 在匹配字符串 "longen aaa bbb"的时候，匹配的结果是失败的
+		// 因为^的含义是以某某字符串开始进行匹配，只有当 aaa 在字符串起始位置才能匹配成功;比如 "aaa longen bbb" 才匹配成功
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

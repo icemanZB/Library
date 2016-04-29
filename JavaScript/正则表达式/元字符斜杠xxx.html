@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// \xxx 查找一个以八进制数 xxx 规定的字符，如果未找到匹配，则返回 null。
+
+		// 基本语法：new RegExp("\xxx") 或直接量 /\xxx/
+
+		var str="Visit W3School. Hello World!";
+
+		console.log(/\127/g.exec(str)); // ["W", index: 6, input: "Visit W3School. Hello World!"]
+
+		// 代码分析：127 的八进制转换为 10 进制的值等于 1*8 的二次方 + 2*8 的一次方 + 7*8 的 0 次方 = 64 + 16 + 7 = 87 而 W 的 ASCLL 编码转换为 10 进制也是 87，因此打印 W
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

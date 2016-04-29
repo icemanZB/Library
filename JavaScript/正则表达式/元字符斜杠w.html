@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// \w  查找任意一个字母或数字或下划线
+
+		// 基本语法：new RegExp("\w"); 或 直接量语法 : /\w/
+
+		var str = "abcde";
+
+		// 匹配单个字符，找到一个直接返回
+		console.log(str.match(/\w/)); // ["a", index: 0, input: "abcde"]
+
+		// 匹配所有字符
+		console.log(str.match(/\w+/)); // ["abcde", index: 0, input: "abcde"]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

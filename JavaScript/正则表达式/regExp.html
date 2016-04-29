@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8"/>
+	<title>正则表达式</title>
+	<script>
+		// web.jobbole.com/84450/
+		// 正则表达式的基本语法如下2种
+		// 直接量语法：/pattern/attributes; 创建 RegExp 对象的语法 new RegExp(pattern,attributes);
+		// 参数：参数 pattern 是一个字符串，指定了正则表达式的模式;参数 attributes 是一个可选的参数，包含属性 g、i、m 分别使用与全局匹配、不区分大小写匹配、多行匹配
+		// @return 返回值：一个新的 RegExp 对象，具有指定的模式和标志
+
+		var re = new RegExp("de", "i");  // 加上这个 i 参数意思就是 ignore，可以忽略大小写
+
+		// var re=/b/i; // 正则的另外中写法，一般不这么写
+
+		console.log("abcdef".search(re));  // 查找字符串的位置
+
+
+		// \d 找数字，g 是参数，表示找出所有数字 global
+
+		/*
+		 * match 函数是使用正则表达式对字符串进行查找，并将查找的结果作为数组返回，没有找到匹配返回 null
+		 */
+		console.log("asds3344 ssw 11 33dff".match(/\d/g));  // ["3", "3", "4", "4", "1", "1", "3", "3"]
+
+		// \d\d 就拿两个数字
+		console.log("asds3344 ssw 11 33dff".match(/\d+/g));  // ["3344", "11", "33"]
+
+		// 把 a 替换成 0
+		console.log("asds3344 ssw 11 33dff".replace(/a/g, "0")); // 0sds3344 ssw 11 33dff
+
+
+		// 正则中的 "|" 表示或者的意思
+		// [] [abc]  在方括号里面的内容都符合要求或者表示范围 [0-9] 0-9 的所有数字
+		// [^a-z]  ^ 表示排除 a-z
+
+		console.log("apc xpc ppc bpc spc tpc".match(/[apx]pc/g));  // ["apc", "xpc", "ppc"]
+
+		//  "." 代表任意字符
+		// 过滤 html，除了<> 以外的任意字符
+
+		//  \d    数字 [0-9]    \D  [^0-9]
+
+		//  \w    英文数字下划线 [0-9a-z_]   \W  [^0-9a-z_]
+
+		//  \s    空白字符
+
+		//  {n}  正好出现n次
+
+		// {n,m}  最少n次  最多m次
+
+		//  {n,}  最少n次 最多不限
+
+		//  ?  表示可有可无
+
+		// * 可以有可以没有 有可以多个 不推荐用  (出现0次也算、)
+
+		//   \.  \ 表示转义
+
+		// re.test("所要检验的字符串")  test  特性 ： 一部分字符串符合要求就会返回 true
+
+		// ^  $   开头 结尾
+	</script>
+</head>
+<body>
+
+</body>
+</html>
+

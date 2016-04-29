@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// \b  匹配一个单词边界，也就是指单词和空格间的位置
+
+		// 基本语法：new RegExp("\bregexp") 或直接量 /\bregexp/
+
+		var str = "Is this all there is?";
+
+		console.log(/\bthis\b/g.exec(str)); // ["this", index: 3, input: "Is this all there is?"]
+
+		var str2 = "my name is longen";
+
+		// 匹配单词边界的字符
+
+		console.log(str2.match(/\bname\b/g)); // ["name"]
+
+		// 如果不是单词边界的地方，就匹配失败
+
+		console.log(str2.match(/\blong\b/g)); // null
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

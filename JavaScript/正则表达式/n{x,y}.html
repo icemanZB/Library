@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// n{x,y} 匹配包含至少x个的n字符串，最多 y 个 n 字符串。
+
+		// 基本语法：new RegExp("n{x,y}") 或直接量 /n{x,y}/
+
+		var str = "100, 1000 or 10000?";
+
+		// 匹配到 100,1000 和 10000
+		console.log(str.match(/\d{3,5}/g)); // ["100", "1000", "10000"]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// |  左右两边表达式之间 "或" 关系，匹配左边或者右边。
+
+		var str = "hello world";
+
+		// 使用 | 的含义是或者匹配成功结果为 ["hello "]
+
+		// 如果再次匹配的话就是 world
+
+		console.log(str.match(/(hello | world)/g)); // ["hello "]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

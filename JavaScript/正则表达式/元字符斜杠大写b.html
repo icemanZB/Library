@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// \B  匹配非单词边界
+
+		// 基本语法：new RegExp("\Bregexp") 或直接量 /\Bregexp/
+
+		var str = "Is this all there is?";
+
+		console.log(/\Bhi/g.exec(str)); // ["hi", index: 4, input: "Is this all there is?"]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

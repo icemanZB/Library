@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// 方括号包含一系列字符，能够匹配其中任意一个字符，如 [abc] 可以匹配 abc 中任意一个字符，使用 [^abc]，则能够匹配 abc 字符之外的任何一个字符，只能是一个字符
+
+		// [abc] : 查找在方括号中的任意一个字符
+
+		// [^abc] : 查找不在方括号中的任意一个字符
+
+		// [0-9] : 查找 0-9 中的任意一个数字
+
+		// [a-z] : 查找从小写 a 到 z 中的任意一个字符
+
+		// (red|blue|green); 查找小括号中的任意一项，小括号中的 | 是或者的意思
+
+		// 表达式 [bcd][bcd] 匹配 "abcde" 时候，匹配成功内容是bc，匹配到的位置开始于 1 结束与 3
+
+		var str = "abcde";
+
+		console.log(str.match(/[bcd][bcd]/)); // ["bc", index: 1, input: "abcde"]
+	</script>
+</head>
+<body>
+
+</body>
+</html>

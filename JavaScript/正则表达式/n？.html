@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// n? 匹配零个或者1个 n 的字符串，可以匹配 n 个字符串,也可以只匹配一个n; 先尽量匹配，如没有匹配到，就回溯再进行不匹配
+
+		// 基本语法：new RegExp("n?") 或直接量 /n?/
+
+		var str = "hello longen hello";
+
+		// 匹配至少零个或者 1 个 l 的字符串
+
+		console.log(str.match(/el?/g)); // ["el", "e", "el"]
+
+		// 可以匹配 1 个 u 或者不匹配 u 全局匹配
+
+		console.log(str.match(/hu?/g)); // ["h", "h"]
+	</script>
+</head>
+<body>
+
+</body>
+</html>

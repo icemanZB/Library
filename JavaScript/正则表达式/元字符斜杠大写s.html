@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// \S 匹配任何非空白字符,等价于[^\f\n\r\t\v]
+
+		// 基本语法：new RegExp("\S") 或直接量 /\S/
+
+		var str = "Is this all there is?";
+
+		console.log(/\S+/g.exec(str)); // ["Is", index: 0, input: "Is this all there is?"]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
