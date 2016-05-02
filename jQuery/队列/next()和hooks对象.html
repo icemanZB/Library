@@ -13,7 +13,7 @@
 
 			function func(next, hooks) {
 				console.log(this);  // p#box
-				// next 内部仍然调用 .dequeue()，这样可以接着执行队列中的下一个callback
+				// next 内部仍然调用 .dequeue()，这样可以接着执行队列中的下一个 callback
 				console.log(next); // .dequeue()
 				// .dequeue() 里的 hooks 是当队列里所有的 callback 都执行完后 ( 此时 startLength 为 0 ) 进行最后的一个清理工作
 				console.log(hooks); // Object{ empty:function(){} }

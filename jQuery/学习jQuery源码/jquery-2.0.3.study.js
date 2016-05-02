@@ -3679,7 +3679,7 @@ jQuery.extend({
 			remaining = length !== 1 || ( subordinate && jQuery.isFunction( subordinate.promise ) ) ? length : 0,
 
 			// the master Deferred. If resolveValues consist of only a single Deferred, just use that.
-		/*
+			/*
 			 * 当 remaining == 0 的时候，就会创建一个 Deferred 对象
 			 * 当传入了1个参数，subordinate 是一个延迟对象的话，就赋值给 deferred，如果 subordinate 不是延迟对象，就会创建新的 Deferred 对象
 			 * 一个参数的时候就会直接 return deferred.promise(); 其他代码都不走了
@@ -3747,6 +3747,7 @@ jQuery.support = (function( support ) {
 		opt = select.appendChild( document.createElement("option") );
 
 	// Finish early in limited environments
+	/* 经过测试，所有 input 都有默认值 "text"，所以这句没有什么意义 */
 	if ( !input.type ) {
 		return support;
 	}
@@ -3755,30 +3756,43 @@ jQuery.support = (function( support ) {
 
 	// Support: Safari 5.1, iOS 5.1, Android 4.x, Android 2.3
 	// Check the default checkbox/radio value ("" on old WebKit; "on" elsewhere)
+	/*
+	 * 在老版本的 webkit 下是 false
+	 * 检测出浏览器的差异后，需要解决这个问题，在所有浏览器下表现形式都是一样的，统一返回 "on"
+	 * 搜索 "support.checkOn"
+	 */
 	support.checkOn = input.value !== "";
 
 	// Must access the parent to make an option select properly
 	// Support: IE9, IE10
+	/* 在FF，chrome 中，创建了下拉菜单，这个时候默认子项的第一项是被选中的，在 IE 下并不是 */
 	support.optSelected = opt.selected;
 
 	// Will be defined later
+	/* 这三个是节点操作，需要等 DOM 加载完，所以初始化了一些值 */
 	support.reliableMarginRight = true;
 	support.boxSizingReliable = true;
 	support.pixelPosition = false;
 
 	// Make sure checked status is properly cloned
 	// Support: IE9, IE10
+	/* 正常情况让复选框选中，clone 出来的复选框也是选中状态，在 IE10、IE9 中 clone 出来的复选框是没有选中的，通过 Hooks 机制处理这兼容问题  */
 	input.checked = true;
 	support.noCloneChecked = input.cloneNode( true ).checked;
 
 	// Make sure that the options inside disabled selects aren't marked as disabled
 	// (WebKit marks them as disabled)
+	/* 下拉菜单被禁止了，子项应该不会被禁止，只有在老版本的 webkit 会有问题，子项会被禁止 */
 	select.disabled = true;
 	support.optDisabled = !opt.disabled;
 
 	// Check if an input maintains its value after becoming a radio
 	// Support: IE9, IE10
 	input = document.createElement("input");
+	/*
+	 * 一定要先设置 value，在设置 type，如果先设置 type 再设置 value，所有浏览器都会返回 true
+	 * 在 IE 下都是 false ( 包括 IE11 )，其实 IE 的值是 "on"
+	 */
 	input.value = "t";
 	input.type = "radio";
 	support.radioValue = input.value === "t";
@@ -3795,8 +3809,13 @@ jQuery.support = (function( support ) {
 
 	// Support: Firefox, Chrome, Safari
 	// Beware of CSP restrictions (https://developer.mozilla.org/en/Security/CSP)
+	/* 只有 IE 支持 onfocusin */
 	support.focusinBubbles = "onfocusin" in window;
 
+	/*
+	 * 这个 div 首先是创建出来的，然后在 clone 一个 div，设置 backgroundClip = ""，在看之前的 div 的 backgroundClip 值是否改变 ( 其实任何与 background 有关系的 都会有这样的问题 )
+	 * 正常情况下，修改 clone 元素是不会影响到原来的元素的，在 IE 下 都是会被 clone 的元素所影响到
+	 */
 	div.style.backgroundClip = "content-box";
 	div.cloneNode( true ).style.backgroundClip = "";
 	support.clearCloneStyle = div.style.backgroundClip === "content-box";
@@ -3805,6 +3824,7 @@ jQuery.support = (function( support ) {
 	jQuery(function() {
 		var container, marginDiv,
 			// Support: Firefox, Android 2.3 (Prefixed box-sizing versions).
+			/* content-box：标准模式、border-box：怪异模式 */
 			divReset = "padding:0;margin:0;border:0;display:block;-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box",
 			body = document.getElementsByTagName("body")[ 0 ];
 
@@ -3814,23 +3834,33 @@ jQuery.support = (function( support ) {
 		}
 
 		container = document.createElement("div");
+		/* margin-top:1px：在 jQuery1x..版本中是有用到的，比如 body.offsetTop;在这个版本中并没有使用 */
 		container.style.cssText = "border:0;width:0;height:0;position:absolute;top:0;left:-9999px;margin-top:1px";
 
 		// Check box-sizing and margin behavior.
 		body.appendChild( container ).appendChild( div );
+		/* 这句也是在 jQuery1x..版本中是有用到的，这里并没有使用 */
 		div.innerHTML = "";
 		// Support: Firefox, Android 2.3 (Prefixed box-sizing versions).
 		div.style.cssText = "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding:1px;border:1px;display:block;width:4px;margin-top:1%;position:absolute;top:1%";
 
 		// Workaround failing boxSizing test due to offsetWidth returning wrong value
 		// with some non-1 values of body zoom, ticket #13543
+		/*
+		 * swap() 是 css 样式转换的方法，可以让 jQuery 获取到隐藏元素的值
+		 * body.style.zoom 有值的时候，会影响到 div.offsetWidth 值，所以要统一一下
+		 * offsetWidth = width + padding + border，但是上面设置了 box-sizing:border-box; 所以这些都是包括在 width 内的
+		 */
 		jQuery.swap( body, body.style.zoom != null ? { zoom: 1 } : {}, function() {
 			support.boxSizing = div.offsetWidth === 4;
 		});
 
 		// Use window.getComputedStyle because jsdom on node.js will break without it.
+		/* 在 nodejs 下是没有 window.getComputedStyle */
 		if ( window.getComputedStyle ) {
+			/* 只有在 Safari 下返回 1%，其他的浏览器返回的都是 px */
 			support.pixelPosition = ( window.getComputedStyle( div, null ) || {} ).top !== "1%";
+			/* 在 IE 下如果是怪异模式，还有 padding 值，width - padding = width;结果在 IE 下 width 是 2px */
 			support.boxSizingReliable = ( window.getComputedStyle( div, null ) || { width: "4px" } ).width === "4px";
 
 			// Support: Android 2.3
@@ -3846,6 +3876,7 @@ jQuery.support = (function( support ) {
 				!parseFloat( ( window.getComputedStyle( marginDiv, null ) || {} ).marginRight );
 		}
 
+		/* 移除创建好的元素 */
 		body.removeChild( container );
 	});
 
@@ -3871,17 +3902,32 @@ function Data() {
 	// Support: Android < 4,
 	// Old WebKit does not have Object.preventExtensions/freeze method,
 	// return new empty object instead with no [[set]] accessor
+	/*
+	 * Object.freeze(obj) 防止修改对象，只能获取
+	 * Object.defineProperty(属性所在对象,属性所在的对象属性名，一个描述符对象 )
+	 * 在 this.cache 对象中默认添加了 "0" 这个属性，并且是不可修改的
+	 * 为什么不能修改，假设一个文本节点设置了数据，他是返回空的 {}，那么如果这个时候在有个文本节点设置了数据，他还是返回 {}
+	 * 如果这个是可以改的，那么第一个值改掉了，第二个值也随之改变了
+	 */
 	Object.defineProperty( this.cache = {}, 0, {
 		get: function() {
 			return {};
 		}
 	});
 
+	/* 唯一的标识，用在 <div xxx=""></div>，这个标识就是表示 "xxx" */
 	this.expando = jQuery.expando + Math.random();
 }
 
+/*
+ * this.cache{
+ *     1:{},
+ *     2:{}
+ * }
+ */
 Data.uid = 1;
 
+/* 判断节点类型 */
 Data.accepts = function( owner ) {
 	// Accepts only:
 	//  - Node
@@ -3889,6 +3935,12 @@ Data.accepts = function( owner ) {
 	//    - Node.DOCUMENT_NODE
 	//  - Object
 	//    - Any
+	/*
+	 * nodeType = 1 说明是元素、nodeType = 9 说明是 document，这些都是可以被分配的标识的
+	 * 如 1->{"name":"aa"}、2->{"name":"bb"}..，这些是私有的，只有某个元素有，所以是可以被设置修改
+	 * 除了上面的是不能被分配标识的就会返回默认的 "0"->{}，并且是共用的，会有很多不满足条件的会使用它
+	 * 还有一些数组之类的是没有 nodeType ，也是可以分配的
+	 */
 	return owner.nodeType ?
 		owner.nodeType === 1 || owner.nodeType === 9 : true;
 };
@@ -3904,20 +3956,29 @@ Data.prototype = {
 
 		var descriptor = {},
 			// Check if the owner object already has a cache key
+			/*
+			 * $.data(document.body,"age",30); $.data(document.body,"job","it");
+			 * owner 就是 body，然后把随机数放到了 body 上面
+			 * 第一次肯定是没有的，找不到的话就分配一个，相同的元素是同一个 ID
+			 */
 			unlock = owner[ this.expando ];
 
 		// If not, create one
 		if ( !unlock ) {
+			/* 分配一个标识 */
 			unlock = Data.uid++;
 
 			// Secure it in a non-enumerable, non-writable property
+			/* 分配自定义属性 */
 			try {
 				descriptor[ this.expando ] = { value: unlock };
+				/* 这里添加属性，只能获取不能修改 */
 				Object.defineProperties( owner, descriptor );
 
 			// Support: Android < 4
 			// Fallback to a less secure definition
 			} catch ( e ) {
+				/* 通过 extend() 把自定义属性加到 body 上面 */
 				descriptor[ this.expando ] = unlock;
 				jQuery.extend( owner, descriptor );
 			}
@@ -3935,7 +3996,9 @@ Data.prototype = {
 			// There may be an unlock assigned to this node,
 			// if there is no entry for this "owner", create one inline
 			// and set the unlock as though an owner entry had always existed
+			/* 找到 ID */
 			unlock = this.key( owner ),
+			/* 通过 ID 找到对应的 json */
 			cache = this.cache[ unlock ];
 
 		// Handle: [ owner, key, value ] args
@@ -3945,6 +4008,7 @@ Data.prototype = {
 		// Handle: [ owner, { properties } ] args
 		} else {
 			// Fresh assignments by object are shallow copied
+			/* 这个判断是不是没有什么意义，extend() 内部本来就是调用 for-in */
 			if ( jQuery.isEmptyObject( cache ) ) {
 				jQuery.extend( this.cache[ unlock ], data );
 			// Otherwise, copy the properties one-by-one to the cache object
@@ -3954,6 +4018,7 @@ Data.prototype = {
 				}
 			}
 		}
+		// console.log( this,this.expando );
 		return cache;
 	},
 	get: function( owner, key ) {
@@ -3961,11 +4026,13 @@ Data.prototype = {
 		// New caches will be created and the unlock returned,
 		// allowing direct access to the newly created
 		// empty data object. A valid owner object must be provided.
+		/* 先找到对应的 ID ，在缓存中找到对应的 json */
 		var cache = this.cache[ this.key( owner ) ];
 
 		return key === undefined ?
 			cache : cache[ key ];
 	},
+	/* 对于 get()、set(） 整合 */
 	access: function( owner, key, value ) {
 		var stored;
 		// In cases where either:
@@ -4005,11 +4072,13 @@ Data.prototype = {
 			unlock = this.key( owner ),
 			cache = this.cache[ unlock ];
 
+		/* 不指定具体的 key 的时候，会删除所有的数据缓存 */
 		if ( key === undefined ) {
 			this.cache[ unlock ] = {};
 
 		} else {
 			// Support array or space separated string of keys
+			/* 判断是不是数组， $.removeData(document.body,["age","job"]) */
 			if ( jQuery.isArray( key ) ) {
 				// If "name" is an array of keys...
 				// When data is initially created, via ("key", "val") signature,
@@ -4017,21 +4086,26 @@ Data.prototype = {
 				// Since there is no way to tell _how_ a key was added, remove
 				// both plain key and camelCase key. #12786
 				// This will only penalize the array argument path.
+				/* jQuery.camelCase 返回驼峰的形式 "all-mame" -> "allName" */
 				name = key.concat( key.map( jQuery.camelCase ) );
 			} else {
 				camel = jQuery.camelCase( key );
 				// Try the string as a key before any manipulation
+				/* key 在 cache 中存不存在 */
 				if ( key in cache ) {
 					name = [ key, camel ];
 				} else {
 					// If a key with the spaces exists, use it.
 					// Otherwise, create an array by matching non-whitespace
 					name = camel;
+					/* 看看转完驼峰以后在不在 cache 中 */
 					name = name in cache ?
+						/*  name.match( core_rnotwhite ) 是去掉空格后有没有 key */
 						[ name ] : ( name.match( core_rnotwhite ) || [] );
 				}
 			}
 
+			/* 删除 */
 			i = name.length;
 			while ( i-- ) {
 				delete cache[ name[ i ] ];
@@ -4044,6 +4118,7 @@ Data.prototype = {
 		);
 	},
 	discard: function( owner ) {
+		/* 删除的是一个整体 1:{"name","aa"} 删除的是 "1"这个整体 */
 		if ( owner[ this.expando ] ) {
 			delete this.cache[ owner[ this.expando ] ];
 		}
@@ -4051,7 +4126,9 @@ Data.prototype = {
 };
 
 // These may be used throughout the jQuery core codebase
+/* 对外的数据缓存对象 */
 data_user = new Data();
+/* 对内的数据缓存对象 */
 data_priv = new Data();
 
 
@@ -4084,25 +4161,37 @@ jQuery.extend({
 jQuery.fn.extend({
 	data: function( key, value ) {
 		var attrs, name,
+			/* 找到一组元素的第一个 */
 			elem = this[ 0 ],
 			i = 0,
 			data = null;
 
 		// Gets all values
 		if ( key === undefined ) {
+			/* 判断元素是否存在 */
 			if ( this.length ) {
+				/* 获取元素中的数据 */
 				data = data_user.get( elem );
 
+				/*
+				 * 用来获取 HTML 中 data-* 的自定义数据
+				 * data_priv.get( elem, "hasDataAttrs" ) 第一次进来肯定是 false，在取反
+				 */
 				if ( elem.nodeType === 1 && !data_priv.get( elem, "hasDataAttrs" ) ) {
+					/* 获取元素所有属性的集合 */
 					attrs = elem.attributes;
 					for ( ; i < attrs.length; i++ ) {
+						/* 获取属性名，如果要获取属性的值的话 attrs[i].value */
 						name = attrs[ i ].name;
 
 						if ( name.indexOf( "data-" ) === 0 ) {
+							/* 把 data- 截掉，然后转驼峰 */
 							name = jQuery.camelCase( name.slice(5) );
+							/* 这个方法就是把自定义属性 "data-*" 放到 $.data() 中 */
 							dataAttr( elem, name, data[ name ] );
 						}
 					}
+					/* 这里在设置一下，下次就不走了 */
 					data_priv.set( elem, "hasDataAttrs", true );
 				}
 			}
@@ -4111,6 +4200,7 @@ jQuery.fn.extend({
 		}
 
 		// Sets multiple values
+		/* 设置多个属性值 $("div").data({name:"iceman",age:28}) */
 		if ( typeof key === "object" ) {
 			return this.each(function() {
 				data_user.set( this, key );
@@ -4126,6 +4216,7 @@ jQuery.fn.extend({
 			// `value` parameter was not undefined. An empty jQuery object
 			// will result in `undefined` for elem = this[ 0 ] which will
 			// throw an exception if an attempt to read a data cache is made.
+			/* 这个 if 走的都是获取的操作 */
 			if ( elem && value === undefined ) {
 				// Attempt to get data from the cache
 				// with the key as-is
@@ -4136,6 +4227,7 @@ jQuery.fn.extend({
 
 				// Attempt to get data from the cache
 				// with the key camelized
+				/* 转完驼峰再去找 */
 				data = data_user.get( elem, camelKey );
 				if ( data !== undefined ) {
 					return data;
@@ -4153,6 +4245,19 @@ jQuery.fn.extend({
 			}
 
 			// Set the data...
+			/*
+			 * 设置
+			 * 这里会处理一种特殊情况
+			 * $("div").data("nameAge","hi");
+			 * $("div").data("name-age","hello");
+			 * this.cache ={
+			 *     1:{
+			 *         "nameAge":"hello",
+			 *         "name-age":"hello"
+			 *     }
+			 * };
+			 * 如果是只有 $("div").data("name-age","hello"); 只会出现 "nameAge":"hello"
+			 */
 			this.each(function() {
 				// First, attempt to store a copy or reference of any
 				// data that might've been store with a camelCased key.
@@ -4170,6 +4275,11 @@ jQuery.fn.extend({
 					data_user.set( this, key, value );
 				}
 			});
+		/*
+		 * null 对应的是 key ，因为 key 已经有了所以就不用传了
+		 * arguments.length == 1 的话就是 false，那么这个回调函数就是获取操作
+		 * 后面两个参数没什么用
+		 */
 		}, null, value, arguments.length > 1, null, true );
 	},
 
@@ -4185,8 +4295,17 @@ function dataAttr( elem, key, data ) {
 
 	// If nothing was found internally, try to fetch any
 	// data from the HTML5 data-* attribute
+	/*
+	 * data === undefined 是为了如果之前 $.data() 设置过，然后又在 HTML 中也设置了同样的属性名，那么就不会再添加到 $.data() 中
+	 * elem.nodeType === 1 是要一个元素
+	 */
 	if ( data === undefined && elem.nodeType === 1 ) {
+		/*
+		 * key 就是转完驼峰的属性名
+		 * rmultiDash 是个正则，找大写的字母，在转成小写 例如： data-ice-name -> data-iceName -> data-ice-name
+		 */
 		name = "data-" + key.replace( rmultiDash, "-$1" ).toLowerCase();
+		/* 通过属性名找到对应的属性的值 */
 		data = elem.getAttribute( name );
 
 		if ( typeof data === "string" ) {
@@ -4195,7 +4314,12 @@ function dataAttr( elem, key, data ) {
 					data === "false" ? false :
 					data === "null" ? null :
 					// Only convert to a number if it doesn't change the string
+					/* +data 就是转数字，这句就是判断是不是字符串的数字，如果是就存对应的数字 */
 					+data + "" === data ? +data :
+					/*
+					 * 如果属性值是 "a100" 那么上面 +"a100" 就会变成 NaN，那么就会走最后一句，该什么就是什么
+					 * rbrace 这个正则就是判断是不是一个 json，如果是的话，就把字符串的 json 转为真正的 json
+					 */
 					rbrace.test( data ) ? JSON.parse( data ) :
 					data;
 			} catch( e ) {}
@@ -4213,14 +4337,26 @@ jQuery.extend({
 		var queue;
 
 		if ( elem ) {
+			/* type 就是队列的名字，默认是 "fx" */
 			type = ( type || "fx" ) + "queue";
+			/*
+			 * 先去取一下 queue 存不存在
+			 * $.queue(document,"q1",aaa); 第一次走 queue 肯定是没有的
+			 * $.queue(document,"q1",bbb); 第二次走就有了
+			 */
 			queue = data_priv.get( elem, type );
 
 			// Speed up dequeue by getting out quickly if this is just a lookup
+			/* data 就是第三个参数  */
 			if ( data ) {
+				/*
+				 * 第一次当 queue 没有的时候，就创建一个 data 缓存
+				 * $.queue(document,"q1",[ccc]); 当第三个参数是个数组的时候，不管之前添加过多少个，都会被覆盖掉
+				 */
 				if ( !queue || jQuery.isArray( data ) ) {
 					queue = data_priv.access( elem, type, jQuery.makeArray(data) );
 				} else {
+					/* 之后的几次直接添加到之前创建的 data 缓存中 */
 					queue.push( data );
 				}
 			}
@@ -4231,15 +4367,20 @@ jQuery.extend({
 	dequeue: function( elem, type ) {
 		type = type || "fx";
 
-		var queue = jQuery.queue( elem, type ),
+		var queue = jQuery.queue( elem, type ), /* 获得队列 */
 			startLength = queue.length,
-			fn = queue.shift(),
+			fn = queue.shift(), /* 找到队列数组的第一项 */
 			hooks = jQuery._queueHooks( elem, type ),
+			/* next() 就是出队的操作 */
 			next = function() {
 				jQuery.dequeue( elem, type );
 			};
 
 		// If the fx queue is dequeued, always remove the progress sentinel
+		/*
+		 * "inprogress" 是针对 "fx" 的
+		 *  之后的出队操作的时候，有 "inprogress" 的话就删除，然后长度减减
+		 */
 		if ( fn === "inprogress" ) {
 			fn = queue.shift();
 			startLength--;
@@ -4249,21 +4390,28 @@ jQuery.extend({
 
 			// Add a progress sentinel to prevent the fx queue from being
 			// automatically dequeued
+			/*
+			 * 这里 animate() 第一次调用的时候，就是默认 "fx"，然后直接在队列里面添加了 "inprogress"
+			 * 就是第一次的时候直接执行出队的操作，后续就不会执行了
+			 */
 			if ( type === "fx" ) {
 				queue.unshift( "inprogress" );
 			}
 
 			// clear up the last queue stop function
 			delete hooks.stop;
+			/* 这里在执行队列中的函数 */
 			fn.call( elem, next, hooks );
 		}
 
+		/* 主动触发 remove 操作，清理缓存 */
 		if ( !startLength && hooks ) {
 			hooks.empty.fire();
 		}
 	},
 
 	// not intended for public consumption - generates a queueHooks object, or returns the current one
+	/* 出队结束之后，在缓存中删除 */
 	_queueHooks: function( elem, type ) {
 		var key = type + "queueHooks";
 		return data_priv.get( elem, key ) || data_priv.access( elem, key, {
@@ -4278,24 +4426,38 @@ jQuery.fn.extend({
 	queue: function( type, data ) {
 		var setter = 2;
 
+		/* 默认省略了 type */
 		if ( typeof type !== "string" ) {
 			data = type;
 			type = "fx";
 			setter--;
 		}
 
+		/*
+		 * 根据长度来判断是设置还是获取
+		 * 获取的话，只查看一组元素的第一个元素
+		 */
 		if ( arguments.length < setter ) {
 			return jQuery.queue( this[0], type );
 		}
 
 		return data === undefined ?
 			this :
+			/* 对每一个进行设置 */
 			this.each(function() {
 				var queue = jQuery.queue( this, type, data );
 
 				// ensure a hooks for this queue
+				/* 这里先设置一下 hooks，当上面调用的时候，data_priv.get( elem, key ) 这个就会找到，直接返回 */
 				jQuery._queueHooks( this, type );
 
+				/*
+				 * 这里是针对运动，入完队以后直接出队
+				 * $(this).animate({width:300},2000);
+				 * $(this).animate({height:300},2000);
+				 * $(this).animate({width:300},2000) 走这句的时候就会执行这里的出队操作
+				 * 由于后续的操作不需要执行出队，所以加了这个 "inprogress"，第一次的时候 "inprogress" 这个肯定是没有的，走完了出队以后，"inprogress" 就有了
+				 */
 				if ( type === "fx" && queue[0] !== "inprogress" ) {
 					jQuery.dequeue( this, type );
 				}
@@ -4309,6 +4471,7 @@ jQuery.fn.extend({
 	// Based off of the plugin by Clint Helfers, with permission.
 	// http://blindsignals.com/index.php/2009/07/jquery-delay/
 	delay: function( time, type ) {
+		/* jQuery.fx.speeds 这个是在运动中定义过的，可以写 "fast"、"slow" */
 		time = jQuery.fx ? jQuery.fx.speeds[ time ] || time : time;
 		type = type || "fx";
 
@@ -4320,17 +4483,26 @@ jQuery.fn.extend({
 		});
 	},
 	clearQueue: function( type ) {
+		/* 清除队列 */
 		return this.queue( type || "fx", [] );
 	},
 	// Get a promise resolved when queues of a certain type
 	// are emptied (fx is the type by default)
+	/*
+	 * 所有运动做完之后，可以进行done() 的调用
+	 * $(this).animate({width:300},2000).animate({left:200},2000);
+	 * $(this).promise().done(function(){
+	 *     console.log(1234);
+	 * });
+	 */
 	promise: function( type, obj ) {
 		var tmp,
-			count = 1,
+			count = 1, /* 计数有多少个要执行的队列 */
 			defer = jQuery.Deferred(),
 			elements = this,
 			i = this.length,
 			resolve = function() {
+				/* 当所有的都出队了，就说明已经完成了，就会执行done() */
 				if ( !( --count ) ) {
 					defer.resolveWith( elements, [ elements ] );
 				}
@@ -4346,6 +4518,7 @@ jQuery.fn.extend({
 			tmp = data_priv.get( elements[ i ], type + "queueHooks" );
 			if ( tmp && tmp.empty ) {
 				count++;
+				/* 出队 */
 				tmp.empty.add( resolve );
 			}
 		}
@@ -4847,6 +5020,10 @@ jQuery.each([ "radio", "checkbox" ], function() {
 			}
 		}
 	};
+	/*
+	 * support.checkOn = false，在老版本的 webkit 就会走这个if，解决兼容问题，让这个值"" 变成 "on"
+	 * 通过 jQuery 的 Hooks 机制，专门解决兼容问题的
+	 */
 	if ( !jQuery.support.checkOn ) {
 		jQuery.valHooks[ this ].get = function( elem ) {
 			// Support: Webkit
