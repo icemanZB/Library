@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>new Array 和 []</title>
+	<script>
+		// new Array() 循环 100000 次
+		function test1(arr) {
+			var d1 = new Date();
+			var a = [];
+			for (var i = 0; i < 100000; i++) {
+				a[i] = new Array();
+			}
+			var d2 = new Date();
+			arr.push(d2.getTime() - d1.getTime());
+			// console.log(d2.getTime() - d1.getTime());
+		}
+
+		// [] 循环 100000 次
+		function test2(arr) {
+			var d1 = new Date();
+			var a = [];
+			for (var i = 0; i < 100000; i++) {
+				a[i] = [];
+			}
+			var d2 = new Date();
+			arr.push(d2.getTime() - d1.getTime());
+			// console.log(d2.getTime() - d1.getTime());
+		}
+
+		// new Array 方式执行 100 次，并计算平均值
+		function excuteTest1() {
+			var arr = [];
+			for (var i = 0; i < 100; i++) {
+				test1(arr);
+			}
+			// console.log(arr);
+			console.log("average1:" + average(arr));
+		}
+
+		excuteTest1();
+
+		// [] 方式执行 100 次，并计算平均值
+		function excuteTest2() {
+			var arr = [];
+			for (var i = 0; i < 100; i++) {
+				test2(arr);
+			}
+			// console.log(arr);
+			console.log("average2:" + average(arr))
+		}
+		function average(arr) {
+			var s = 0, len = arr.length;
+			for (var i = 0; i < len; i++) {
+				s += arr[i];
+			}
+			return s / len;
+		}
+
+		excuteTest2();
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

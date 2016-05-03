@@ -6,7 +6,7 @@ js 获取 document.getElementById("div1").clientHeight  ==>     $("#obj").innerH
 
 js div1.offsetHeight + parseInt(div1.style.marginTop) + parseInt(div1.style.marginBottom)==>$("#obj").outerHeight(true)
 
-js 获取 obj.offsetTop  ==>  $("#obj").position().top  obj是有定位的
+js 获取 obj.offsetTop  ==>  $("#obj").position().top  obj 是有定位的
 
 js appendChild  ==>  $("#li").appendTo("ul");
 
@@ -15,3 +15,5 @@ js removeChild 必须是父级调用 ul.removeChild(li); ==>  $("ul").find("li")
 js ev.clientX + document.documentElement ? document.documentElement.scrollTop : document.body.scrollTop  ==> ev.pageX
 
 js  ev.keyCode  ==>  ev.which
+
+js document.documentElement.clientWidth || document.body.clientWidth() ==> $(window).width()  获取窗口的宽度

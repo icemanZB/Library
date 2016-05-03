@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>innerHTML</title>
+	<script>
+		// 用 innerHTML 插入 html 代码中有样式表时需注意的地方
+		// 注意到在 IE 中，代码中的 <style>p{background:#f00}</style> 这段样式声明并没有起作用
+		// 解决方法：在样式表前必须要有其他的html代码，即使是一个 &nbsp 也行。
+		window.onload = function () {
+			document.getElementById("div1").innerHTML = "<style>p{background:#f00}</style><p>我是p标签</p>";
+		};
+
+	</script>
+</head>
+<body>
+<div id="div1"></div>
+</body>
+</html>

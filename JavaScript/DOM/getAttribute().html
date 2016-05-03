@@ -8,6 +8,7 @@
 
 			var oText = document.getElementById("text1");
 			var oDiv = document.getElementById("oDiv");
+			var _menu = document.getElementsByClassName("current");
 
 			// 元素.getAttribute(属性名称); 获取指定元素的指定属性的值
 
@@ -32,8 +33,14 @@
 
 			console.log(oImg.style.getAttribute("width"));  // 标准下会报错，IE下支持
 
+
+			var _href = _menu.getAttribute("href");  // 获取到 #item1
+			var _href2=_menu.href; // 获取到的是浏览器的路径
+
+
 			// 在 IE7 及之前的版本 getAttribute() 访问 style 或 onclick ，返回的值与属性的相同 getAttribute("style") 返回一个对象
 			// getAttirbute("onclick") 返回一个函数，IE8 修正了这个问题
+			// getAttirbute("class") 那么高等级的浏览器没有问题 IE7 需要用 className
 
 			// 一般只有在取得自定义特性值的情况，才会使用 getAttribute()，一般使用对象的属性 ". []"
 			// 所有特性都是属性，直接给属性赋值可以设置特性的值
@@ -70,7 +77,7 @@
 <body>
 <input type="text" id="text1" value="1111" _name_="妙味"/>
 <img src="bdlogo.gif" id="img1" style="width:100px;"/>
-
+<a href="#item1" class="current">1F 男装</a>
 <div id="oDiv"></div>
 </body>
 </html>
