@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>event</title>
+    <script>
+
+        function fn1(ev) {
+
+            var oEvent = ev || event;
+
+            for (var attr in oEvent) {
+                console.log(attr + " = " + oEvent[attr]);
+            }
+
+            console.log(oEvent.clientX);
+        }
+
+        document.onclick = fn1;	// 是事件调用的函数，所以event有内容
+    </script>
+</head>
+
+<body>
+</body>
+</html>

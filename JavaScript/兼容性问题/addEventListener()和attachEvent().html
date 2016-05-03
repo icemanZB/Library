@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>addEventListener()和attachEvent()</title>
+	<script>
+		function bind(obj, evname, fn) {
+			if (obj.addEventListener) {
+				obj.addEventListener(evname, fn, false);
+			} else {
+				obj.attachEvent("on" + evname, function () {
+					fn.call(obj);
+				});
+			}
+		}
+
+		bind(document, "click", fn1);
+		bind(document, "click", fn2);
+
+		// 解决无法解绑的问题
+
+		function addEvent(obj, event, fn) {
+			// obj['bindclick']
+			obj["bind" + event] = obj["bind" + event] || {};
+			// 给匿名函数添加个名字 obj["bindclick"]["bindchange"]
+			// 如果有就走匿名函数，如果没有就给他
+			obj["bind" + event]["bind" + fn] = obj["bind" + event]["bind" + fn] || function () {
+						fn.call(obj);
+					};
+			// 事件绑定，绑定的是 obj["bind" + event]["bind" + fn] 这个给定的匿名函数
+			obj.attachEvent('on' + event, obj["bind" + event]["bind" + fn]);
+
+		}
+		function removeEvent(obj, event, fn) {
+			// 判断一下有没有这个属性和给定名字的匿名函数
+			if (obj["bind" + event] && obj["bind" + event]["bind" + fn]) {
+				obj.detachEvent('on' + event, obj["bind" + event]["bind" + fn]);
+			}
+		}
+		window.onload = function () {
+			var oDiv = document.getElementById("div1");
+			var oDiv2 = document.getElementById("div2");
+			oDiv.attachEvent("onclick", function () {
+				change.call(oDiv);
+			});
+			// 这里无法解绑的原因是，change 不在是事件函数，而是普通函数，真正要解绑的是匿名函数
+			oDiv2.onclick = function () {
+				oDiv.detachEvent("onclick", change);
+			};
+
+			function change() {
+				alert(this);
+			}
+
+			addEvent(oDiv, "click", change);
+
+			oDiv2.onclick = function () {
+				removeEvent(oDiv, "click", change);
+			};
+		};
+	</script>
+</head>
+
+<body>
+<div id="div1">aaaaaaaa</div>
+<div id="div2">bbbbbbbb</div>
+</body>
+</html>

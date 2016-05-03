@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>firstChild和firstElementChild</title>
+	<script>
+		window.onload = function () {
+
+			var oUl = document.getElementById("ul1");
+
+			console.log(oUl.firstChild); // IE9 下是 objext text IE8 以下是 object HTMLLIElement
+
+			console.log(oUl.firstElementChild); // 标准下获取第一个元素节点
+
+			// firstChild 在标准和非标准有都有的属性，只是有兼容问题
+			// firstElementChild 只有在标准下有这个属性，非标准没有
+
+			var oFirst = oUl.firstElementChild || oUl.firstChild;  // 这个兼容写法在没有子节点的情况下会出问题
+			oFirst.style.background = "red";
+
+			// 换一种方式获取第一个节点
+			oUl.children[0].style.background = "red";
+
+			// 如果当前的 ul 下面没有子元素
+			// <ul id="ul1"></ul>
+			// 在 IE8 以下 可以正常运行，但在标准下却没有近 else
+			if (oFirst) {
+				oFirst.style.background = "red"; // 标准走了这句，并且报错了
+
+				// 原因  标准下 oFirst 弹出的是 null  那么 oUl.firstElementChild || oUl.firstChild 就会走 oUl.firstChild
+				// 导致标准下获取到了 文本节点，从而报错了
+			} else {
+				console.log("没有子节点可以设置");
+			}
+
+			// 正确的写法
+			if (oUl.children[0]) {
+				oUl.children[0].style.background = "red";
+			} else {
+				alert("没有子节点可以设置");
+			}
+
+			// 注：其他的节点属性都有这个问题 lastChild、nextSibling、previousSibling
+
+		}
+	</script>
+</head>
+
+<body>
+<ul id="ul1">
+	<li>11111</li>
+	<li>22222</li>
+	<li>33333</li>
+	<li>44444</li>
+</ul>
+</body>
+</html>

@@ -24,8 +24,24 @@
 		console.log(a + b); // 125 字符串链接
 		console.log(a - b); // 7 做减法之前 先把 a 和 b 转为数字 然后在去相减
 
+		// 数据类型转换
+		// []+1+3  // 结果为 13
+		// [1]+3   // 结果为 13
+		// null+1+3  // 结果为 4
+
+		// 转换成数字
+		//+x  // 使用一个一元的加号运算符，这是最快的方法
+		// x-0 或 x*1 // 另一种形式
+		// Number(x)  // 使用不带 new 的数字构造函数进行转换
+
+		// 对象和函数总是被转换成 NaN，undefined 也会被转换成 NaN，但 null 会被转换成 0
+		console.log(+[]);  // 结果为 0
+		console.log(+[1]); // 结果为 1
+		console.log(+[1, 2]); //结果为NaN
+		console.log(+new Array(1)); // 结果为 0
+		console.log(+new Array(1, 2)); // 结果为 NaN
+		
 	</script>
 </head>
-<body>
-</body>
+<body></body>
 </html>

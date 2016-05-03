@@ -33,6 +33,14 @@
 					oUl.appendChild(oLi);
 				}
 
+			};
+
+			var ul = document.getElementById("demo");
+			var liList = ul.getElementsByTagName("li");
+			var lilength = liList.length;
+			// 当删除了一个之后，行的位置会向前移动一位。liList.length也会相应减一
+			for (var i = 0; i < lilength; i++) {
+				ul.removeChild(liList[0]);
 			}
 
 		}
@@ -42,5 +50,10 @@
 <body>
 <input type="text" id="text1"/><input type="button" value="留言" id="btn"/>
 <ul id="ul1"></ul>
+<ul id="demo">
+	<li>a</li>
+	<li>b</li>
+	<li>c</li>
+</ul>
 </body>
 </html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>removeEventListener和detachEvent()</title>
+    <script>
+        function removeEvent(obj, evname, fn) {
+            if (obj.detachEvent) {
+                obj.detachEvent("on" + evname, fn);
+            } else {
+                obj.removeEventListener(evname, fn, false);
+            }
+        }
+    </script>
+</head>
+<body>
+
+</body>
+</html>
