@@ -9,27 +9,27 @@
 		(function(){
 			var rootjQuery,
 			// (21 , 94) 定义了一些变量和函数
-			//  其中这个函数很重要，这个就是jQuery函数，在61行
+			//  其中这个函数很重要，这个就是 jQuery 函数，在 61 行
 			jQuery = function( selector, context){
 				// The jQuery object is actually just the init constructor 'enhanced'
 				return new jQuery.fn.init( selector, context, rootjQuery );  // 63 行
 			};
 
-			// 96 行 jQuery.fn 就是 jQuery的原型
+			// 96 行 jQuery.fn 就是 jQuery 的原型
 			jQuery.fn = jQuery.prototype={
 				constructor: jQuery,
 				init: function( selector, context, rootjQuery ) {
 					// something to do
 					return this;
 				}
-			};  // 96行-283行， 给 jQuery 对象，添加一些方法和属性
+			};  // 96行-283行，给 jQuery 对象，添加一些方法和属性
 
 			// Give the init function the jQuery prototype for later instantiation
 			/*
-			 * 给init函数后实例化jQuery原型， jQuery.fn 就是 jQuery 的原型，现在赋值给 jQuery.fn.init 的原型
+			 * 给 init 函数后实例化 jQuery 原型， jQuery.fn 就是 jQuery.prototype，现在赋值给 jQuery.fn.init 的原型
 			 * jQuery.prototype = jQuery.fn = jQuery.fn.init.prototype ( 让 jQuery 原型中的 init 方法中的原型对象指向 jQuery 的原型 )
-			 * 赋值了以后。在调用的时候，当 init 中没有方法的时候，就会去原型函数中调用
-			 * jQuery.extends()、jQuery.fn.extends()；jQuery.extends() 是直接扩展 jQuery 而 jQuery.fn.extends()，很明显是扩展的原型
+			 * 赋值了以后,在调用的时候，当 init 中没有方法的时候，就会去原型函数中调用
+			 * jQuery.extends()、jQuery.fn.extends()，jQuery.extends() 是直接扩展 jQuery 而 jQuery.fn.extends()，是扩展的原型
 			 * 这样所有通过 $ 创建出来的对象都将共享 fn 对象上的成员。因此，jQuery 对象都有了类似 attr 、html 等等方法了
 			 */
 			jQuery.fn.init.prototype = jQuery.fn;  // 283行
@@ -41,7 +41,7 @@
 			// 349 - 817 jQuery.extend({}) : 扩展一些工具方法
 			/* 工具方法，就是在函数下面扩展方法(或属性)，也就是扩展静态方法或者静态属性 ( $.trim()、$.proxy()，$ 就是一个函数 )
 			 * 工具方法和实例方法( $().css()、$().html() )的关系，工具方法就是底层的方法，实例方法通过调用工具方法，来完成一些事情
-			 * */
+			 */
 			jQuery.extend({});
 
 			// (877 , 2856)  Sizzle : 复杂选择器的实现
@@ -70,12 +70,12 @@
 
 			// (8585 , 8792) offset() : 位置和尺寸的方法
 
-			// (8804 , 8821) JQ支持模块化的模式
+			// (8804 , 8821) jQuery 支持模块化的模式
 
 			// All jQuery objects should point back to these
-			rootjQuery = jQuery(document);  // 866行
+			rootjQuery = jQuery(document);  // 866 行
 
-			window.jQuery = window.$ = jQuery; // 8826行，对外提供接口
+			window.jQuery = window.$ = jQuery; // 8826 行，对外提供接口
 
 		})();
 

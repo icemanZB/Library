@@ -20,52 +20,60 @@
 //"use strict";
 var
 	// A central reference to the root jQuery(document)
-	/* 1.为了压缩考虑，jQuery(document)这种无法压缩 2.定义变量，有利于后期代码进行可维护 */
+	/*
+	 * 1、为了压缩考虑，jQuery(document) 这种无法压缩
+	 * 2、定义变量，有利于后期代码进行可维护
+	 */
 	rootjQuery,
 
 	// The deferred used on DOM ready
-	/* 延期使用DOM就绪 */
 	readyList,
 
 	// Support: IE9
 	// For `typeof xmlNode.method` instead of `xmlNode.method !== undefined`
-	/* 在老版本的IE6 7 8 9中，如果是判断 xml节点(或方法)，window.a == undefined 这种方式判断会有问题，为了兼容使用 typeof window.a == "undefined"  */
+	/*
+	 * 在老版本的 IE6 7 8 9中，如果是判断 xml节点 (或方法)，window.a == undefined 这种方式判断会有问题，为了兼容使用 typeof window.a == "undefined"
+	 */
 	core_strundefined = typeof undefined,  // "undefined"
 
 	// Use the correct document accordingly with window argument (sandbox)
-	/* 使用正确的文档与窗口参数，存储为变量用于压缩 */
+	/*
+	 * 使用正确的文档与窗口参数存储为变量用于压缩
+	 */
 	location = window.location,
 	document = window.document,
 	docElem = document.documentElement,
 
 	// Map over jQuery in case of overwrite
-	/* 变量冲突的时候使用，如果在外部定义过 window.jQuery = "jQuery"; 那么此时这个变量存的值就是 _jQuery = "jQuery";如果外部没有定义，那么 _jQuery = undefined */
+	/*
+	 * 变量冲突的时候使用，如果在外部定义过 window.jQuery = "jQuery"; 那么此时这个变量存的值就是 _jQuery = "jQuery"; 如果外部没有定义，那么 _jQuery = undefined
+	 */
 	_jQuery = window.jQuery,
 
 	// Map over the $ in case of overwrite
-	/* 变量冲突的时候使用同理上述 _jQuery 变量 */
+	/*
+	 * 变量冲突的时候使用同理上述 _jQuery 变量
+	 */
 	_$ = window.$,
 
 	// [[Class]] -> type pairs
-	/* 用于类型判断， $.type()
+	/* 用于类型判断 $.type()
 	 * 	class2type ={
-		 "[object Array]": "array",
-		 "[object Boolean]": "boolean",
-		 "[object Date]": "date",
-		 "[object Error]": "error",
-		 "[object Function]": "function",
-		 "[object Number]": "number",
-		 "[object Object]": "object",
-		 "[object RegExp]": "regexp",
-		 "[object String]": "string"
-	    };
+	 *	    "[object Array]": "array",
+	 *	    "[object Boolean]": "boolean",
+	 *	    "[object Date]": "date",
+	 *	    "[object Error]": "error",
+	 *	    "[object Function]": "function",
+	 *	    "[object Number]": "number",
+	 *	    "[object Object]": "object",
+	 *	    "[object RegExp]": "regexp",
+	 *	    "[object String]": "string"
+	 *   };
 	 *
-	 **/
-
+	 */
 	class2type = {},
 
 	// List of deleted data cache ids, so we can reuse them
-	/* 删除的数据缓存系统的列表(ID)，所以我们可以重用它们，在之前的版本就是删除ID的(与data()是有关系的)，但是2.0.3的版本已经没用了 */
 	core_deletedIds = [],
 
 	core_version = "2.0.3",
@@ -77,72 +85,102 @@ var
 	core_indexOf = core_deletedIds.indexOf,
 	core_toString = class2type.toString,
 	core_hasOwn = class2type.hasOwnProperty,
-	core_trim = core_version.trim,  /* 去掉前后空格，ECMA5 中的字符串方法 */
+	/* 去掉前后空格，ECMA5 中的字符串方法 */
+	core_trim = core_version.trim,
 
 	// Define a local copy of jQuery
-	/* 构建jQuery对象 */
+	/*
+	 * 构建 jQuery 对象
+	 */
 	jQuery = function( selector, context ) {
 		// The jQuery object is actually just the init constructor 'enhanced'
-		/* jQuery 对象实际上只是初始化构造函数的“强化”，这里 new jQuery.fn.init() 就能拿到 jQuery.prototype，jQuery.fn.init() 才是构造函数
+		/*
+		 * jQuery 对象实际上只是初始化构造函数的"强化"，jQuery.fn.init() 才是构造函数
 		 * 其实就是 jQuery.prototype.init()   => jQuery.fn = jQuery.prototype
-		 * */
+		 */
 		return new jQuery.fn.init( selector, context, rootjQuery );
 	},
 
 	// Used for matching numbers
-	/* 找数字，正负号、小数点、科学计数法 */
+	/*
+	 * 找数字，正负号、小数点、科学计数法
+	 */
 	core_pnum = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source,
 
 	// Used for splitting on whitespace
-	/* 用空格分隔单词，匹配空格分隔开 */
+	/*
+	 * 用空格分隔单词，匹配空格分隔开
+	 */
 	core_rnotwhite = /\S+/g,
 
 	// A simple way to check for HTML strings
 	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
 	// Strict HTML recognition (#11290: must start with <)
-	/* ?:\s*(<[\w\W]+>)[^>]* 匹配元素标签(创建标签可能会用到)例如：<p>aaa 、*|#([\w-]*) 匹配ID的形式，防止XSS注入类似(#<div>不在创建div) 例如：#div1  */
+	/*
+	 * ?:\s*(<[\w\W]+>)[^>]* 匹配元素标签 (创建标签可能会用到) 例如：<p>aaa
+	 * #([\w-]*) 匹配元素 ID 的形式，防止 XSS 注入类似 ( #<div>不在创建 div ) 例如：#div1
+	 */
 	rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,
 
 	// Match a standalone tag
-	/* 匹配成对的独立单标签 <div></div> 、 <p></p>、<li> */
+	/*
+	 * 匹配 "成对" 的独立单标签 例如：<div></div> 、 <p></p>、<li>
+	 */
 	rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
 
 	// Matches dashed string for camelizing
-	/* 用在css属性转换上(驼峰式)，如 MsMarginLeft，其他的前缀是 webkitMarginLeft  */
+	/*
+	 * 用在 IE 的 CSS 属性转换上 (驼峰式)
+	 * 例如： MsMarginLeft，其他的前缀是 webkitMarginLeft
+	 */
 	rmsPrefix = /^-ms-/,
-	/* 找到 "-和字符"转成大写，例如： -l  ->  L (margin-left -> marginLeft) 或者匹配css3的数字 ( -2d -> 2d ) */
+
+	/*
+	 * 找到 "-" + "字符" 转成大写，例如： -l ==> L
+	 * margin-left ==> marginLeft 或者匹配 CSS3 的数字 ( -2d -> 2d )
+	 */
 	rdashAlpha = /-([\da-z])/gi,
 
 	// Used by jQuery.camelCase as callback to replace()
-	/* 用于转驼峰的回调函数 */
+	/*
+	 * 用于转驼峰的回调函数 ( all-> 正则，letter -> 正则中的子项 )
+	 */
 	fcamelCase = function( all, letter ) {
-		/* all 就是正则的整体，第二个参数就是正则当中的子项
-		 *  /-([\da-z])/gi => 子项 就是 [\da-z]，匹配到对应的字符，转成大写
-		 * */
+		/*
+		 * 例如： all ==> /-([\da-z])/gi，子项就是 [\da-z] 匹配到对应的字符，转成大写
+		 */
 		return letter.toUpperCase();
 	},
 
 	// The ready event handler and self cleanup method
-	/* DOM加载成功后触发 */
+	/*
+	 * DOM 加载成功后触发
+	 */
 	completed = function() {
-		/* 这两句话就是取消事件，那么其中一个走进来，第二个就走不进来了，也就是事件被取消掉了，所以最终 jQuery.ready() 只会触发一次 */
+		/*
+		 * 这两句话就是取消事件，那么其中一个走进来，第二个就走不进来了，也就是事件被取消掉了，所以最终 jQuery.ready() 只会触发一次
+		 */
 		document.removeEventListener( "DOMContentLoaded", completed, false );
 		window.removeEventListener( "load", completed, false );
-		/* 最终调用的是 jQuery.ready() 工具方法 */
+		/*
+		 * 最终调用的是 jQuery.ready() 工具方法
+		 */
 		jQuery.ready();
 	};
 
-/* 将 jQuery 的原型对象 赋值给了 jQuery.fn */
+/*
+ * 将 jQuery 的原型对象赋值给了 jQuery.fn
+ */
 jQuery.fn = jQuery.prototype = {
 	// The current version of jQuery being used
 	jquery: core_version,
 
 	constructor: jQuery,
-	/**
+	/*
 	 *  入口
 	 *  构造函数 function init(){} 初始化和参数的管理
 	 *  原型对象 init.prototype = jQuery.prototype
-	 *  return this; $()的返回值是 $.fn.init 的原型对象(Object{ } ”空“)，于是通过 jQuery.fn.init.prototype = jQuery.fn;
+	 *  return this; $() 的返回值是 $.fn.init 的原型对象 ( Object{ } "空" )，于是通过 jQuery.fn.init.prototype = jQuery.fn;
 	 *  $() 的返回值从 $.fn.init.prototype 一下子变成 $.fn
 	 *  这样所有通过 $ 创建出来的对象都将共享 fn 对象上的成员。因此，jQuery 对象都有了类似 attr 、html 等等方法了
 	 */
@@ -155,24 +193,35 @@ jQuery.fn = jQuery.prototype = {
 		}
 
 		// Handle HTML strings
-		/* 例如传入的是 $("div")、$(".box')、$("#div")、$("#div div.box")、$("<div>")、$("<li>hello")(这种写法会生成<li></li>不会添加hello文本) */
+		/*
+		 * 例如传入的是 $("div")、$(".box")、$("#div")、$("#div div.box")、$("<div>")、$("<li>hello") ( 这种写法会生成<li></li>不会添加 hello 文本 )
+		 */
 		if ( typeof selector === "string" ) {
-			/* 判断字符串最左边的字符是否是"<"并且最右边的字符是否是">"并且长度大于等于3，所以这个判断是去找标签 */
+			/*
+			 * 判断字符串最左边的字符是否是 "<" 并且最右边的字符是否是 ">" 并且长度大于等于3，所以这个判断是去找标签
+			 */
 			if ( selector.charAt(0) === "<" && selector.charAt( selector.length - 1 ) === ">" && selector.length >= 3 ) {
 				// Assume that strings that start and end with <> are HTML and skip the regex check
-				/* $("<div>")  -> match = [null , "<div>" , null] */
+				/*
+				 * $("<div>")  -> match = [null , "<div>" , null]
+				 */
 				match = [ null, selector, null ];
 
 			} else {
-				/* 使用正则匹配标签加文字$("<li>hello")或者ID的形式$("#div")，像 $("div")、$(".box')、$("#div div.box") 匹配这些的时候 match = null;
+				/*
+				 * 使用正则匹配标签加文字 $("<li>hello") 或者 ID 的形式 $("#div")
+				 * 像 $("div")、$(".box')、$("#div div.box") 匹配这些复杂选择器的时候 match = null;就会调用 find() -> 最终会调用 sizzle
 				 * $("#div1")  -> match = ["#div1",null,"div1"];
 				 * $("<li>hello") -> match = ["<li>hello","<li>",undefined];
-				 **/
+				 */
 				match = rquickExpr.exec( selector );
 			}
 
 			// Match html or make sure no context is specified for #id
-			/* 其实只有在创建标签和获取ID元素的时候match有值得true，match[1]有值的话，那肯定是创建标签，没有值的话并且不指定上下文的时候肯定是获取ID元素 */
+			/*
+			 * 其实只有在创建标签和获取 ID 元素 的时候 match 才会有值
+			 * match[1] 有值的话，那肯定是创建标签，没有值的话并且不指定上下文的时候肯定是获取 ID 元素
+			 */
 			if ( match && (match[1] || !context) ) {
 
 				// HANDLE: $(html) -> $(array)
@@ -182,9 +231,10 @@ jQuery.fn = jQuery.prototype = {
 					context = context instanceof jQuery ? context[0] : context;
 
 					// scripts is true for back-compat
-					/* jQuery.parseHTML 把字符串转成节点数组，jQuery.merge() 是用在合并json，但是json格式一定是这样子的类数组格式
+					/*
+					 * jQuery.parseHTML 把字符串转成节点数组，jQuery.merge() 是用在合并 json，但是 json 格式一定是这样子的类数组格式
 					 * 最终形成 Object {0:li,1:li,length:2,....}
-					 * */
+					 */
 					jQuery.merge( this, jQuery.parseHTML(
 						match[1],
 						/* 最终 context = document */
@@ -193,10 +243,12 @@ jQuery.fn = jQuery.prototype = {
 					) );
 
 					// HANDLE: $(html, props)
-					/* 这段是处理创建标签带有属性的 $('<li></li>',{title : 'hi',html : 'abcd',css : {background:'red'}}).appendTo( 'ul' ); */
-					/* rsingleTag 匹配单标签(<li></li>)， jQuery.isPlainObject() 必须是个{title : 'hi',html : 'abcd'} */
+					/*
+					 * 这段是处理创建标签带有属性的 $("<li></li>",{title : "hi",html : "abcd",css : {background:"red"}}).appendTo( "ul" );
+					 * rsingleTag 匹配单标签 (<li></li>)，jQuery.isPlainObject() 必须是个 {title : "hi",html : "abcd"}
+					 */
 					if ( rsingleTag.test( match[1] ) && jQuery.isPlainObject( context ) ) {
-						/* 此时 context = { title : 'hi',html : 'abcd' } */
+						/* 此时 context = { title : "hi",html : "abcd" } */
 						for ( match in context ) {
 							// Properties of context are called as methods if possible
 							/* match 的值 就是 title 、html，在jQuery中 this["title"] 没有这个方法，但是有 this["html"] = this.html() */
