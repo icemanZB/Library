@@ -22,7 +22,8 @@
 
 			// 为 div 中的所有 p 元素绑定 click 事件处理程序
 			// 只有n2、n3可以触发该事件
-			$div.on("click", "p", function () {
+			$div.on("click", "p", function (ev) {
+				console.log( ev.target );
 				console.log($(this).text());
 			});
 

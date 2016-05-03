@@ -1,0 +1,180 @@
+Git教程
+http://www.liaoxuefeng.com/
+
+学习课程
+http://www.ycku.com/course/
+
+阿里巴巴矢量图
+http://www.iconfont.cn/
+
+jquery 插件
+http://www.jq22.com/
+
+http://codepen.io/
+
+牛客网
+http://www.nowcoder.com/
+
+猿圈 目前没有开设前端
+http://www.oxcoder.com/index.action / http://www.oxcoder.com/index.htm
+
+淘宝 UED 官方博客
+http://ued.taobao.org/blog/
+
+迅雷CUED
+http://cued.xunlei.com/
+
+淘宝前端团队 (FED)
+http://taobaofed.org/
+
+http://www.w3cplus.com/  CSS3
+
+http://imweb.io/
+
+
+书籍推荐
+http://www.imooc.com/wenda/detail/239506
+http://www.imooc.com/wenda/detail/241339
+http://www.imooc.com/wenda/detail/242348
+
+100 offer
+https://100offer.com/
+
+北风网
+http://edu.ibeifeng.com/list-index-is_key-is_new.html
+
+开源
+http://www.oschina.net/
+
+李坏博客
+http://www.lihuai.net/
+
+阮一峰
+http://www.ruanyifeng.com
+
+张鑫旭
+http://www.zhangxinxu.com/wordpress/
+
+http://www.barretlee.com/entry/  小胡子哥博客
+
+http://greengerong.com/  破狼
+
+http://www.alloyteam.com/ 腾讯全端 AlloyTeam 团队 Blog
+
+http://cssreset.com/ CSS Reset  normalize.css
+
+Bootstrap网站案例 http://colly.com/   http://foodsense.is/
+
+http://www.lihuai.net/qianduan/js/259.html  如何避免JavaScript代码冲突
+
+给JavaScript程序一个统一的入口
+http://www.lihuai.net/qianduan/js/316.html
+
+http://www.uimaker.com/index.html  ui设计网站
+http://dengo.org/  不错的网站
+
+http://www.75team.com/  奇舞团
+
+http://laypage.layui.com/ 分页控件
+
+http://www.cnblogs.com/dolphinX/p/3524977.html   表达式与运算符
+
+http://www.cnblogs.com/dolphinX/p/3529249.html 逗号、冒号与括号
+
+http://www.zhangxinxu.com/wordpress/2013/05/%E7%90%86%E8%A7%A3another-javascript-quiz-%E9%A2%98%E7%9B%AE/  js面试题
+
+http://www.cnblogs.com/coco1s/p/4029708.html  js篇 面试题
+
+http://web.jobbole.com/82251/ js 面试题目
+
+http://www.jb51.net/article/56847.htm  css篇 面试题
+
+http://alloyteam.github.io/AlloyStick/ 蛮有意思的网站
+
+http://www.ruanyifeng.com/blog/2011/08/jquery_best_practices.html   jQuery性能
+
+http://www.cnblogs.com/dojo-lzz/p/4576083.html 高阶函数
+http://dengo.org/archives/1004 高阶函数
+
+http://www.ruanyifeng.com/blog/2011/08/a_detailed_explanation_of_jquery_deferred_object.html promise的问题
+http://www.zhangxinxu.com/wordpress/2014/02/es6-javascript-promise-%E6%84%9F%E6%80%A7%E8%AE%A4%E7%9F%A5/   promise的问题
+
+http://blog.jobbole.com/29269/  前端面试题
+
+http://www.cnblogs.com/muyou/archive/2012/06/26/2563930.html web前端开发笔试集锦(javascript篇)
+
+http://wteamxq.com/testDemo/array.html  数组用法
+
+http://www.open-open.com/lib/view/open1331175932452.html  ECMAScript5新JavaScript API入门
+
+http://web.jobbole.com/82870/  js 单例模式
+
+http://kb.cnblogs.com/page/127995/  Javascript 面向对象编程
+
+http://www.cnblogs.com/2050/archive/2012/08/13/2636467.html#2457812     margin负值
+
+js 面向对象
+http://www.ruanyifeng.com/blog/2010/05/object-oriented_javascript_encapsulation.html
+
+console 详解
+http://www.cnblogs.com/see7di/archive/2011/11/21/2257442.html
+
+页面中如何加载javascript才是最优化的 javascript在网页中放在什么位置？
+http://www.itokit.com/2012/0827/74701.html   http://www.lihuai.net/qianduan/js/352.html
+
+手机端H5上传图片，能调摄像头 本地相册
+https://github.com/think2011/localResizeIMG4
+
+http://my.oschina.net/sevenhdu/blog/332014  DOM事件流
+http://www.cnblogs.com/yexiaochai/p/3567597.html    DOM事件流
+
+http://www.jb51.net/article/43261.htm 浮动
+
+http://blog.csdn.net/return_false/article/details/11203025 清除浮动
+
+http://www.cnblogs.com/webblog/archive/2009/07/07/1518274.html  css选择器
+
+http://www.phperz.com/article/14/0925/25668.html  2014年最新web前端开发面试题
+
+http://blog.csdn.net/dyllove98/article/details/8981433 好文章 有深度的 css
+
+http://blog.jobbole.com/54495/  不错js技巧
+
+fullpage.js
+http://www.jq22.com/jquery-info472   http://www.dowebok.com/77.html
+
+http://www.w3cplus.com/content/css3-background-size/    css3-background-size
+
+
+http://www.modernizr.com/ 检测浏览器是否支持HTML5/CSS3神器Modernizr
+
+if (Modernizr.localstorage) {
+// window.localStorage is available!
+} else {
+// no native support for local storage :(
+// maybe try Gears or another third-party solution
+}
+
+http://jdc.jd.com/archives/321  移动端lazyload优化
+
+http://www.chinaz.com/web/2015/0918/448237.shtml  纯干货！一款APP从设计稿到切图过程全方位揭秘
+
+http://blog.csdn.net/phunxm/article/details/42174937  iPhone屏幕尺寸、分辨率及适配
+
+http://cubic-bezier.com/#.25,.1,.25,1  bezier 曲线
+
+http://tgideas.qq.com/webplat/info/news_version3/804/808/811/m579/201412/293834.shtml
+
+https://www.qianduan.net/high-performance-css3-animations/
+
+http://www.tuicool.com/articles/NBbQjy3
+
+http://www.w3cplus.com/css3/introduction-to-hardware-acceleration-css-animations.html
+
+http://rapheal.sinaapp.com/tag/jquery-2/ jQuery 源码
+
+http://www.w3cplus.com/
+
+https://isux.tencent.com/
+
+https://www.processon.com/signup 在线思维导图

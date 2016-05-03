@@ -1,0 +1,80 @@
+http://blog.fens.me/angularjs-webstorm-ide/  webstrom 支持angularjs 提示
+
+File->Settings->Plugins->点击 “Browse Repositories”->选中 “AngularJS(ScaffAngular)” 双击->选择 “Yes”-> 重启WebStorm
+
+webstrom js提示比较迟缓 File -> Code Completion -> Autopopup in 下 1000改为0
+
+主题更换 http://my.oschina.net/lee2013/blog/314051   http://qianduanblog.com/post/webstorm-portal-1-themes-and-colors.html
+
+如何完美显示中文： File -> Settings->Appearance中勾选Override default fonts by (not recommended)，设置 Name:NSimSun，Size:12
+如何显示行号： File -> Settings->Editor，”Show line numbers”打上勾，就显示行号了
+如何代码自动换行： File -> settings -> Editor “Use Soft Wraps in editor” 打上钩，代码就自动换行了
+如何点击光标，显示在本行末尾： File -> Settings->Editor “Allow placement of caret after end of line”去掉勾就行了。
+如何修改快键键： File -> Settings->Keymap，然后双击要修改快捷的功能会有提示框出来，按提示操作 换成自己熟悉编辑器的快键键
+javascript类库提示。 File -> settings -> Javascript -> Libraries -> 然后在列表里选择自己经常用到的javascript类库，最后Download and Install
+
+git配置： File -> settings -> Editor -> github，进去改github的账户
+git：http://www.mamicode.com/info-detail-1083245.html 使用webstorm操作git
+
+配置 grunt，首先要安装 grunt，在 webstrom 中 grunt配置文件名字必须是 GruntFile.js，之后就可以执行 grunt
+grunt 提示 Libraries，选择 DownLoad -> TypeScript Community stubs -> grunt
+grunt： http://www.tuicool.com/articles/6ziYVv
+
+注释在行首而不是紧接着代码? Code Style > Javascript > Wrapping and Braces > comment at first column 取消勾选
+
+自定义主题的设置
+
+General
+选中的文本背景色：Selection background #2769B1
+
+Identifier under caret  设置双击时候高亮  Effects Bordered 加边框
+
+General的设置
+普通文本：default text
+折叠文本: Folded text
+光标: Caret
+光标所在行: Caret row
+行号: Line number
+光标下变量高亮：Search result
+搜索结果：Text search result
+匹配的括号：Matched brace
+不匹配的括号：Unmatched brace
+未使用的符号：Unused symbol
+左边空隙（行号，断点）：Gutter background
+选中的文本背景色：Selection background
+选中的文本前景色：Selection foreground
+injected language fragment 背景颜色去掉，就是<!--[if IE 6]><![endif]--> 这样注释的背景色
+
+快捷键
+F2 或Shift+F2	高亮错误或警告快速定位
+
+选中文本，按Ctrl+Shift+F7	高亮显示所有该文本，按Esc高亮消失
+
+勾选上图中的Use Soft Wraps就启用了WebStorm的自动换行的功能，即过长的代码行不会超出屏幕，不会出现横向的滚动条
+
+file status
+added  git add 文件的颜色 #629755
+unknow 添加一个文件 但是git没有add的颜色  D5756C
+merged with conflicts   D5756C
+merged width property conflicts
+merged with text and property conflicts
+changelist conflict   D5756C
+modify  #6897BB
+modify in not active changelist  #6897BB
+
+webstrom 搜索encoding 设置创建的文件格式为utf-8
+webstrom css->other->keep single-line blocks css保持显示一行 code style css
+         css->appearance->show css color
+
+Reformat Code  格式化代码
+
+WebStorm 配置node  File -> Settings -> 搜索栏输入node -> Node.js and NPM -> 配置node.exe 安装路径
+在hello.js 中 右键 Run hello.js 即可
+
+WebStorm 配置支持 Node.js 智能提示  File -> Settings -> 搜索栏输入node -> Node.js and NPM -> Configure -> Directory
+                                  (选择在node.js 官网中Downloads下,下载 Source Code 并解压出来) -> pEdit usage scoe -> ok
+File->setting->language and frameworks->javascript->libraries->勾选要用到的库
+
+File Encodings 设置工程的编码为 utf-8
+
+settings 搜索 proxy 配置代理  Host name:99.48.212.223 Port Number:3128 No proxy for:localhost, 127.0.0.1,99.0.0.0/8

@@ -1,0 +1,17 @@
+js 获取 obj.scrollTop  ==>    $("#obj").scrollTop()
+
+js 获取 obj.offsetHeight (获取不到隐藏元素的值，也不包括 margin)  ==>   $("#obj").prop("offsetHeight")、$("#obj").outerHeight() jQuery 可以
+
+js 获取 document.getElementById("div1").clientHeight  ==>     $("#obj").innerHeight()
+
+js div1.offsetHeight + parseInt(div1.style.marginTop) + parseInt(div1.style.marginBottom)==>$("#obj").outerHeight(true)
+
+js 获取 obj.offsetTop  ==>  $("#obj").position().top  obj是有定位的
+
+js appendChild  ==>  $("#li").appendTo("ul");
+
+js removeChild 必须是父级调用 ul.removeChild(li); ==>  $("ul").find("li").remove();  jQuery 中的 remove() 可以删除自己
+
+js ev.clientX + document.documentElement ? document.documentElement.scrollTop : document.body.scrollTop  ==> ev.pageX
+
+js  ev.keyCode  ==>  ev.which

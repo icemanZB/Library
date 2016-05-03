@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>深拷贝</title>
+	<script>
+		function deepCopy(obj, c) {
+			var _c = c || {};
+			for (var attr in obj) {
+				if (obj.hasOwnProperty(attr)) {
+
+					if (typeof obj[attr] === "object") {
+
+						// 重新分配内存地址，防止原有的对象被修改
+						_c[attr] = ( Object.prototype.toString.call(obj[attr]) === "[object Array]") ? [] : {};
+
+						deepCopy(obj[attr], _c[attr]);
+
+					} else {
+						_c[attr] = obj[attr];
+					}
+				}
+
+			}
+
+			return _c;
+		}
+
+		var Chinese = {
+			nation     : "中国",
+			birthPlaces: ["北京", "上海", "香港"]
+		};
+
+		var deep = deepCopy(Chinese);
+		console.log(deep);
+		deep.birthPlaces.push("厦门");
+		console.log(deep.birthPlaces); // ["北京", "上海", "香港", "厦门"]
+		console.log(Chinese.birthPlaces); // ["北京", "上海", "香港"]
+
+		// Zepto 源码中的深拷贝
+		function extend(target, source, deep) {
+			for (var key in source) {
+				if (source.hasOwnProperty(key)) {
+					if (deep && (isPlainObject(source[key]) || Array.isArray(source[key]))) {
+						if (isPlainObject(source[key]) && !isPlainObject(target[key])) {
+							target[key] = {};
+						}
+						if (Array.isArray(source[key]) && !Array.isArray(target[key])) {
+							target[key] = [];
+						}
+						extend(target[key], source[key], deep)
+					}
+					else if (source[key] !== undefined) {
+						target[key] = source[key];
+					}
+				}
+			}
+
+			return target;
+
+		}
+
+		function isPlainObject(obj) {
+			return isObject(obj) && !isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype;
+		}
+
+		function isWindow(obj) {
+			return obj != null && obj == obj.window;
+		}
+		function isObject(obj) {
+			return type(obj) == "object";
+		}
+		var class2type = {};
+
+		function type(obj) {
+			return obj == null ? String(obj) :
+			class2type[toString.call(obj)] || "object"
+		}
+
+		var aStr = ("Boolean Number String Function Array Date RegExp Object Error").split(" ");
+
+		for (var i = 0; i < aStr.length; i++) {
+			class2type["[object " + aStr[i] + "]"] = aStr[i].toLowerCase();
+		}
+
+		var Person = {
+			name : "ice",
+			age  : 30,
+			hobby: ["睡觉", "写字", "看书"]
+		};
+
+		var Man = {
+			sex  : "男",
+			hobby: ["运动", "聊妹"]
+		};
+
+		var oExtend = extend(Man, Person, true);
+
+		console.log(oExtend);  // Object {sex: "男", hobby: ["睡觉", "写字", "看书"], name: "ice", age: 30}
+
+		var deepC = deepCopy(Person, Man); // Object {sex: "男", hobby: ["睡觉", "写字", "看书"], name: "ice", age: 30}
+		console.log(deepC);
+
+		// jQuery 中的深拷贝
+		function jQueryExtend(deep) {
+			var target = arguments[1] || {},
+			    length = arguments.length,
+			    options,
+			    src,
+			    copy,
+			    copyIsArray,
+			    clone;
+
+			for (var i = 2; i < length; i++) {
+				if ((options = arguments[i]) != null) {
+					for (var name in options) {
+						if (options.hasOwnProperty(name)) {
+							src = target[name];
+							copy = options[name];
+
+							if (target === copy) {
+								continue;
+							}
+
+							if (deep && copy && ( isPlainObject(copy) || (copyIsArray = Array.isArray(copy))  )) {
+								// 针对数组的情况
+								if (copyIsArray) {
+									copyIsArray = false;
+									clone = src && Array.isArray(src) ? src : [];
+
+								} else {
+									clone = src && isPlainObject(src) ? src : {};
+								}
+
+								target[name] = jQueryExtend(deep, clone, copy);
+
+							} else if (copy !== undefined) {
+								target[name] = copy;
+							}
+
+						}
+
+					}
+				}
+
+			}
+
+			return target;
+		}
+
+		var deepJ = jQueryExtend(true, {
+			name    : "John",
+			location: {
+				city: "Boston"
+			}
+		}, {
+			last    : "Resig",
+			location: {
+				state: "MA"
+			}
+		});
+		console.log(deepJ);
+
+		var deepJquery = jQueryExtend(true, Person, Man);
+
+		console.log(deepJquery);
+
+		console.log(extend({
+			name    : "John",
+			location: {
+				city: "Boston"
+			}
+		}, {
+			last    : "Resig",
+			location: {
+				state: "MA"
+			}
+		}, true));
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
