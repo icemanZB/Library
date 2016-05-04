@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>XMLHttpRequest</title>
+	<script>
+		// XMLHttpRequest通用属性和方法
+
+		/*
+		 * 1、"readyState"：表示请求状态的整数，取值：
+		 *	   - UNSENT(0)：对象已创建
+		 *     - OPENED(1)：open() 成功调用，在这个状态下，可以为 xhr 设置请求头，或者使用 send() 发送请求
+		 *     - HEADERS_RECEIVED(2)：所有重定向已经自动完成访问，并且最终响应的 HTTP 头已经收到
+		 *     - LOADING(3)：响应体正在接收
+		 *     - DONE(4)：数据传输完成或者传输产生错误
+		 * 2、"onreadystatechange"：readyState 改变时调用的函数
+		 * 3、"status"：服务器返回的HTTP状态码 (如：200、404)
+		 * 4、"statusText"：服务器返回的 HTTP 状态信息 ( 如：OK、No Content )
+		 * 5、"responseText"：作为字符串形式的来自服务器的完整响应
+		 * 6、"responseXML"：document 对象表示服务器的响应解析成的 XML 文档
+		 * 7、"abort()"：取消异步 HTTP 请求
+		 * 8、"getAllResponseHeaders()"：返回一个字符串，包含响应中服务器发送的全部HTTP报头，每个报头都是一个用冒号分隔开的名/值对，并且使用一个回车/换行来分隔报头行
+		 * 9、"getResponseHeader(headerName)"：返回 headName 对应的报头值
+		 * 10、"open(method, url, asynchronous [, user, password])"：初始化准备发送到服务器上的请求。
+		 *           method 是 HTTP 方法，不区分大小写
+		 *           url 是请求发送的相对或绝对URL
+		 *           asynchronous 表示请求是否异步
+		 *           user 和 password 提供身份验证
+		 * 11、"setRequestHeader(name, value)"：设置 HTTP 报头
+		 * 12、"send(body)"：对服务器请求进行初始化，参数 body 包含请求的主体部分，对于 POST 请求为键值对字符串，对于 GET 请求为 null
+		 */
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

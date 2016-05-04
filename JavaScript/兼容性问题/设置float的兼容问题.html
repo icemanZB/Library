@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>设置float的兼容问题</title>
+	<script>
+		/*  可以通过写样式来回避这个问题.{float:left} .right{float:right;} */
+		window.onload=function(){
+			var oDiv=document.getElementById("div1");
+			oDiv.style.float = "right";     // 有兼容问题
+			oDiv.style.styleFloat = "right";		// IE styleFloat
+			oDiv.style.cssFloat = "left";			// 非IE cssFloat
+		};
+	</script>
+</head>
+<body>
+<div id="div1"></div>
+</body>
+</html>

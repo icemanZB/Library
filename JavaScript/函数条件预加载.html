@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>函数条件预加载</title>
+	<script>
+		// 条件预加载，条件预加载会在脚本加载期间提前检测，而不会等到函数被调用：
+		var addHandler = document.addEventListener ?
+				function (target, eventType, handler) {
+					target.addEventListener(eventType, handler, false);
+				} :
+				function (target, eventType, handler) {
+					target.attachEvent("on" + eventType, handler);
+				};
+
+		// 调用
+		addHandler(document, "click", function () {
+			console.log("hello world");
+		});
+
+		addHandler(window, "keydown", function () {
+			console.log("key down");
+		});
+		// 条件预加载确保所有函数消耗的时间相同，其代价是需要在脚本加载时就检测，而不是加载后。
+		// 预加载适用于一个函数马上就要被用到，并且在整个页面的生命周期中频繁出现的场合
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

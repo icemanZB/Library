@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>函数惰性加载</title>
+	<script>
+		// 延迟加载，也称惰性加载，惰性载入等。延迟加载意味着在信息被使用前不会做任何操作：
+		var addHandler = function (target, eventType, handler) {
+			if (target.addEventListener) {  // DOM2 Events
+				addHandler = function (target, eventType, handler) {
+					target.addEventListener(eventType, handler, false);
+				};
+			} else {  // IE
+				addHandler = function (target, eventType, handler) {
+					target.attachEvent("on" + eventType, handler);
+				};
+			}
+			return addHandler(target, eventType, handler);
+		};
+
+		// 调用
+		addHandler(document, "click", function () {
+			console.log("hello world");
+		});
+
+		addHandler(window, "keydown", function () {
+			console.log("key down");
+		});
+		/*
+		 * 方法在第一次被调用时，会先检查并决定使用哪种方法去绑定事件处理器，然后原始函数被包含正确操作的新函数覆盖。
+		 * 最后一步调用新的函数 (也可以直接 return 新的函数 )，并传入原始参数。
+		 * 之后的每次调用 addHandler() 都不会再做检测，因为检测代码已经被新的函数覆盖。
+		 *
+		 * 调用延迟加载函数时，第一次总会消耗较长的时间，因为它必须运行检测接着再调用另一个函数完成任务，
+		 * 但随后调用函数会变快，因为不需要再进行检测。当一个函数在页面中不会立即调用时，延迟加载是最好的选择。
+		 */
+	</script>
+</head>
+<body>
+
+</body>
+</html>

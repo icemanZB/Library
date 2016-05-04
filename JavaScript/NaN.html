@@ -15,6 +15,7 @@
 		 * NaN 和 NaN 是不相等的   console.log(NaN == NaN);   false
 		 *
 		 * 判断是否是 NaN 用 JavaScript 自带的函数 isNaN
+		 * isFinite(null);  true  !!!
 		 *
 		 */
 		(function(){
@@ -38,6 +39,12 @@
 			}
 
 		})();
+
+		// 验证参数是否是数字（number）
+		function isNumber(n){
+			return !isNaN(parseFloat(n)) && isFinite(n);
+		}
+
 
 	</script>
 </head>
