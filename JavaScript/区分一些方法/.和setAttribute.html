@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>.和setAttribute</title>
+	<script>
+		window.onload=function () {
+			var oDiv = document.getElementById("div1");
+
+			// title 是 html 已有的属性，这两种方式是一样的
+			oDiv.setAttribute("title","hello");
+			oDiv["title"] = "hello";
+			// 设置自定义属性的时候的区别
+			oDiv.setAttribute("ice","hello");  // 已添加在 dom 节点中
+			oDiv["ice"]="hello"; // 这个 f12 查看 dom 节点，并没有体现出来
+
+			// 获取的时候是一样，是可以获取自定义属性的 ( getAttribute )
+			// 对于 "." 或者 " [] " 获取自定义属性的时候是不兼容的
+
+			// 获取 a标签的 href 也是不同的
+			var oA=document.getElementsByTagName("a");
+
+			oA.getAttribute("href"); // http://baidu.com
+			// oA["href"]; 本地的完整地址
+
+			// setAttirbute() -> jQuery 的 attr
+			// "." 或者 " [] " -> jQuery 的 prop
+
+			// 在 checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped 中
+			// 例如：getAttribute() 返回是 checked，"." 或者 " [] " 返回的是 true
+		};
+	</script>
+</head>
+<body>
+<div id="div1"></div>
+<a href="http://baidu.com"></a>
+</body>
+</html>

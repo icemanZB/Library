@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>prop()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		// 用的不多，有一些问题
+		$(function(){
+
+			$("div").removeProp("id");
+			console.log( $("div").prop("id") );  // div1，这里还是能获取到
+
+			// 因为源码中使用 .或者是 ["id"] 的形式，它对自带的一些属性操作是有问题的(id、href)
+			// 使用 attr() 方式是可以删除的
+
+		})
+
+	</script>
+</head>
+<body>
+<div id="div1"></div>
+</body>
+</html>
