@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>DOM操作</title>
+	<script>
+		// http://web.jobbole.com/84444/
+		window.onload=function(){
+
+			// 代码首先修改了一个元素的样式，接下来读取另一个元素的 clientHeight 属性，由于之前的修改导致当前 DOM 被标记为脏
+			// 为了保证能准确的获取这个属性，浏览器会进行一次 layout (我们发现 chrome 的开发者工具良心的提示了我们这个性能问题 )
+			// Read
+			var h1 = element1.clientHeight;
+
+			// Write (invalidates layout)
+			element1.style.height = (h1 * 2) + "px";
+
+			// Read (triggers layout)
+			var h2 = element2.clientHeight;
+
+			// Write (invalidates layout)
+			element2.style.height = (h2 * 2) + "px";
+
+			// Read (triggers layout)
+			var h3 = element3.clientHeight;
+
+			// Write (invalidates layout)
+			element3.style.height = (h3 * 2) + "px";
+
+			/*
+			 * 优化后的代码
+			 * var h1 = element1.clientHeight;
+			 * var h2 = element2.clientHeight;
+			 * var h3 = element3.clientHeight;
+			 *
+			 * element1.style.height = (h1 * 2) + "px";
+			 * element2.style.height = (h2 * 2) + "px";
+			 * element3.style.height = (h3 * 2) + "px";
+			 */
+		};
+	</script>
+</head>
+<body>
+浏览器是如何呈现一张页面的
+1、解析 HTML，并生成一棵 DOM tree
+2、解析各种样式并结合 DOM tree 生成一棵 Render tree
+3、对 Render tree 的各个节点计算布局信息，比如 box 的位置与尺寸
+4、根据 Render tree 并利用浏览器的UI层进行绘制
+
+其中 DOM tree 和 Render tree 上的节点并非一一对应，比如一个 display:none 的节点就在会存在与 DOM tree 上，而不会出现在 Render tree 上，因为这个节点不需要被绘制
+
+paint 是一个耗时的过程，然而 layout 是一个更耗时的过程，我们无法确定 layout 一定是自上而下或是自下而上进行的，甚至一次 layout 会牵涉到整个文档布局的重新计算
+
+但是 layout 是肯定无法避免的，所以我们主要是要最小化 layout 的次数
+
+什么情况下浏览器会进行 layout
+
+在考虑如何最小化 layout 次数之前，要先了解什么时候浏览器会进行 layout。
+
+layout(reflow) 一般被称为布局，这个操作是用来计算文档中元素的位置和大小，是渲染前重要的一步。在 HTML 第一次被加载的时候，
+会有一次 layout 之外，js 脚本的执行和样式的改变同样会导致浏览器执行 layout。
+
+一般情况下，浏览器的 layout 是 lazy 的，也就是说：在js 脚本执行时，是不会去更新 DOM 的，任何对 DOM 的修改都会被暂存在一个队列中
+在当前 js 的执行上下文完成执行后，会根据这个队列中的修改，进行一次 layout。
+
+然而有时希望在 js 代码中立刻获取最新的 DOM 节点信息，浏览器就不得不提前执行 layout，这是导致 DOM 性能问题的主因。
+
+如下的操作会打破常规，并触发浏览器执行 layout：
+
+1、通过 js 获取需要计算的 DOM 属性
+2、添加或删除 DOM 元素
+3、resize 浏览器窗口大小
+4、改变字体
+5、css伪类的激活，比如 :hover
+6、通过 js 修改 DOM 元素样式且该样式涉及到尺寸的改变
+
+
+</body>
+</html>

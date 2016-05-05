@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>固定定位插件</title>
+	<style>
+		body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, select, textarea, p, blockquote {
+			padding: 0;
+			margin: 0;
+			-webkit-text-size-adjust: none;
+		}
+
+		body, input, button, select, textarea {
+			font: normal 12px "微软雅黑", Arial;
+		}
+
+		table {
+			border-collapse: collapse;
+			border-spacing: 0;
+		}
+
+		fieldset, img {
+			border: 0;
+		}
+
+		ol, ul {
+			list-style: none;
+		}
+
+		/***** link *****/
+		a {
+			text-decoration: none;
+		}
+
+		#backtoTop {
+			width: 50px;
+			height: 50px;
+			display: none;
+			opacity: 0.6;
+			filter: alpha(opacity=0.6);
+			background: url(images/top.png) no-repeat center top;
+			cursor: pointer;
+		}
+
+		#backtoTop:hover {
+			opacity: 1;
+			filter: alpha(opacity=100);
+		}
+
+	</style>
+	<script src="js/jquery-1.7.2.min.js"></script>
+	<script src="js/jquery.fixed.js"></script>
+	<script>
+		$(function () {
+			(function ($top) {
+				($top.length ? $top : $('<a href="#" id="backtoTop"></a>').appendTo("body")).fixed({
+					/*
+					 * right: 400,
+					 * onscrolling: function ($element, options, scrollTop, supportsFix) {
+					 *     console.log($element);
+					 * }
+					 */
+				}).click(function () {
+
+					$("html,body").animate({scrollTop: 0}, "fast");
+					return false;
+				}).focus(function () {
+					this.blur();
+				});
+			})($('#backtoTop'));
+
+			$("#div1").fixed({
+				top:100
+			})
+
+		});
+
+	</script>
+</head>
+<body style="height: 2000px;">
+<div style="background: rosybrown; height: 100%; width: 978px; border: 1px solid #CCC; margin: 0 auto;"></div>
+<div style="width: 100px;height: 200px; background: red" id="div1"></div>
+</body>
+</html>

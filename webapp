@@ -1,0 +1,8 @@
+1、配置IIS环境，直接手机测试
+   配置完成设置 hosts   127.0.0.1 www.webapp.com ( www.webapp.com 是站点所访问的域名  )
+   http://jingyan.baidu.com/album/72ee561a42bd44e16038df6e.html?picindex=3 手机直接访问电脑本地网站
+   http://jingyan.baidu.com/article/3065b3b6e5becdbecff8a4d5.html IIS配置网站
+   http://zhidao.baidu.com/link?url=F8erMJZ72VeeX-5X287bRRiJh1Vmueia0-y3EKFI0g8_fLvCYJxSwwBXEtJRZdJ1gRuch_-wZVQ0LKQwRihjYK
+   目录浏览全部启用，方便查看目录
+   MIME 类型添加.json 后缀，方便访问 json文件
+

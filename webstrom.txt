@@ -78,3 +78,7 @@ File->setting->language and frameworks->javascript->libraries->勾选要用到�
 File Encodings 设置工程的编码为 utf-8
 
 settings 搜索 proxy 配置代理  Host name:99.48.212.223 Port Number:3128 No proxy for:localhost, 127.0.0.1,99.0.0.0/8
+
+IDEA Unescaped xml character 报错的解决办法   转义XML字符
+
+http://jingyan.baidu.com/article/8cdccae97f2026315513cd5d.html

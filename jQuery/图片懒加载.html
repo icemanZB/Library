@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>图片懒加载</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+
+			var num =$("img").length;
+
+			var dtd = $.Deferred();
+
+			var imgLoad = function () {
+				if (!--num) {
+					dtd.resolve();
+				}
+			};
+
+			$("img").each(function () {
+				var $img = $(this);
+				$img.attr("src", $img.data("src")).load(imgLoad);
+
+			});
+
+			dtd.promise(imgLoad);
+
+			imgLoad.done(function () {
+				console.log("图片加载完成");
+			});
+		})
+	</script>
+</head>
+<body>
+
+</body>
+</html>

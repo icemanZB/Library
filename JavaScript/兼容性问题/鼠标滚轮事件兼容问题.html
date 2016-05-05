@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>鼠标滚轮事件</title>
+	<script>
+		// http://www.zhangxinxu.com/wordpress/2013/04/js-mousewheel-dommousescroll-event
+		// 无论IE7, IE10, Opera12,或者是safari5.1，每次往下滚动event.wheelDelta值都是-120
+		// 对于 FireFox 浏览器 ( Opera浏览器也有 )，判断鼠标滚动方向的属性为 event.detail，向下滚动值为 3
+		// FireFox 浏览器的方向判断的数值的正负与其他浏览器是相反的。FireFox 浏览器向下滚动是正值，而其他浏览器是负值
+		/*
+		 * 简易的事件添加方法
+		 */
+
+		var addEvent = (function (window, undefined) {
+			var _eventCompat = function (event) {
+				var type = event.type;
+				if (type == 'DOMMouseScroll' || type == 'mousewheel') {
+					event.delta = (event.wheelDelta) ? event.wheelDelta / 120 : -(event.detail || 0) / 3;
+				}
+				// alert(event.delta);
+				if (event.srcElement && !event.target) {
+					event.target = event.srcElement;
+				}
+				if (!event.preventDefault && event.returnValue !== undefined) {
+					event.preventDefault = function () {
+						event.returnValue = false;
+					};
+				}
+				/* ......其他一些兼容性处理 */
+				return event;
+			};
+			if (window.addEventListener) {
+				return function (el, type, fn, capture) {
+					if (type === "mousewheel" && document.mozHidden !== undefined) {
+						type = "DOMMouseScroll";
+					}
+					el.addEventListener(type, function (event) {
+						fn.call(this, _eventCompat(event));
+					}, capture || false);
+				}
+			} else if (window.attachEvent) {
+				return function (el, type, fn, capture) {
+					el.attachEvent("on" + type, function (event) {
+						event = event || window.event;
+						fn.call(el, _eventCompat(event));
+					});
+				}
+			}
+			return function () {};
+		})(window);
+
+		addEvent("dom", "mousewheel", function(event) {
+			if (event.delta < 0) { alert("鼠标向上滚了！"); }
+		});
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
