@@ -5000,11 +5000,20 @@ var nodeHook, boolHook,
 
 jQuery.fn.extend({
 	attr: function( name, value ) {
+		/*
+		 * this：每一个元素
+		 * jQuery.attr：回调方法 ( 实际调用的是工具方法中的 attr() )
+		 * name -> value 键值对
+		 * arguments.length > 1 决定是设置还是获取
+		 */
 		return jQuery.access( this, jQuery.attr, name, value, arguments.length > 1 );
 	},
 
 	removeAttr: function( name ) {
 		return this.each(function() {
+			/*
+			 * 实际调用的是工具方法中的 removeAttr()
+			 */
 			jQuery.removeAttr( this, name );
 		});
 	},
@@ -5215,6 +5224,9 @@ jQuery.fn.extend({
 	}
 });
 
+/*
+ * 这些工具方法都是内部使用的
+ */
 jQuery.extend({
 	valHooks: {
 		option: {
@@ -5290,40 +5302,79 @@ jQuery.extend({
 			nType = elem.nodeType;
 
 		// don't get/set attributes on text, comment and attribute nodes
+		/*
+		 * 当元素不存在的时候、是文本、是注释、是属性 这几个属性没办法设置就先过滤掉
+		 */
 		if ( !elem || nType === 3 || nType === 8 || nType === 2 ) {
 			return;
 		}
 
 		// Fallback to prop when attributes are not supported
+		/*
+		 * 当元素不支持 getAttribute 的时候 ( typeof elem.getAttribute === undefined )
+		 * 那就是用 prop() 代替 attr()，这种情况是出现在：$(document).attr("title","hello"); === $(document).prop("title","hello")
+		 */
 		if ( typeof elem.getAttribute === core_strundefined ) {
 			return jQuery.prop( elem, name, value );
 		}
 
 		// All attributes are lowercase
 		// Grab necessary hook if one is defined
+		/*
+		 * nType = 1 就是元素节点，jQuery.isXMLDoc() -> Sizzle 中的方法，就是调用的是 Sizzle.isXML;就是判断当前节点是不是 XML 下的节点
+		 * 那么一但是 XML 节点是不会走这个 if，如果是 HTML 下的元素节点是有兼容问题，就会走这个 if
+		 */
 		if ( nType !== 1 || !jQuery.isXMLDoc( elem ) ) {
-			name = name.toLowerCase();
+			name = name.toLowerCase(); // 统一转成小写
+			/*
+			 * hooks 机制，先通过 support 检测，然后通过 hooks 找到具体的方法，分为两种(set、get)，有获取到这个值，说明做到兼容了
+			 * attrHooks 只是针对设置的，如果是这种情况 atrr("type","radio")
+			 * jQuery.expr 是 Sizzle.selectors，它下面有个 match:matchExpr，matchExpr 这下面是一堆的正则表达式，找到 bool -> new RegExp( "^(?:" + booleans + ")$", "i" );
+			 * 那么 booleans 是 "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped"
+			 * 也就是正则去匹配 booleans， 就是说 jQuery.expr.match.bool 这个整体去匹配上面一串，然后 test(name)，在字符串中是否存在，存在就要做 boolHook，不存在就是 nodeHook ( undefined )
+			 * boolHook 对应是下面一个 boolHook={ set:function(){}}
+			 */
 			hooks = jQuery.attrHooks[ name ] ||
 				( jQuery.expr.match.bool.test( name ) ? boolHook : nodeHook );
 		}
 
+		/*
+		 * value !== undefined 就是设置的时候
+		 */
 		if ( value !== undefined ) {
 
+			/*
+			 * $("div").attr("ice",null); 当第二个参数是 null 的时候，调用的是 removeAttr();
+			 */
 			if ( value === null ) {
 				jQuery.removeAttr( elem, name );
 
 			} else if ( hooks && "set" in hooks && (ret = hooks.set( elem, value, name )) !== undefined ) {
+				/*
+				 * 首先 hooks 存在，并且是有 set() 方法，那么通过 set() 获取到这个值，这个值有的话就说明有值，做到兼容了
+				 * 如果等于 undefined 就说明没有兼容性，就跳过
+				 */
 				return ret;
 
 			} else {
+				/*
+				 * 没有兼容问题的时候，调用原生的 setAttribute(); 把 value 转为字符串的形式
+				 */
 				elem.setAttribute( name, value + "" );
 				return value;
 			}
-
+			/*
+			 * 获取
+			 */
 		} else if ( hooks && "get" in hooks && (ret = hooks.get( elem, name )) !== null ) {
 			return ret;
 
 		} else {
+			/*
+			 * jQuery.find = Sizzle 就是 Sizzle 对象
+			 * Sizzle.attr() 就是 getAttribute() 兼容的操作
+			 * 例如：$("div").attr("title"); 调用的就是这里
+			 */
 			ret = jQuery.find.attr( elem, name );
 
 			// Non-existent attributes return null, we normalize to undefined
@@ -5355,11 +5406,21 @@ jQuery.extend({
 
 	attrHooks: {
 		type: {
+			/*
+			 * 只有设置有兼容问题，get ( 获取 )是没有的
+			 */
 			set: function( elem, value ) {
+				/*
+				 * 单选框的兼容，就是在 support里面有的，先设置 value，在设置 type 类型的时候，在 IE 下获取不到 value 值，IE 获取的是 "on"
+				 */
 				if ( !jQuery.support.radioValue && value === "radio" && jQuery.nodeName(elem, "input") ) {
 					// Setting the type on a radio button after the value resets the value in IE6-9
 					// Reset value to default in case type is set after value during creation
 					var val = elem.value;
+					/*
+					 * 重新设置 type 类型，在去赋值 value 就没有问题了
+					 * 先设置 type，在赋值是没有兼容问题的
+					 */
 					elem.setAttribute( "type", value );
 					if ( val ) {
 						elem.value = val;
@@ -5416,12 +5477,19 @@ jQuery.extend({
 });
 
 // Hooks for boolean attributes
+/*
+ * 针对的是这样的情况：$("input").attr("checked",true)
+ * $("input").attr("checked","checked") -> $("input").attr("checked",true)
+ */
 boolHook = {
 	set: function( elem, value, name ) {
 		if ( value === false ) {
 			// Remove boolean attributes when set to false
 			jQuery.removeAttr( elem, name );
 		} else {
+			/*
+			 * elem.setAttribute("checked","checked");
+			 */
 			elem.setAttribute( name, name );
 		}
 		return name;
