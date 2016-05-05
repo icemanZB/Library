@@ -5387,10 +5387,16 @@ jQuery.extend({
 	removeAttr: function( elem, value ) {
 		var name, propName,
 			i = 0,
-			attrNames = value && value.match( core_rnotwhite );
+			attrNames = value && value.match( core_rnotwhite ); // 匹配空格，返回的是一个数组 ["ice","href","id"]
 
 		if ( attrNames && elem.nodeType === 1 ) {
+			/*
+			 * 删除多个属性 $("div").removeAttr("ice href id");
+			 */
 			while ( (name = attrNames[i++]) ) {
+				/*
+				 * jQuery.propFix[ name ]：看看有没有兼容问题 类似 class -> className
+				 */
 				propName = jQuery.propFix[ name ] || name;
 
 				// Boolean attributes get special treatment (#10870)
@@ -5447,6 +5453,9 @@ jQuery.extend({
 
 		notxml = nType !== 1 || !jQuery.isXMLDoc( elem );
 
+		/*
+		 * 不是 XML 的就是有兼容问题
+		 */
 		if ( notxml ) {
 			// Fix name and attach hooks
 			name = jQuery.propFix[ name ] || name;
@@ -5466,6 +5475,10 @@ jQuery.extend({
 	},
 
 	propHooks: {
+		/*
+		 * tabIndex：光标切换顺序，在 IE 下，不是 div 他也可以得到 tabIndex，所以要做兼容
+		 * rfocusable：/^(?:input|select|textarea|button)$/i; 不是这些的统一返回 -1
+		 */
 		tabIndex: {
 			get: function( elem ) {
 				return elem.hasAttribute( "tabindex" ) || rfocusable.test( elem.nodeName ) || elem.href ?
@@ -5519,6 +5532,9 @@ jQuery.each( jQuery.expr.match.bool.source.match( /\w+/g ), function( i, name ) 
 
 // Support: IE9+
 // Selectedness for an option in an optgroup can be inaccurate
+/*
+ * 下拉菜单的选中状态，在 IE 下创建的 select 有子项的话，默认是没有选中状态的，标准浏览器有
+ */
 if ( !jQuery.support.optSelected ) {
 	jQuery.propHooks.selected = {
 		get: function( elem ) {
@@ -5531,6 +5547,9 @@ if ( !jQuery.support.optSelected ) {
 	};
 }
 
+/*
+* 把这里面的值转小写 tabIndex -> tabindex
+* */
 jQuery.each([
 	"tabIndex",
 	"readOnly",
