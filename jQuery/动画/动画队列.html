@@ -16,9 +16,9 @@
 			// 当使用 animate() 时，必须使用 Camel 标记法书写所有的属性名，比如，必须使用 paddingLeft 而不是 padding-left 等等。
 			// 同时，色彩动画并不包含在核心 jQuery 库中。如果需要生成颜色动画，您需要从 jQuery.com 下载 Color Animations 插件
 			$("div.content")
-					.animate({width: '300'}, 200)
-					.animate({height: '150'}, 300)
-					.animate({opacity: '0.2'}, 2000);
+					.animate({width: "300"}, 200)
+					.animate({height: "150"}, 300)
+					.animate({opacity: "0.2"}, 2000);
 			// 动画队列
 			// css() 方法并不会加入到动画队列中去，而是立即执行，所以可以使用回调函数对非动画方法实现排队
 			var $panel = $("#panel");
@@ -28,7 +28,7 @@
 						.animate({top: "200px", width: "200px"}, 3000)
 						.queue(function (next) {
 							$(this).css("border", "5px solid blue");
-							next(); // 继续下一个动画 slideUp('slow')
+							next(); // 继续下一个动画 slideUp("slow")
 						})
 						.slideUp("slow");
 			})

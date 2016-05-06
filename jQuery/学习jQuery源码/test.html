@@ -6,19 +6,12 @@
 	<script src="jquery-2.0.3.study.js"></script>
 	<script>
 		$(function () {
-			function show(n1, n2) {
-				console.log(n1);
-				console.log(n2);
-				console.log(this);
-			}
-
-			//$.proxy(show, document, 3)(4);  // 两种传参方式
-			// 修改 this 指向
-			$.proxy(show, document)(3, 4);
+			$("#aa").attr("checked",false);
 		});
 	</script>
 </head>
 
 <body>
+<input type="checkbox" id="aa" checked>爱好
 </body>
 </html>

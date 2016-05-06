@@ -15,9 +15,9 @@
 
 			setTimeout(tasks, 2000);
 			/*
-			 * $.Deferred().promise()方法
+			 * $.Deferred().promise() 方法
 			 * 它的作用是，在原来的 deferred 对象上返回另一个 deferred 对象
-			 * 后者只开放与改变执行状态无关的方法（ 比如 done() 方法和 fail() 方法），屏蔽与改变执行状态有关的方法
+			 * 后者只开放与改变执行状态无关的方法 ( 比如 done() 方法和 fail() 方法 )，屏蔽与改变执行状态有关的方法
 			 * 比如 resolve() 方法和 reject() 方法，从而使得执行状态不能被改变
 			 */
 			return dtd.promise(); // 返回promise对象

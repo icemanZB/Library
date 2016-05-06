@@ -10,13 +10,13 @@
 			/*
 			 * 哪些属性应该用 attr() 访问，哪些应该用 prop() 访问呢？
 			 * 1、只添加属性名称该属性就会生效应该使用 prop()
-			 * 2、只存在 true/false 的属性应该使用prop()
+			 * 2、只存在 true/false 的属性应该使用 prop()
 			 * 官方解释：如果是设置 disabled 和 checked 这些属性，应该使用 prop() 方法，而不是使用 attr() 方法
 			 */
 
-			$('li').attr({"title": "your title", "name": "test"});
+			$("li").attr({"title": "your title", "name": "test"});
 			// 替换 class ( 设置 class ) 可以使用
-			$('p').attr("class", "high");
+			$("p").attr("class", "high");
 			$('[name="Fruit"]').eq(2).prop("checked", true);
 		});
 	</script>
@@ -24,9 +24,9 @@
 <body>
 
 <ul>
-	<li title='苹果'>苹果</li>
-	<li title='橘子'>橘子</li>
-	<li title='菠萝'>菠萝</li>
+	<li title="苹果">苹果</li>
+	<li title="橘子">橘子</li>
+	<li title="菠萝">菠萝</li>
 </ul>
 您喜欢的水果？<br/><br/> <label><input name="Fruit" type="checkbox" value="苹果"/>苹果 </label>
 <label><input name="Fruit" type="checkbox" value="桃子"/>桃子 </label>

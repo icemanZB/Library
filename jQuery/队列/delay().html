@@ -14,7 +14,7 @@
 			var $p = $("p");
 			$p.delay(2000, "mx").queue("mx", fn);
 
-			$p.dequeue("mx"); // 2秒后输出1
+			$p.dequeue("mx"); // 2 秒后输出 1
 
 			function fn1() {
 				console.log(11);
@@ -25,7 +25,7 @@
 			}
 
 			$p.queue("mx1", fn1);
-			$p.delay(3000, 'mx1');
+			$p.delay(3000, "mx1");
 			$p.queue("mx1", fn2);
 
 			$p.dequeue("mx1"); // 立即输出 11

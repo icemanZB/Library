@@ -14,7 +14,7 @@
 			// 通过字面量创造一个对象，存储我们需要的共有方法
 			var methods = {
 				init   : function (options) {
-					// 返回 "this"( 函数each() 的返回值也是this),以便进行链式调用
+					// 返回 "this" ( 函数each() 的返回值也是 this )，以便进行链式调用
 					return this.each(function () {
 						var $this = $(this); // 为每个独立的元素创建一个 jQuery 对象
 
@@ -29,14 +29,14 @@
 								}
 							};
 
-							// 使用extend方法从options和defaults对象中构造出一个settings对象
+							// 使用 extend() 方法从 options 和 defaults 对象中构造出一个 settings 对象
 							settings = $.extend({}, defaults, options);
 
 							$this.data("pluginName", settings); // 保存我们新创建的settings
 						} else {
-							// 如果我们获取了 settings,则将它和options进行合并(这不是必须的)
+							// 如果我们获取了 settings，则将它和 options 进行合并 (这不是必须的)
 							settings = $.extend({}, settings, options);
-							// 如果你想每次都保存options,可以添加下面代码
+							// 如果你想每次都保存 options，可以添加下面代码
 							$this.data("pluginName", settings);
 						}
 
@@ -62,9 +62,9 @@
 				var args = [].slice.call(arguments, 1);
 				// 检验方法是否存在
 				if (methods[method]) {
-					// 如果方法存在，存储起来以便使用；注意：这样做是为了等下更方便地使用 each()
+					// 如果方法存在，存储起来以便使用，注意：这样做是为了等下更方便地使用 each()
 					method = methods[method];
-				} else if (typeof(method) == 'object' || !method) {
+				} else if (typeof(method) == "object" || !method) {
 					// 如果方法不存在，检验对象是否为一个对象 ( JSON对象 ) 或者 method 方法没有被传入
 					// 如果我们传入的是一个对象参数，或者根本没有参数，init 方法会被调用
 					method = methods.init;
@@ -75,7 +75,7 @@
 				}
 
 				// 调用选中的方法
-				// 当我们在主函数中调用 method.apply(this) 的时候,这里的 this 事实上就是一个 jQuery 对象，作为 this 传入每个方法中。
+				// 当我们在主函数中调用 method.apply(this) 的时候，这里的 this 事实上就是一个 jQuery 对象，作为 this 传入每个方法中。
 				// 所以在方法的即时作用域中，它已经是一个 jQuery 对象。只有在被 each() 所调用的函数中,我们才有必要将 this 包装在一个 jQuery 对象中。
 				return method.apply(this, args);  // this 相当于 $(element)
 

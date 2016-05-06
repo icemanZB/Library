@@ -25,7 +25,7 @@
 			$p.queue(fn2);
 			$p.queue(fn3);
 
-			// 当使用默认列名"fx"时，它会调用 $.dequeue() 出列执行下
+			// 当使用默认列名 "fx" 时，它会调用 $.dequeue() 出列执行下
 			var queue = $p.queue("fx");  // 第一个 fn1 已经出列
 
 			console.log(queue); // ["inprogress", fn2, fn3]

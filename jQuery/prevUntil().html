@@ -14,7 +14,7 @@
 		 * 语法       2、.prevUntil(element, filter)
 		 * 参数	     描述   element	可选。指示在何处停止匹配前方同胞元素的 DOM 节点或 jQuery 对象。
 		 * filter	 可选。字符串值，包含用于匹配元素的选择器表达式。
-		 * */
+		 */
 		// 查找 <dt id="term-2"> 之前的同胞元素，直到前一个 <dt>，并将它们设置为红色。
 		$(function () {
 			$("#term-2").prevUntil("dt").css("background-color", "red");

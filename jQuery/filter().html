@@ -13,12 +13,12 @@
 	<script>
 		$(function () {
 			// filter() 方法将匹配元素集合缩减为匹配指定选择器的元素 ( 偶数加红 )
-			$("#ul1").find("li").filter(':even').css('background-color', 'red');
+			$("#ul1").find("li").filter(":even").css("background-color", "red");
 			// 筛选出 '.middle' 的 div 加背景红色
 			$("div").css("background", "#c8ebcc")
 					.filter(".middle")
 					.css("border-color", "red");
-			// 对于每个元素，如果该函数返回 true，则元素会被包含在已筛选集合中；否则会排除这个元素
+			// 对于每个元素，如果该函数返回 true ，则元素会被包含在已筛选集合中；否则会排除这个元素
 			$("#ul2").find("li").filter(function (index) {
 				console.log(index);
 				// 是从父节点里找子节点
