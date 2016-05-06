@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>rem</title>
+	<style>
+		/*
+		 * 给手机设置 100px 的字体大小; 对于 320px 的手机匹配是 100px，其他手机都是等比例匹配;
+		 * 因此设计稿上是多少像素的话，那么转换为 rem 的时候，rem = 设计稿的像素/100 即可;
+		 */
+		html { font-size: 100px; }
+
+		@media (min-width: 320px) {
+			html { font-size: 100px; }
+		}
+
+		@media (min-width: 360px) {
+			html { font-size: 112.5px; }
+		}
+
+		@media (min-width: 400px) {
+			html { font-size: 125px; }
+		}
+
+		@media (min-width: 640px) {
+			html { font-size: 200px; }
+		}
+	</style>
+</head>
+<body></body>
+</html>
