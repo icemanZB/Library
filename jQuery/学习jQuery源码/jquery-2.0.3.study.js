@@ -5031,9 +5031,15 @@ jQuery.fn.extend({
 	addClass: function( value ) {
 		var classes, elem, cur, clazz, j,
 			i = 0,
-			len = this.length,
-			proceed = typeof value === "string" && value;
+			len = this.length,  // this 就是 $("div")
+			proceed = typeof value === "string" && value; // 如果是字符串，就返回该字符串，如果不是，则返回 false
 
+		/*
+		 * 传了回调函数
+		 * $("div").addClass(function(index){
+		 *     return "box" + index;
+		 * });
+		 */
 		if ( jQuery.isFunction( value ) ) {
 			return this.each(function( j ) {
 				jQuery( this ).addClass( value.call( this, j, this.className ) );
@@ -5042,17 +5048,35 @@ jQuery.fn.extend({
 
 		if ( proceed ) {
 			// The disjunction here is for better compressibility (see removeClass)
+			/*
+			 * 通过正则把字符串中的空格分成数组 $("div").addClass("box1 box2");  classes = [box1,box2]
+			 */
 			classes = ( value || "" ).match( core_rnotwhite ) || [];
 
+			/*
+			 * 循环每一个元素 $("div")
+			 */
 			for ( ; i < len; i++ ) {
 				elem = this[ i ];
+				/*
+				 * 看看是不是元素节点，如果是其他节点 cur = false
+				 * 先去找自身的 className 有没有，没有的话，就返回 cur = " " ( 空格 )
+				 * 有的话，找到之前的 className，并且前后加上空格
+				 * rclass 正则：匹配一些空白的字符 (回车、换行、换页)，替换成 " " 是空格，不是空， cur = elem.clssName
+				 */
 				cur = elem.nodeType === 1 && ( elem.className ?
 					( " " + elem.className + " " ).replace( rclass, " " ) :
 					" "
 				);
 
+				/*
+				 * 等于 " "，会返回真
+				 */
 				if ( cur ) {
 					j = 0;
+					/*
+					 * clazz 存储所要添加的 class，判断是否在原来的 cur 中，没有找到就添加
+					 */
 					while ( (clazz = classes[j++]) ) {
 						if ( cur.indexOf( " " + clazz + " " ) < 0 ) {
 							cur += clazz + " ";
@@ -5071,6 +5095,10 @@ jQuery.fn.extend({
 		var classes, elem, cur, clazz, j,
 			i = 0,
 			len = this.length,
+		/*
+			 * "&&" 优先级高于 "||" ， alert( 1 || 0 && 2 ) => 1
+			 * 先计算 typeof value === "string" && value， arguments.length === 0 是没有写参数的时候，作用是删除所有 className
+			 */
 			proceed = arguments.length === 0 || typeof value === "string" && value;
 
 		if ( jQuery.isFunction( value ) ) {
@@ -5093,10 +5121,16 @@ jQuery.fn.extend({
 					j = 0;
 					while ( (clazz = classes[j++]) ) {
 						// Remove *all* instances
+						/*
+						 * 当 clazz 存在再 cur 中，那就 replace() " "
+						 */
 						while ( cur.indexOf( " " + clazz + " " ) >= 0 ) {
 							cur = cur.replace( " " + clazz + " ", " " );
 						}
 					}
+					/*
+					 * value ="" 或者不存在的时候，就删除所有
+					 */
 					elem.className = value ? jQuery.trim( cur ) : "";
 				}
 			}
@@ -5105,6 +5139,10 @@ jQuery.fn.extend({
 		return this;
 	},
 
+	/*
+	 * stateVal = true 就是不管元素中有没有这个 className，都是添加操作
+	 * stateVal = false 就是不管元素中有没有这个 className，都是删除操作
+	 */
 	toggleClass: function( value, stateVal ) {
 		var type = typeof value;
 
@@ -5136,6 +5174,11 @@ jQuery.fn.extend({
 				}
 
 			// Toggle whole class name
+			/*
+			 * 这里平时几乎用不到，不建议使用
+			 * $("div").toggleClass(false)，就是删除已有的 className
+			 * $("div").toggleClass(true) 通过缓存的形式在添加回去
+			 */
 			} else if ( type === core_strundefined || type === "boolean" ) {
 				if ( this.className ) {
 					// store className if set
@@ -5166,12 +5209,24 @@ jQuery.fn.extend({
 
 	val: function( value ) {
 		var hooks, ret, isFunction,
-			elem = this[0];
+			elem = this[0]; // 获取集合中第一个元素
 
+		/*
+		 * 获取操作
+		 */
 		if ( !arguments.length ) {
 			if ( elem ) {
+				/*
+				 * valHooks：option select radio checkbox 针对这四个获取做兼容处理
+				 * jQuery.valHooks[ elem.type ] 当 elem 是一个 select，他的 type 是 select-one 那么在 valHooks 中是找不到的
+				 * jQuery.valHooks[ elem.nodeName.toLowerCase() ] select 的 nodeName 还是 select 那么在 valHooks 就找到了
+				 * elem 的 option.type 是 ""，所以又要走后面 option.nodeName 就是 option
+				 */
 				hooks = jQuery.valHooks[ elem.type ] || jQuery.valHooks[ elem.nodeName.toLowerCase() ];
 
+				/*
+				 * 处理兼容问题，像 input 是没有兼容问题的就不会走这个 if
+				 */
 				if ( hooks && "get" in hooks && (ret = hooks.get( elem, "value" )) !== undefined ) {
 					return ret;
 				}
@@ -5190,9 +5245,15 @@ jQuery.fn.extend({
 
 		isFunction = jQuery.isFunction( value );
 
+		/*
+		 * 设置的时候是针对每一个元素的
+		 */
 		return this.each(function( i ) {
 			var val;
 
+			/*
+			 * 判断一定是元素节点
+			 */
 			if ( this.nodeType !== 1 ) {
 				return;
 			}
@@ -5204,11 +5265,18 @@ jQuery.fn.extend({
 			}
 
 			// Treat null/undefined as ""; convert numbers to string
+			/*
+			 * $("input").val(null)
+			 */
 			if ( val == null ) {
 				val = "";
 			} else if ( typeof val === "number" ) {
-				val += "";
+				val += ""; // 数字转字符串
 			} else if ( jQuery.isArray( val ) ) {
+				/*
+				 * 针对数组 $("#input2").val(["hello"]);当 val 是数组的时候就不是设置值了，而是去匹配每一项，然后选中
+				 * <input type="checkbox" id="input2" value="hello">
+				 */
 				val = jQuery.map(val, function ( value ) {
 					return value == null ? "" : value + "";
 				});
@@ -5217,6 +5285,9 @@ jQuery.fn.extend({
 			hooks = jQuery.valHooks[ this.type ] || jQuery.valHooks[ this.nodeName.toLowerCase() ];
 
 			// If set returns undefined, fall back to normal setting
+			/*
+			 * 如果不满足这些条件就直接 this.value = val; 满足了就在 set() 中进行操作
+			 */
 			if ( !hooks || !("set" in hooks) || hooks.set( this, val, "value" ) === undefined ) {
 				this.value = val;
 			}
@@ -5233,6 +5304,12 @@ jQuery.extend({
 			get: function( elem ) {
 				// attributes.value is undefined in Blackberry 4.7 but
 				// uses .value. See #6932
+				/*
+				 * 在 IE6 7 下 <option>111</option>  option.value 是空的，<option value="hello">111</option>这样写就可以找到 "hello"
+				 * 那么 IE 6 7 下使用 text 做兼容， option.text 获取到的就是 111
+				 * elem.attributes.value 在 IE 的高版本是 undefined，在 IE6 7 是 [object]，elem.attributes.value.specified 在 IE 6 7 下是 false
+				 * 那么就会去找 elem.text 相应的内容
+				 */
 				var val = elem.attributes.value;
 				return !val || val.specified ? elem.value : elem.text;
 			}
@@ -5242,7 +5319,7 @@ jQuery.extend({
 				var value, option,
 					options = elem.options,
 					index = elem.selectedIndex,
-					one = elem.type === "select-one" || index < 0,
+					one = elem.type === "select-one" || index < 0,  // 如果是单选的时候 one =true，有 multiple属性就是多选 one = false
 					values = one ? null : [],
 					max = one ? index + 1 : options.length,
 					i = index < 0 ?
@@ -5250,12 +5327,18 @@ jQuery.extend({
 						one ? index : 0;
 
 				// Loop through all the selected options
+				/*
+				 * 如果是单选的话，就只会循环一次
+				 */
 				for ( ; i < max; i++ ) {
 					option = options[ i ];
 
 					// IE6-9 doesn't update selected after form reset (#2551)
 					if ( ( option.selected || i === index ) &&
 							// Don't return options that are disabled or in a disabled optgroup
+							/*
+							 * jQuery.support.optDisabled 如果是禁用的元素是不会走这个 if 的
+							 */
 							( jQuery.support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null ) &&
 							( !option.parentNode.disabled || !jQuery.nodeName( option.parentNode, "optgroup" ) ) ) {
 
@@ -5278,11 +5361,15 @@ jQuery.extend({
 			set: function( elem, value ) {
 				var optionSet, option,
 					options = elem.options,
-					values = jQuery.makeArray( value ),
+					values = jQuery.makeArray( value ), // 针对是数组
 					i = options.length;
 
 				while ( i-- ) {
 					option = options[ i ];
+					/*
+					 * 相应的 select 选中 $("select").val(111); 然后 "111" 就会被选中
+					 * value 值和相应的 option 值匹配成功就会选中
+					 */
 					if ( (option.selected = jQuery.inArray( jQuery(option).val(), values ) >= 0) ) {
 						optionSet = true;
 					}
@@ -5569,6 +5656,9 @@ jQuery.each([
 jQuery.each([ "radio", "checkbox" ], function() {
 	jQuery.valHooks[ this ] = {
 		set: function( elem, value ) {
+			/*
+			 * 判断是不是数组，相应的选中或者取消状态
+			 */
 			if ( jQuery.isArray( value ) ) {
 				return ( elem.checked = jQuery.inArray( jQuery(elem).val(), value ) >= 0 );
 			}
@@ -6315,10 +6405,19 @@ if ( !jQuery.support.focusinBubbles ) {
 
 jQuery.fn.extend({
 
+	/*
+	 * one 参数是内部使用的，帮 one() 方法有关系
+	 */
 	on: function( types, selector, data, fn, /*INTERNAL*/ one ) {
 		var origFn, type;
 
 		// Types can be a map of types/handlers
+		/*
+		 * $("div").on({
+		 *     "click":function(){},
+		 *     "mouseover":function(){}
+		 * });
+		 */
 		if ( typeof types === "object" ) {
 			// ( types-Object, selector, data )
 			if ( typeof selector !== "string" ) {
@@ -6329,9 +6428,15 @@ jQuery.fn.extend({
 			for ( type in types ) {
 				this.on( type, selector, data, types[ type ], one );
 			}
+			/*
+			 * 返回当前对象，防止在往下走
+			 */
 			return this;
 		}
 
+		/*
+		 * 参数顺序修正
+		 */
 		if ( data == null && fn == null ) {
 			// ( types, fn )
 			fn = selector;
@@ -6354,14 +6459,24 @@ jQuery.fn.extend({
 			return this;
 		}
 
+		/*
+		 * 内部 one() 方法会走这里
+		 */
 		if ( one === 1 ) {
 			origFn = fn;
 			fn = function( event ) {
 				// Can use an empty set, since event contains the info
+				/*
+				 * 一上来就是取消当前元素的事件操作，下次点击就没有用了  jQuery() -> jQuery(this)
+				 * origFn.apply( this, arguments ); 然后这个原来传进来的函数执行一次
+				 */
 				jQuery().off( event );
 				return origFn.apply( this, arguments );
 			};
 			// Use same guid so caller can remove using origFn
+			/*
+			 * 给 fn 加 guid 的唯一标识，用来快速找到对应的函数
+			 */
 			fn.guid = origFn.guid || ( origFn.guid = jQuery.guid++ );
 		}
 		return this.each( function() {
@@ -6369,6 +6484,9 @@ jQuery.fn.extend({
 		});
 	},
 	one: function( types, selector, data, fn ) {
+		/*
+		 * 这里多传了一个 1，让事件只执行一次
+		 */
 		return this.on( types, selector, data, fn, 1 );
 	},
 	off: function( types, selector, fn ) {
@@ -6390,6 +6508,9 @@ jQuery.fn.extend({
 			}
 			return this;
 		}
+		/*
+		 * 参数修正
+		 */
 		if ( selector === false || typeof selector === "function" ) {
 			// ( types [, fn] )
 			fn = selector;
@@ -6408,6 +6529,9 @@ jQuery.fn.extend({
 			jQuery.event.trigger( type, data, this );
 		});
 	},
+	/*
+	 * triggerHandler 不会触发当前事件所带的默认行为
+	 */
 	triggerHandler: function( type, data ) {
 		var elem = this[0];
 		if ( elem ) {
@@ -8013,6 +8137,9 @@ jQuery.each( ("blur focus focusin focusout load resize scroll unload click dblcl
 	// Handle event binding
 	jQuery.fn[ name ] = function( data, fn ) {
 		return arguments.length > 0 ?
+			/*
+			 * 并没有委托的操作
+			 */
 			this.on( name, null, data, fn ) :
 			this.trigger( name );
 	};
@@ -8030,6 +8157,9 @@ jQuery.fn.extend({
 		return this.off( types, null, fn );
 	},
 
+	/*
+	 * 事件委托，内部调用的是 on
+	 */
 	delegate: function( selector, types, data, fn ) {
 		return this.on( types, selector, data, fn );
 	},

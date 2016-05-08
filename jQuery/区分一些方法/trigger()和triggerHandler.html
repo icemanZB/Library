@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>attr()和prop()的区别</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			$("#Fruit").focus(function(){
+				$(this).css("background","red");
+			});
+
+			$("#Fruit").trigger("focus"); // 光标会在 input 上
+			$("#Fruit").triggerHandler("focus"); // 光标没在 input 上
+
+			// triggerHandler 不会触发当前事件所带的默认行为 ( 光标在 input 上 )
+
+		});
+	</script>
+</head>
+<body>
+
+<input id="Fruit" type="text" value="桃子"/>
+
+</body>
+</html>
