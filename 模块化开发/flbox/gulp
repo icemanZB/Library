@@ -1,0 +1,31 @@
+http://www.ydcss.com/archives/18
+http://www.tuicool.com/articles/2YzUVf
+http://www.techug.com/gulp
+https://www.npmjs.com/package/gulp-seajs-combo
+
+1、先安装 nodejs 和 npm ( 包管理工具 )
+2、npm install gulp -g  全局安装，命令提示符执行 gulp -v，出现版本号即为正确安装
+3、本地安装 gulp：定位目录命令后提示符执行 npm install gulp --save-dev 就会在目录下生成 node_modules
+4、安装对应插件：npm install gulp-seajs-combo --save-dev ..等等
+5、细心的你可能会发现，我们全局安装了gulp，项目也安装了gulp，全局安装gulp是为了执行gulp任务，本地安装gulp则是为了调用gulp插件的功能。
+6、新建 gulpfile.js文件（重要）
+var gulp = require('gulp');
+//var uglify = require('gulp-uglify');  // 压缩
+var concat = require('gulp-concat');
+var seajsCombo = require('gulp-seajs-combo');
+gulp.task('seajscombo', function () {
+
+	return gulp.src('./build/c.js')
+
+		.pipe(seajsCombo())
+
+		.pipe(gulp.dest('build/dist'));
+
+});
+
+
+
+
+
+
+
