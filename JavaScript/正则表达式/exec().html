@@ -19,6 +19,48 @@
 		// 假如没有找到的话，则返回 null
 		console.log(/wo/.exec(str)); // null
 
+
+
+		// 对于 exec() 方法而言，即使在模式中设置了全局标志 (g)，它每次也只会返回一个匹配项
+		// 在不设置全局标志的情况下，在同一个字符串上多次调用 exec() 将始终返回第一个匹配项的信息
+		// 而在设置全局标志的情况下，每次调用 exec() 则都会在字符串中继续查找新匹配项
+
+		// 这个例子中的第一个模式不是全局模式，因此每次调用 exec() 返回的都是第一个匹配项("cat")
+		// 而第二个模式是全局模式，因此每次调用 exec() 都会返回字符串中的下一个匹配项，直到搜索到字符串某尾为止。
+		// 此外，还应该注意模式的 lastIndex 属性的变化情况，在全局匹配模式下，lastIndex 的值在每次调用 exec() 都都会增加，而在非全局模式下则始终保持不变
+
+		// IE 的 JavaScript 实现在 lastIndex 属性上存在偏差，即使在非全局模式下，lastIndex 属性每次也会变化
+		var text="cat,bat,sat,fat";
+
+		var pattern=/.at/;
+
+		var matches=pattern.exec(text);
+
+		console.log(matches.index);  // 0
+		console.log(matches[0]); // cat
+		console.log(pattern.lastIndex); // 0
+
+		matches=pattern.exec(text);
+
+		console.log(matches.index);  // 0
+		console.log(matches[0]); // cat
+		console.log(pattern.lastIndex); // 0
+
+
+		var text2 = "cat,bat,sat,fat";
+
+		var pattern2 = /.at/g;
+
+		var matches2 = pattern.exec(text2);
+		console.log(matches2.index); // 0
+		console.log(matches2[0]); // cat
+		console.log(pattern2.lastIndex); // 3
+
+		matches2 = pattern2.exec(text2);
+		console.log(matches2.index); // 4
+		console.log(matches2[0]); // bat
+		console.log(pattern2.lastIndex); // 7
+
 	</script>
 </head>
 <body>

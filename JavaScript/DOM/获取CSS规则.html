@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>获取CSS规则</title>
+	<style>
+		div.box { background-color: blue; width: 100px; height: 200px; }
+	</style>
+	<script>
+		// 获取CSS规则
+		var sheet = document.styleSheets[0];
+		var rules = sheet.cssRules || sheet.rules;  // 取得规则列表
+		var rule = rules[0]; // 取得第一条规则
+		console.log(rule.selectorText);  // "div.box"
+		// IE 中的 styleSheet.cssText 属性设置为空字符串，可能会导致浏览器崩溃
+		console.log(rule.style.cssText);  // 完整的 CSS 代码
+		console.log(rule.style.backgroundColor);  // blue
+		console.log(rule.style.width); // 100px
+
+		// inertRule()  插入规则 IE 是 addRule()  最多可以插入4095条样式
+
+		function insertRule(sheet,selectorText,cssText,position){
+			if(sheet.insertRule){
+				sheet.insertRule(selectorText + "{" + cssText + "}",position);
+			}else if(sheet.addRule){
+				sheet.addRule(selectorText,cssText,position);
+			}
+		}
+
+		insertRule(document.styleSheets[0],"body","background-color:silver",0);
+
+		// 删除规则
+
+		sheet.deleteRule(0);  // DOM 方法 sheet.removeRule(0); 仅对 IE 有效果
+
+		function deleteRule(sheet,index){
+			if(sheet.deleteRule){
+				sheet.deleteRule(index);
+			}else if(sheet.removeRule){
+				sheet.removeRule(index);
+			}
+		}
+
+		deleteRule(document.styleSheets[0],0);
+	</script>
+</head>
+<body>
+
+</body>
+</html>

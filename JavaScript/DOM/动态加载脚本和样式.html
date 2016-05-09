@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>动态加载脚本和样式</title>
+	<script>
+		// 动态加载脚本 ( 缺点：并不知道脚本加载完成 )
+		function loadScript(url){
+			var script = document.createElement("script");
+			script.type = "text/javascript";
+			script.src=url;
+			document.body.appendChild(script);
+		}
+
+		loadScript("client.js");
+
+		// 动态样式
+		function loadStyles(url){
+			var link = document.createElement("link");
+			link.rel="stylesheet";
+			link.type="text/css";
+			link.href=url;
+			var head = document.getElementsByTagName("head")[0];
+			head.appendChild(link);  // 加入到 head 保证浏览器兼容
+		}
+
+		loadStyles("style.css");
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

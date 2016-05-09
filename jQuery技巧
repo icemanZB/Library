@@ -1,22 +1,5 @@
-工具方法
-$.type()  可以判断出数组和json   返回: date array null 等..
-$.trim()  去掉前后空格
-var arr=['a','b','c','d']
-$.inArray('b',arr)  b在arr中的位置,如果有的话就得到相应的位置1,没有就返回-1
-$.proxy()  改变this指向   $.proxy('fn',document)(3)  3就是传的参数  $.proxy('fn',document,3) 第三个参数起就是传参数
-$.parseJSON()  解析严格模式的json
-$.markArray()  把类数组转换为真正的数组
+1、多个对象调用相同的事件    $(".mark_left,.prev").click();
 
-------------------------------------------------------------------------------------------------------------------------
-
-index() 方法回家弄
-
-
-多个对象调用相同的事件
-$('.mark_left,.prev').click();
-
-
-jQuery 技巧总结：
 
 1、 判断元素在网页上是否存在 if( $('#box').length>0 ){ // do something.. }  $('#box') 获取的永远是一个对象
 			     if($('#box')[0]){ // do something... }

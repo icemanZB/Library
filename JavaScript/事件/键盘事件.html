@@ -10,9 +10,18 @@
 		 *
 		 * 不是所有元素都能够接收键盘事件，能够响应用户输入的元素，能够接收焦点的元素就能够接收键盘事件
 		 *
-		 * event.keyCode：数字类型 键盘按键的值 键值
+		 * event.keyCode：数字类型，键盘按键的值 (如回车是13)，也有兼容问题，Firefox 和 Opera 中，按分号键的 keyCode 值为 59 但是 IE 和 Safari 返回 186
 		 * ctrlKey、shiftKey、altKey 布尔值
 		 * 当一个事件发生的时候，如果 ctrl || shift || alt 是按下的状态，返回 true，否则返回 false
+		 *
+		 * charCode 只有在 keypress 时才包含值，此时 keyCode 通常等于 0 或者也可能等于所按键的键码，IE8 及之前的版本和 Opera 是在 keyCode 中保存字符 ASCII
+		 *
+		 * keydown：按下键盘上任意键时触发，按住不放重复触发此事件
+		 * keypress：按下键盘上的字符键触发，按住不放重复触发此事件，按下 Esc 键也会触发这个事件
+		 * keyup：释放键盘上的键触发
+		 * 如果用户按住一个字符键不放会重复触发 keydown、keyup
+		 * 执行顺序：keydown->keypress->keyup
+
 		 */
 
 		// 问题：如何解决按住不放，第一次有比较长的间隔时间

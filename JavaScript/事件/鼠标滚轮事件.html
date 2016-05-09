@@ -15,15 +15,21 @@
 			var oDiv = document.getElementById("div1");
 
 			/*
+			 * mousewheel 事件 (鼠标滚轮)，这个事件可以在任何元素上面触发，最终冒泡到 document(IE8) 或 window(IE9、Opera、Chrome、Safari)
+			 *
 			 * ie/chrome : onmousewheel
-			 * event.wheelDelta
+			 * event.wheelDelta ( 当用户向前滚动 wheelDelta 是 120 倍数，向后滚动是 -120 倍数 )
 			 * 上：120
 			 * 下：-120
+			 * 鼠标滚轮的方向只要检测 wheelDelta 正负号就可以了
+			 *
+			 * 在 Opera9.5 之前的版本，wheelDelta 值正负号是颠倒的，需要检测浏览器统一正负号
 			 *
 			 * firefox : DOMMouseScroll 必须用 addEventListener
 			 * event.detail
 			 * 上：-3
 			 * 下：3
+			 *
 			 *
 			 * return false; 阻止的是  obj.on 事件名称 = fn 所触发的默认行为
 			 * addEventListener 绑定的事件需要通过 event下面的 preventDefault();

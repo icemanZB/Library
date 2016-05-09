@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<script>
+		// inertRule()  插入规则 IE 是 addRule()  最多可以插入4095条样式
+
+		function insertRule(sheet, selectorText, cssText, position) {
+			if (sheet.insertRule) {
+				sheet.insertRule(selectorText + "{" + cssText + "}", position);
+			} else if (sheet.addRule) {
+				sheet.addRule(selectorText, cssText, position);
+			}
+		}
+
+		insertRule(document.styleSheets[0], "body", "background-color:silver", 0);
+
+		// 删除规则
+
+		sheet.deleteRule(0);  // DOM 方法 sheet.removeRule(0); 仅对 IE 有效果
+
+		function deleteRule(sheet, index) {
+			if (sheet.deleteRule) {
+				sheet.deleteRule(index);
+			} else if (sheet.removeRule) {
+				sheet.removeRule(index);
+			}
+		}
+
+		deleteRule(document.styleSheets[0], 0);
+	</script>
+</head>
+<body>
+
+</body>
+</html>

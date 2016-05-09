@@ -1,0 +1,110 @@
+1、多个对象调用相同的事件    $(".mark_left,.prev").click();
+
+
+2、 判断元素在网页上是否存在
+    if( $("#box").length > 0 ){ // do something.. }  $("#box") 获取的永远是一个对象，所以要判断他的长度
+	if( $("#box")[0] ){ // do something... } 使用原生判断
+
+
+3、表单对象属性过滤选择器
+   $("#form :enabled") 、 $("#form :disabled") 、 $("#input:checked")
+
+   $("#form :input") // 选取所有 <input>、<textarea>、<select>、<button>
+
+   $("#form input") // 选取 "#form" 下的 <input>
+
+   $("#select option:selected")、$("#select").find("option:selected")
+
+   $("[name=items]:checkbox") 、 $("[name=items]:checkbox:checked")、$('input[name="check"]:checked').length; // 获取 checkbox 选中的个数
+
+
+4、 获取含有 "#"、"[]" 等特殊字符的元素，使用 "\\" 转义     $("#id\\#b")、$("#id\\[1\\]")
+
+
+5、 判断是否是一个 jQuery 对象 console.log( this instanceof jQuery );
+
+
+6、is(":visible") 选择器选取每个当前是可见的元素，其中 visibility:hidden; opacity:0; 算是可见元素
+   jQuery 的判断逻辑是：这个对象的 offsetWidth 和 offsetHeight 都为 0 才是不可见
+
+   :hidden 选择器选取每个当前是隐藏的元素
+   包括：<input type="hidden" /> 、<div style="display:none;"></div>、width 和 height 设置为 0、隐藏的父元素 ( 这也会隐藏子元素 ）
+   注释：该选择器对 visibility:hidden; opacity: 0; 的元素不起作用。
+
+
+7、 $("tobdy>tr:has(:checked)").addClass("selected");  // 含有选中的单选框 <tr> 行将被高亮显示
+
+
+8、filter 获取包含某些文字 $("table tbody tr").hide().filter(":contains('字符串')").show()
+
+
+9、 var txtfontSize=$("div").css("font-size");  // 16px
+     parseInt(txtfontSize)->16
+     txtfontSize.slice(-2)  拿到 px
+
+10、清空 select、radio、checkbox
+
+$.fn.clearFields = $.fn.clearInputs = function(includeHidden) {
+	var re = /^(?:color|date|datetime|email|month|number|password|range|search|tel|text|time|url|week)$/i; // "hidden" is not in this list
+	return this.each(function() {
+		var t = this.type, tag = this.tagName.toLowerCase();
+		if (re.test(t) || tag == "textarea" || (includeHidden && /hidden/.test(t)) ) {
+			this.value = "";
+		}else if (t == "checkbox" || t == "radio") {
+			this.checked = false;
+		}else if (tag == "select") {
+			this.selectedIndex = -1;
+		}
+	});
+};
+
+
+11、 $("a").blur(); // 去掉超链接点击时的虚线框
+
+
+12、animate 一般看情况给 normal、fast 如果给时间的话，他是一定时间内完成动画，会有快慢之分
+
+
+13、var cssText = "position:fixed;top:0;left:0;right:0;bottom:0;\"_width\":0;\"_height\":0;"; CSS hank 必须转义字符
+    $('<div id="overlay" style="'+cssText+'"></div>'); // 如果不转义字符 jQuery 会自动过滤掉"_"，从而在 IE7 中有了 width、height 样式
+    console.log($("#overlay")[0].style.cssText); 获取所有 style
+
+
+14、$(this).toggleClass("current").siblings().filter('[data-all="current"]').removeClass("current"); 过滤 data 属性
+    $(this).toggleClass("current").siblings().filter('[data-all],[data-noeday]').removeClass("current"); 过滤多个 data
+
+15、把 jQuery 的 DOM 对象转为数组，其中数组中的每一项是 DOM 对象不是 jQuery 对象
+    $(this).find("span").get(); => [].slice.call($(this).find("span"));
+
+
+
+keyup() 事件能在用户每次松开按键时触发，focus 事件能在元素得到焦点触发
+trigger("blur") 不仅会触发为元素绑定的 blur 事件，也会触发浏览器默认的 blur 事件，既不能将光标定位到文本框上，
+而 triggerHandler('blur') 只会触发为元素绑定的 blur 事件，而不会触发浏览器默认 blur 事件
+$('form :input').blur(function(){
+    // 失去焦点处理函数 ..
+}).keyup(function(){
+   $(this).triggerHandler('blur');
+}).focus(function(){
+  $(this).triggerHandler('blur');
+});
+
+
+11、 substring()  应用
+var imgSrc='images/pro_img/blue_one.jpg';
+var i = imgSrc.lastIndexOf(".");  // 23
+var unit = imgSrc.substring(i); // .jpg
+imgSrc = imgSrc.substring(0, i); //  images/pro_img/blue_one
+var imgSrc_big = imgSrc + "_big" + unit;
+
+21、实际测试，无法动态添加刚刚创建好的 div 样式中的 expression (样式中没设置)
+    var overlay = $('<div id="overlay"></div>');
+    overlay[0].style.setExpression('top', 'eval((document.documentElement).scrollTop + ' + 0 + ') + "px"'); // 无效
+    overlay[0].style.cssText = "position:absolute;top:expression(document.documentElement.scrollTop);"; // 无效
+    overlay = $('<div id="overlay" style="top:expression(document.documentElement.scrollTop);"></div>'); // 无效
+    <div id="overlay"></div>
+    // 样式中设置的话，就算是动态创建的div也是有效的
+    #overlay{ _position:absolute; _top:expression(documentElement.scrollTop); }
+    // 样式中没设置，并且不是动态创建的
+    document.getElementById('overlay').style.setExpression('top','eval((document.documentElement).scrollTop) + "px"'); // 有效
+总结：建议样式直接设置好hank，或者在已有的html元素上设置
