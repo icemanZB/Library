@@ -3,6 +3,9 @@
 <head lang="en">
 	<meta charset="UTF-8">
 	<title>页面视口大小</title>
+	<style>
+		body{ height:2000px;}
+	</style>
 	<script>
 		/*
 		 * 在 IE9+、Safari、Firefox 中，outerWidth 和 outerHeight 返回浏览器窗口本身的尺寸( 无论从最外层的 window 对象还是从某个框架访问 )
@@ -12,23 +15,27 @@
 		 * IE8 及更早的版本没有提供取得当前浏览器窗口尺寸的属性
 		 * 在 IE、Firefox、Safari、Opera、Chrome 中，document.documentElement.clientWidth 和 document.documentElement.clientHeight 中保存了页面视口的信息
 		 * 在 IE6 中，这些属性必须在标准模式下才有效；如果是混杂模式，就必须使用 document.body.clientWidth 和 document.body.clientHeight 取得相同的信息
-		 * 对于Chrome而言这个两个方法都可以取得视口大小
+		 * 对于 Chrome 而言这个两个方法都可以取得视口大小
 		 * 虽然无法确定浏览器窗口本身大小，但是却可以取得页面视口大小
 		 */
 
-		var pageWidth = window.innerWidth;
-		var pageHeight = window.innerHeight;
-		if (typeof pageWidth != "number") {
-			if (document.compatMode == "CSS1Compat") {  // 是否处于标准模式
-				pageWidth = document.documentElement.clientWidth;
-				pageHeight = document.documentElement.clientHeight;
-			} else {
-				pageWidth = document.body.clientWidth;
-				pageHeight = document.body.clientHeight;
-			}
-		}
+		window.onload=function(){
+			var pageWidth = window.innerWidth;
+			var pageHeight = window.innerHeight;
+			if (typeof pageWidth != "number") {
+				if (document.compatMode == "CSS1Compat") {  // 是否处于标准模式
+					pageWidth = document.documentElement.clientWidth;
+					pageHeight = document.documentElement.clientHeight;
+				} else {
 
-		console.log(pageWidth, pageHeight);
+					pageWidth = document.body.clientWidth;
+					pageHeight = document.body.clientHeight;
+				}
+			}
+
+			console.log( document.documentElement.clientHeight|| document.body.clientHeight );
+			console.log(pageHeight);
+		};
 
 		/*
 		 * 对于移动设备 window.innerWidth、window.innerHeight 保存着可见视口，移动 IE 浏览器不支持这些属性，
@@ -41,6 +48,6 @@
 	</script>
 </head>
 <body>
-
+<div style="width: 100px;height: 700px;background: red"></div>
 </body>
 </html>
