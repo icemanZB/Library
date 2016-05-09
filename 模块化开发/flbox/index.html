@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8"/>
+	<title>seajs使用测试之简易弹框实现</title>
+	<style>
+		.box {
+			width: 256px;
+			height: 193px;
+			padding: .5em;
+		}
+
+		a img {
+			border: 0;
+		}
+	</style>
+</head>
+
+<body>
+<a href="beLoaded.html" id="test" title="点击查看大图"> <img src="image/mm1.jpg"/> </a>
+<script src="../sea/sea.js"></script>
+<script>
+	seajs.use("./js/main.js", function (test) {
+		test.bind(document.getElementById("test"));
+	});
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8"/>
+	<title>ajax方法使用测试</title>
+	<style>
+		.box {
+			width: 256px;
+			background-color: #F0F3F9;
+			text-align: center;
+			padding: .5em;
+		}
+	</style>
+</head>
+
+<body>
+<p><input type="button" id="button" value="点击加载HTML"/></p>
+<div id="load"></div>
+<script src="../sea/sea.js"></script>
+<script>
+	var $ajax = null;
+	seajs.use("./js/ajax", function (ajax) {
+		$ajax = ajax;
+	});
+	document.getElementById("button").onclick = function () {
+		$ajax.get("beLoaded.html", function (html) {
+			document.getElementById("load").innerHTML = html;
+		});
+	};
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8"/>
+	<title>半透明遮罩层</title>
+	<style>
+		body { margin: 0; }
+
+		button { margin: 1em; position: relative; z-index: 2; }
+	</style>
+</head>
+
+<body>
+<button id="button">点击toggle</button>
+<script src="../sea/sea.js"></script>
+<script>
+	var myOverlay = null;
+	seajs.use("./js/overlay", function (overlay) {
+		myOverlay = overlay.overlay;
+	});
+
+	document.getElementById("button").onclick = function () {
+		myOverlay[myOverlay.display ? "hide" : "show"]();
+	};
+</script>
+</body>
+</html>
