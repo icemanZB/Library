@@ -1,0 +1,6 @@
+1、clone 项目：进入文件夹，比如 cd d:，cd Code/textGit，git clone https://github.com/icemanZB/ProjectTest.git
+2、设置 git 的全局的用户名和邮箱，帮 github 上面一样即可，方便在多人协作的时候让其他人知道是你提交的代码
+   也是一样需要进入到项目目录，比如 cd d:，cd Code/textGit
+   git config --global user.name "icemanZB"、git config --global user.email "254784109@qq.com"
+   查看全局的邮箱或名字：git config --global user.email
+3、查看所有 git 下面的配置 git config --list

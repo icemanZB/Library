@@ -108,3 +108,15 @@ var imgSrc_big = imgSrc + "_big" + unit;
     // 样式中没设置，并且不是动态创建的
     document.getElementById('overlay').style.setExpression('top','eval((document.documentElement).scrollTop) + "px"'); // 有效
 总结：建议样式直接设置好hank，或者在已有的html元素上设置
+
+
+trigger 用法找下
+
+$('#span1').on('hide',function(){
+		alert(3);
+});
+$('#span1').on('hide',function(){
+    alert(4);
+});
+
+$('#span1').trigger('hide');
