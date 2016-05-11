@@ -14,7 +14,7 @@
   }
 }
 7、cmd 进入webqq项目的目录(f: ->  cd webqq)
-8、进入根目录后执行命令：npm install 运行即可
+8、进入根目录后执行命令：npm install 运行即可，安装 devDependencies 下所有的插件，提交文件的时候就提交 package.json，获取到的人安装就好
 9、此时项目中就会多出个文件夹叫 "node_modules"
 10、写 Gruntfile.js 文件，里面的内容就是要执行的任务
 module.exports = function(grunt) {

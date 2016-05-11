@@ -1,6 +1,6 @@
 var gulp = require('gulp');
-//var gutil = require('gulp-util');
-//var uglify = require('gulp-uglify');
+// var gutil = require('gulp-util');
+var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var seajsCombo = require('gulp-seajs-combo');
 
@@ -16,6 +16,7 @@ gulp.task('seajscombo', function () {
 	return gulp.src('./build/c.js')
 
 		.pipe(seajsCombo())
+		//.pipe(uglify())
 
 		.pipe(gulp.dest('build/dist'));
 
@@ -34,4 +35,5 @@ gulp.task('seajscombo', function () {
  }))
  // .pipe(uglify())
  .pipe(gulp.dest('build/dist'));//输出到目录
- });*/
+ });
+ */

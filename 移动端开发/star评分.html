@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>webapp星星评分</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta content="telephone=no" name="format-detection"/>
+	<script>
+		(function (doc, win) {
+			var docEl     = doc.documentElement,
+			    resizeEvt = "orientationchange" in window ? "orientationchange" : "resize",
+			    recalc    = function () {
+				    var clientWidth = docEl.clientWidth;
+				    if (!clientWidth) return;
+				    docEl.style.fontSize = 100 * (clientWidth / 640) + "px";
+			    };
+			recalc();
+			if (!doc.addEventListener) return;
+			win.addEventListener(resizeEvt, recalc, false);
+			// doc.addEventListener("DOMContentLoaded", recalc, false);
+		})(document, window);
+	</script>
+	<style>
+		body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, form, input, select, textarea, p {
+			padding: 0;
+			margin: 0;
+			-webkit-text-size-adjust: none;
+		}
+
+		body, input, button, select, textarea {
+			font: normal 12px Arial;
+		}
+
+		img { border: 0; }
+
+		ol, ul { list-style: none; }
+
+		a { text-decoration: none; }
+
+		.clearfix:after { content: ''; display: block; clear: both; }
+
+		a, input { -webkit-tap-highlight-color: rgba(255, 0, 0, 0); }
+
+		.comment-level {
+			font-size: 0.3rem;
+			color: #5F606D;
+			margin: 15px 15px auto;
+		}
+
+		.comment-level li span {
+			float: left;
+			margin-right: 0.1rem;
+			line-height: 0.45rem;
+		}
+
+		.star-level a {
+			float: left;
+			width: 0.4rem;
+			height: 0.4rem;
+			margin-right: 0.1rem;
+			/* 一个星星图片是40*40大小，留有3px间隙 */
+			background: url(images/star-big.png) no-repeat 0 0;
+			background-size: cover;
+		}
+
+		/*.star-level.level1 a:first-child,
+		.star-level.level2 a:nth-child(1),
+		.star-level.level2 a:nth-child(2),
+		.star-level.level3 a:nth-child(1),
+		.star-level.level3 a:nth-child(2),
+		.star-level.level3 a:nth-child(3),
+		.star-level.level4 a:nth-child(1),
+		.star-level.level4 a:nth-child(2),
+		.star-level.level4 a:nth-child(3),
+		.star-level.level4 a:nth-child(4),
+		.star-level.level5 > a {
+			background-position: 0 -0.45rem;
+		}*/
+		.star-level a.active {
+			background-position: 0 -0.45rem;
+		}
+	</style>
+</head>
+<body>
+<ul class="comment-level">
+	<li class="clearfix">
+		<span>宝贝评分</span>
+        <span id="score" data-value="1" class="star-level">
+            <a href="#" data-value="1" class="active"></a>
+            <a href="#" data-value="2"></a>
+            <a href="#" data-value="3"></a>
+            <a href="#" data-value="4"></a>
+            <a href="#" data-value="5"></a>
+	        <a href="#" data-value="6"></a>
+        </span> <span>5分</span>
+	</li>
+
+</ul>
+<script src="js/jquery-2.2.3.js"></script>
+<script>
+	$(function () {
+		/*$(".star-level").on("click", "a", function () {
+		 var $this = $(this);
+		 var value = $this.data("value");
+		 var $parent = $this.parent();
+		 $parent.removeClass().addClass("star-level level" + value);
+		 $parent.next().text(value + "分");
+		 $parent.data("value", value);
+		 return false;
+		 });*/
+		$(".star-level").on("click", "a", function () {
+			var $this = $(this);
+			var val = $this.data("value");
+			$this.siblings().removeClass("active").end().addClass("active").prevAll().addClass("active");
+			$this.parent().next().text(val + "分").data("value", val);
+			return false;
+		});
+	});
+</script>
+</body>
+</html>
