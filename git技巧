@@ -4,3 +4,9 @@
    git config --global user.name "icemanZB"、git config --global user.email "254784109@qq.com"
    查看全局的邮箱或名字：git config --global user.email
 3、查看所有 git 下面的配置 git config --list
+4、[master]：指的是项目的主分支的默认名字
+5、git add demo.html 把工作区的内容添加到暂存区， git add . 提交所有文件
+6、git commit -m "注释" 把暂存区放到版本库，添加注释最好是英文
+7、git status 查看状态
+8、简写方式：git commit -a -m "注释" ( 这个命令省略了 add 的操作， -a 就是把工作区的文件添加到暂存区 )
+9、 git log 查看提交的 log

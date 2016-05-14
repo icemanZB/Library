@@ -35,6 +35,13 @@
 			$input.trigger("focus");
 			$input.triggerHandler("focus"); // 只会触发绑定的 focus 事件，不会得到焦点
 
+			// trigger 本身是支持冒泡的，这两个都会触发
+			// 实际是不允许这样做的，针对 load 事件，jQuery 做了处理，img 就不会冒泡到 window 上
+			$(window).on("load",function(){});
+			$(img).on("load",function(){});
+
+			$(img).trigger("load");
+
 		});
 	</script>
 </head>

@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>isPropagationStopped</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+
+		$(function () {
+
+			$('div').on('click', function () {
+				alert(1);
+			});
+			$('span').on('click', function (ev) {
+				alert(2);
+				// ev.stopPropagation();  // 阻止了父级的冒泡
+				ev.isPropagationStopped(); // 阻止了父级的冒泡，同时其他相同的事件也被阻止了，alert(3);不会弹
+
+			});
+			$('span').on('click', function (ev) {
+				alert(3);
+			});
+
+		});
+
+	</script>
+</head>
+
+<body>
+<div>div<span>span</span></div>
+</body>
+</html>
