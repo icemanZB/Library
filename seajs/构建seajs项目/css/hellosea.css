@@ -1,0 +1,18 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.header {
+	background: #888 none repeat scroll 0 0;
+	color: #FFF;
+	padding: 5px;
+	text-align: center;
+}
+
+.box {
+	background-color: red;
+	height: 200px;
+	margin: 30px auto;
+	width: 200px;
+}

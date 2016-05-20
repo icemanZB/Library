@@ -1,6 +1,6 @@
-1、先安装 nodejs 和 npm ( 包管理工具 )
-2、npm install -g grunt-cli
-3、npm install grunt --save-dev
+﻿1、先安装 nodejs 和 npm ( 包管理工具 )
+2、npm install -g grunt-cli 全局安装 ( npm install -g yo grunt-cli bower 安装：yeoman(脚手架工具)、bower(包管理工具)、grunt(构建工具) )
+3、npm install grunt --save-dev 进入项目后安装
 4、grunt-version 查看版本号
 5、合并 JavaScript 文件使用的插件是： contrib-concat
 6、安装插件需要写配置文件 packgae.json
@@ -124,6 +124,34 @@ module.exports = function(grunt) {
 };
 
 最后运行 cmd grunt
+
+
+http://www.tuicool.com/articles/jy2MV3B
+http://blog.jobbole.com/65399/
+http://blog.javachen.com/2014/05/10/bower-intro.html
+http://www.tuicool.com/articles/IJbQFn
+https://segmentfault.com/a/1190000002971135  bower
+
+构建项目
+
+1、在F盘下新建test文件夹，执行命令：md test
+2、 yo 的使用：npm install -g generator-webapp ( 安装 webapp 模板 )， yo：查看 Yeoman的菜单， yo --version：查看版本，
+3、生成项目目录及文件，进入目录并执行命令：yo webapp
+4、选择要用的模块，空格选择，回车确认
+
+
+windows 删除 node_modules[文件名或扩展名太长]
+
+npm install -g rimraf
+
+使用方法：cd xxx[include node_modules folder]rimraf nod_modules
+
+
+
+
+
+
+
 
 
 

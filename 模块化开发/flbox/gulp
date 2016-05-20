@@ -23,6 +23,8 @@ gulp.task('seajscombo', function () {
 
 });
 
+http://npm.taobao.org/package/gulp-file-copy 插件
+
 
 
 

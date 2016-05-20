@@ -1,5 +1,5 @@
 // c.js
-define(function (require, exports, module) {
+define("c",function (require, exports, module) {
 	require('./b');
 	console.log("hello module c");
 

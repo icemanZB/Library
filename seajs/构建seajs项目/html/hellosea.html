@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Grunt seajs demo</title>
+	<link rel="stylesheet" href="../css/hellosea.css">
+</head>
+<body>
+<div id="box" class="box"></div>
+<div id="box2" style="width: 100px; height: 100px; position: absolute;top: 0;left: 0;"></div>
+<!--<script src="http://www.jackness.org/wp-content/themes/JStyle/images/default/blank.png" _src="../js/lib/sea.js"></script>-->
+<script src="../js/lib/sea/2.2.0/sea.js" ></script>
+<script>
+	// seajs 的简单配置
+	seajs.config({
+		base : "../js/hellosea/dist/",
+		alias: {
+			"jquery"        : "jquery/2.2.3/jquery.js",
+			"jquerySayHello": "jquery/plugin/jquery.sayHello.sea.js"
+		}
+	});
+
+//	seajs.use("../.build/dist/a.js", function () {
+//
+//		// console.log($);
+//
+//	});
+
+	seajs.use("a.js");
+
+
+</script>
+</body>
+</html>
