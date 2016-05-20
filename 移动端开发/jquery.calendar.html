@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="format-detection" content="telephone=no"/>
+	<title>日历插件</title>
+	<link type="text/css" rel="stylesheet" href="css/calendar.css"/>
+	<script>
+		(function (doc, win) {
+			var docEl     = doc.documentElement,
+			    resizeEvt = "orientationchange" in window ? "orientationchange" : "resize",
+			    recalc    = function () {
+				    var clientWidth = docEl.clientWidth;
+				    if (!clientWidth) return;
+				    docEl.style.fontSize = 100 * (clientWidth / 640) + "px";
+			    };
+			recalc();
+			if (!doc.addEventListener) return;
+			win.addEventListener(resizeEvt, recalc, false);
+			// doc.addEventListener("DOMContentLoaded", recalc, false);
+		})(document, window);
+	</script>
+</head>
+<body>
+
+<div class="page">
+	<section>
+		<div id="Calendar">
+			<!-- calendar-wrapper 并没有这个样式 -->
+			<div class="calendar-wrapper">
+				<div class="calendar" data-year="2016" data-month="2">
+					<table>
+						<caption>2016年2月</caption>
+						<thead>
+						<tr>
+							<th class="weekend"><span>日</span></th>
+							<th><span>一</span></th>
+							<th><span>二</span></th>
+							<th><span>三</span></th>
+							<th><span>四</span></th>
+							<th><span>五</span></th>
+							<th class="weekend"><span>六</span></th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td class="disabled" data-day="29"><a></a></td>
+							<td class="disabled" data-day="30"><a></a></td>
+							<td class="disabled" data-day="31"><a></a></td>
+							<td class="disabled" data-day="1"><a>1</a></td>
+							<td class="disabled" data-day="2"><a>2</a></td>
+							<td class="disabled" data-day="3"><a>3</a></td>
+							<td class="disabled weekend" data-day="4"><a>4</a></td>
+						</tr>
+						<tr>
+							<td class="disabled weekend" data-day="5"><a>5</a></td>
+							<td class="disabled" data-day="6"><a>6</a></td>
+							<td class="disabled" data-day="7"><a>7</a></td>
+							<td class="disabled" data-day="8"><a>8</a></td>
+							<td class="" data-day="9"><a>9</a></td>
+							<td class="" data-day="10"><a>10</a></td>
+							<td class=" weekend" data-day="11"><a>11</a></td>
+						</tr>
+						<tr>
+							<td class=" weekend" data-day="12"><a>12</a></td>
+							<td class="selected" data-day="13">
+								<a> <span>13</span>
+									<small>出发</small>
+								</a>
+							</td>
+							<td class="" data-day="14"><a>14</a></td>
+							<td class="" data-day="15"><a>15</a></td>
+							<td class="" data-day="16"><a>16</a></td>
+							<td class="" data-day="17"><a>17</a></td>
+							<td class=" weekend" data-day="18"><a>18</a></td>
+						</tr>
+						<tr>
+							<td class=" weekend" data-day="19"><a>19</a></td>
+							<td class="disabled" data-day="20">
+								<a> <span>20</span>
+									<small>12.6售</small>
+								</a></td>
+							<td class="disabled" data-day="21">
+								<a> <span>21</span>
+									<small>12.16售</small>
+								</a>
+							</td>
+							<td class="disabled" data-day="22"><a><span>22</span>
+								<small>12.6售</small>
+							</a></td>
+							<td class="disabled" data-day="23"><a><span>23</span>
+								<small>12.6售</small>
+							</a></td>
+							<td class="disabled" data-day="24"><a><span>24</span>
+								<small>12.6售</small>
+							</a></td>
+							<td class=" weekend" data-day="25"><a>25</a></td>
+						</tr>
+						<tr>
+							<td class=" weekend" data-day="26"><a>26</a></td>
+							<td class="" data-day="27"><a>27</a></td>
+							<td class="" data-day="28"><a>28</a></td>
+							<td class="" data-day="29"><a>29</a></td>
+							<td class="" data-day="30"><a>30</a></td>
+							<td class="disabled" data-day="1"><a></a></td>
+							<td class="disabled" data-day="2"><a></a></td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+		</div>
+	</section>
+</div>
+
+<script src="js/jquery-2.2.3.js"></script>
+<script src="js/jquery.calendar.js"></script>
+<script>
+	$(function () {
+		$("#Calendar").calendar({
+			currDate   : "2016-05-19",  // 选中的日期
+			minDate    : $.calendar.parseDate("0"),  // 默认今天
+			maxDate    : $.calendar.parseDate("+59"),
+			saleDateEnd: $.calendar.parseDate("+67"),
+			showMonths : 3,
+			onSelect   : function (date, odate, $cell,_self) {
+				// console.log(date, odate); 可在选中后跳转页面
+			},
+			// 自己添加的火车票售卖规则
+			beforeShow : function (_self, date, settings) {
+				if (_self.maxDate && _self.maxDate < date) {
+
+					if (date < $.calendar.parseDate("+67")) {
+
+						var dateFormat = $.calendar.formatDate("MM.DD", $.calendar.parseDate("-59", date));
+
+						settings[0] += "<small>" + dateFormat + "售</small>";
+					}
+					settings[1] += " disabled";
+
+				}
+			}
+		});
+		/*$("#Calendar").calendar({
+		 currDate   : "2016-05-30",  // 选中的日期
+		 minDate    : $.calendar.parseDate("+10"),  // 默认今天
+		 maxDate    : $.calendar.parseDate("+59"),
+		 saleDateEnd: $.calendar.parseDate("+67"),
+		 showMonths : 3,
+		 onSelect   : function (date, odate) {
+		 // console.log(date, odate);
+		 }
+		 });*/
+
+	})
+</script>
+</body>
+</html>

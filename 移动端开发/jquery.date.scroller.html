@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="format-detection" content="telephone=no" />
+	<title>生日三级联动控件</title>
+	<link type="text/css" rel="stylesheet" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" href="css/jquery.select.scroller.css" />
+	<script>
+		(function (doc, win) {
+			var docEl     = doc.documentElement,
+			    resizeEvt = "orientationchange" in window ? "orientationchange" : "resize",
+			    recalc    = function () {
+				    var clientWidth = docEl.clientWidth;
+				    if (!clientWidth) return;
+				    docEl.style.fontSize = 100 * (clientWidth / 640) + "px";
+			    };
+			recalc();
+			if (!doc.addEventListener) return;
+			win.addEventListener(resizeEvt, recalc, false);
+			// doc.addEventListener("DOMContentLoaded", recalc, false);
+		})(document, window);
+	</script>
+</head>
+<body>
+<form id="form" style=" font-size: 0.28rem;">
+	<span><i>出生日期：</i><em style="color: #CCC;">请选择</em></span>
+	<input type="hidden" name="Birth" value="" />
+</form>
+<script src="js/jquery-2.2.3.js"></script>
+<script src="js/iscroll-4.1.9.min.js"></script>
+<script src="js/jquery.select.scroller.js"></script>
+<script src="js/jquery.date.scroller.js"></script>
+<script>
+	$(function () {
+		var $form = $("#form");
+		var form = $form[0];
+
+		$form.find("span").datescroller({
+			formField  : form["Birth"],
+			yearsAround: -100,
+			defaults   : ["1980", "01", "01"],
+			title      : "出生日期",
+			select     : function (SelectScroller, value) {
+				$form.find("em").html(value);
+			}
+		});
+	})
+</script>
+</body>
+</html>

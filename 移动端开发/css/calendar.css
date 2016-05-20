@@ -1,0 +1,94 @@
+body {
+	padding: 0;
+	margin: 0;
+	font-family: "Arial";
+	-webkit-text-size-adjust: 100%;
+}
+
+a { text-decoration: none; }
+
+.page {
+	overflow: hidden;
+}
+
+.calendar {
+	position: relative;
+	background-color: #FFF;
+}
+
+.calendar table {
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.calendar table td {
+	width: 14.5%;
+	padding: 0;
+	border: 3px solid #FFF;
+	cursor: default;
+	color: #666;
+	font-size: 0.15rem;
+	text-align: center;
+}
+
+.calendar table th {
+	padding: 0.07rem 0 0.1rem;
+	border: 1px solid #FFF;
+	color: #333;
+	font-size: 0.14rem;
+	text-align: center;
+}
+
+.calendar table caption {
+	line-height: 0.6rem;
+	border: 1px solid #CCC;
+	font-size: 0.3rem;
+}
+
+.calendar table td a {
+	height: 0.7rem;
+	line-height: 0.7rem;
+	display: block;
+	background: #EEE;
+	position: relative;
+}
+
+.calendar td.disabled {
+	color: #BBB !important;
+}
+
+.calendar td.disabled a {
+	background: #FFF;
+}
+
+.calendar table td.selected a,
+.calendar table td a:active {
+	background-color: #FF9F23;
+	color: #FFF;
+}
+
+.calendar td.disabled a:active {
+	background-color: transparent;
+	color: inherit;
+}
+
+.calendar table td a small { display: block; font-size: 0.12rem; }
+
+.calendar table td.disabled a small,
+.calendar table td.disabled a span,
+.calendar table td.selected a span,
+.calendar table td.selected a small{
+	width: 100%;
+	line-height: normal;
+	font-size: 0.12rem;
+	position: absolute;
+	bottom: 0.03rem;
+	left: 0;
+}
+
+.calendar table td.disabled a span,
+.calendar table td.selected a span{
+	top: 0.1rem;
+	left: 0;
+}
