@@ -82,3 +82,5 @@ settings 搜索 proxy 配置代理  Host name:99.48.212.223 Port Number:3128 No 
 IDEA Unescaped xml character 报错的解决办法   转义XML字符
 
 http://jingyan.baidu.com/article/8cdccae97f2026315513cd5d.html
+
+webstrom 对 es6 语法支持 Preferences > Languages & Frameworks > JavaScript > 这里只要配置ECMAScript版本即可 选择 es6
