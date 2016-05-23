@@ -120,3 +120,6 @@ $('#span1').on('hide',function(){
 });
 
 $('#span1').trigger('hide');
+
+
+trigger()、add() 研究下

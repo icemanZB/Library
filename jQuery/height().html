@@ -9,11 +9,25 @@
 			// height() 方法也能用来设置元素的高度，如果需要用其它单位(em)，则必须传递一个字符串
 			$("p").height(100);
 			$("p").height("10em");
+
+			console.log( $(window).height() ) ;  // 可视区的高度
+
+			console.log( document.documentElement.clientHeight );
+
+			console.log( $(document).height() );  // 在没有滚动条的时候是一样的(有兼容问题)，有滚动条的时候会加上滚动条的高度，也就是整个文档的高度(页面总高度)
+
+			// 注意在混杂模式下的 IE，需要用 document.body 代替  document.documentElement
+			console.log( document.documentElement.scrollHeight , document.body.scrollHeight );
+
 		});
 	</script>
 </head>
 <body>
 
-<p>aaaaa</p>
+<p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p>
+<p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p>
+<p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p>
+<p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p>
+<p>aaaaa</p><p>aaaaa</p><p>aaaaa</p><p>aaaaa</p>
 </body>
 </html>

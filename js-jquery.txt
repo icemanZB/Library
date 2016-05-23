@@ -1,10 +1,10 @@
 js 获取 obj.scrollTop  ==>    $("#obj").scrollTop()
 
-js 获取 obj.offsetHeight (获取不到隐藏元素的值，也不包括 margin)  ==>   $("#obj").prop("offsetHeight")、$("#obj").outerHeight() jQuery 可以
+js 获取元素的高度(padding + clientHeight + 滚动条) obj.offsetHeight (获取不到隐藏元素的值，也不包括 margin)  ==>   $("#obj").prop("offsetHeight")、$("#obj").outerHeight() jQuery 可以
 
-js 获取 document.getElementById("div1").clientHeight  ==>     $("#obj").innerHeight()
+js 获取可视区的高度 document.getElementById("div1").clientHeight  ==>  $("#obj").innerHeight()
 
-js div1.offsetHeight + parseInt(div1.style.marginTop) + parseInt(div1.style.marginBottom)==>$("#obj").outerHeight(true)
+js div1.offsetHeight + parseInt(div1.style.marginTop) + parseInt(div1.style.marginBottom)  ==>  $("#obj").outerHeight(true)
 
 js 获取 obj.offsetTop  ==>  $("#obj").position().top  obj 是有定位的
 
@@ -16,4 +16,10 @@ js ev.clientX + document.documentElement ? document.documentElement.scrollTop : 
 
 js  ev.keyCode  ==>  ev.which
 
-js document.documentElement.clientWidth || document.body.clientWidth() ==> $(window).width()  获取窗口的宽度
+js document.documentElement.clientWidth || document.body.clientWidth() ==> $(window).width()  获取可视区的宽度
+
+js document.documentElement.clientHeight || document.body.clientHeight() ==> $(window).height()  获取可视区的高度
+
+js  document.documentElement.scrollHeight || document.body.scrollHeight ==> $(document).height() 在没有滚动条的时候是一样的(有兼容问题)，有滚动条的时候会加上滚动条的高度，也就是整个文档的高度
+
+js obj.scrollHeight，计算方式 ：scrollHeight = topPadding + bottomPadding + 内容的高度( div 的实际的高度，由里面的文字来决定，overflow:scroll )
