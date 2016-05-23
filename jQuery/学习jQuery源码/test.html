@@ -3,15 +3,36 @@
 <head>
 	<meta charset="UTF-8">
 	<title>jQuery</title>
-	<script src="jquery-2.0.3.study.js"></script>
-	<script>
-		$(function () {
-			$("#aa").attr("checked",false);
-		});
-	</script>
+	<style>
+		.tabSwitch {
+			width: 100px;
+			height: 100px;
+		}
+		.clearfix{
+			width: 20px;
+			height: 100px;
+			transform: translate();
+		}
+	</style>
+
 </head>
 
 <body>
-<input type="checkbox" id="aa" checked>爱好
+	<input type="checkbox" id="aa" checked>爱好
+	<div class="tabSwitch">
+
+	</div>
+	<script src="jquery-2.0.3.study.js"></script>
+	<script>
+		$(function() {
+			$("#aa").attr("checked", false);
+			$(".tabSwitch").click(
+
+			});
+
+		});
+
+	</script>
 </body>
+
 </html>

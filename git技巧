@@ -10,3 +10,8 @@
 7、git status 查看状态
 8、简写方式：git commit -a -m "注释" ( 这个命令省略了 add 的操作， -a 就是把工作区的文件添加到暂存区 )
 9、 git log 查看提交的 log
+10、git diff 是工作区和暂存区的对比、git diff --cached(--staged) 是暂存区和版本区的对比、git diff master(分支名称)工作区和版本库对比
+11、从暂存区撤销回工作区 git reset HEAD filename
+12、工作区还原 git checkout -- filename 当暂存区有内容，先去还原，暂存区没有的话就到版本区进行还原
+13、撤销 commit 提交操作 git commit -m "change" --amend
+14、退出的话是按 "q"

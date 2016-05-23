@@ -84,3 +84,7 @@ IDEA Unescaped xml character 报错的解决办法   转义XML字符
 http://jingyan.baidu.com/article/8cdccae97f2026315513cd5d.html
 
 webstrom 对 es6 语法支持 Preferences > Languages & Frameworks > JavaScript > 这里只要配置ECMAScript版本即可 选择 es6
+
+插件安装：
+1、Ace Jump  光标跳转到你输入的字符
+2、codeglance    类似于 sublime 右边的 minimap
