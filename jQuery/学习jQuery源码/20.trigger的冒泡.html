@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>trigger的冒泡</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+
+		$(function () {
+
+			$("#div1").on("click", function () {
+				alert(1);
+			});
+
+			$("input").on("click", function () {
+				alert(2);
+			});
+
+			$("input").trigger("click");  // 会冒泡到 div 上
+
+		});
+
+	</script>
+</head>
+
+<body>
+<div id="div1"><input type="text"></div>
+</body>
+</html>

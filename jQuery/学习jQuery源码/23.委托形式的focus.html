@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>focus()不支持冒泡</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+
+		$(function () {
+			// div 是不支持 focus 的，所以源码中使用 delegateType: "focusin" 代替让他支持， focusin 是支持冒泡的
+			$("#div1").delegate("input", "focus", function () {
+				alert(1);
+			});
+
+		});
+
+	</script>
+</head>
+
+<body>
+<div id="div1"><input type="text"></div>
+</body>
+</html>

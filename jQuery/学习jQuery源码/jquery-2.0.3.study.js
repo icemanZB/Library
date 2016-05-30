@@ -5806,6 +5806,9 @@ jQuery.event = {
 				handlers.delegateCount = 0; // 委托计数，并且委托会放到数组的最前面
 
 				// Only use addEventListener if the special events handler returns false
+				/*
+				 * 这里一旦有模拟的事件，就走特殊的绑定事件，没有的话就走公用的
+				 */
 				if ( !special.setup || special.setup.call( elem, data, namespaces, eventHandle ) === false ) {
 					if ( elem.addEventListener ) {
 						/*
@@ -5887,6 +5890,9 @@ jQuery.event = {
 		}
 
 		// Once for each type.namespace in types; type may be omitted
+		/*
+		 * 这里的 types 就是 $("#span1").off("click");中的 click
+		 */
 		types = ( types || "" ).match( core_rnotwhite ) || [""];
 		t = types.length;
 		while ( t-- ) {
@@ -5895,8 +5901,14 @@ jQuery.event = {
 			namespaces = ( tmp[2] || "" ).split( "." ).sort();
 
 			// Unbind all events (on this namespace, if provided) for the element
+			/*
+			 * 判断命名空间中有没有 type，没有 type 就是删除命名空间下所有的事件
+			 */
 			if ( !type ) {
 				for ( type in events ) {
+					/*
+					 * 这里是针对命名空间的 $("#span1").off("click.aaa");
+					 */
 					jQuery.event.remove( elem, type + types[ t ], handler, selector, true );
 				}
 				continue;
@@ -5945,6 +5957,9 @@ jQuery.event = {
 		}
 
 		// Remove the expando if it's no longer used
+		/*
+		 * 清空 events，说明什么事件都没有了
+		 */
 		if ( jQuery.isEmptyObject( events ) ) {
 			delete elemData.handle;
 			data_priv.remove( elem, "events" );
@@ -6011,6 +6026,7 @@ jQuery.event = {
 		// Bubble up to document, then to window; watch for a global ownerDocument var (#9724)
 		/*
 		 * noBubble = true 就是不能网上冒泡，就不会走这个 if
+		 * 意图是找到所有的祖先节点，并且存起来
 		 */
 		if ( !onlyHandlers && !special.noBubble && !jQuery.isWindow( elem ) ) {
 
@@ -6038,6 +6054,9 @@ jQuery.event = {
 				special.bindType || type;
 
 			// jQuery handler
+			/*
+			 * 筛选出满足条件的父节点，并且调用执行
+			 */
 			handle = ( data_priv.get( cur, "events" ) || {} )[ event.type ] && data_priv.get( cur, "handle" );
 			/*
 			 * 主动触发函数执行
@@ -6055,6 +6074,9 @@ jQuery.event = {
 		event.type = type;
 
 		// If nobody prevented the default action, do it now
+		/*
+		 * 有默认行为，并且没有阻止默认行为的时候
+		 */
 		if ( !onlyHandlers && !event.isDefaultPrevented() ) {
 
 			if ( (!special._default || special._default.apply( eventPath.pop(), data ) === false) &&
@@ -6108,6 +6130,9 @@ jQuery.event = {
 		event.delegateTarget = this;
 
 		// Call the preDispatch hook for the mapped type, and let it bail if desired
+		/*
+		 * preDispatch：事件触发前的一个方法，做特殊处理，但是源码中并没有用到，留了个接口供以后使用
+		 */
 		if ( special.preDispatch && special.preDispatch.call( this, event ) === false ) {
 			return;
 		}
@@ -6156,6 +6181,9 @@ jQuery.event = {
 		}
 
 		// Call the postDispatch hook for the mapped type
+		/*
+		 * 件执行完成之后，调用 postDispatch 进行特殊处理
+		 */
 		if ( special.postDispatch ) {
 			special.postDispatch.call( this, event );
 		}
@@ -6163,6 +6191,10 @@ jQuery.event = {
 		return event.result;
 	},
 
+	/*
+	 * 队列操作
+	 * 委托的要比绑在自身的事件执行顺序要靠前，委托的层级越深越靠前
+	 */
 	handlers: function( event, handlers ) {
 		var i, matches, sel, handleObj,
 			handlerQueue = [],
@@ -6335,7 +6367,9 @@ jQuery.event = {
 
 		return fixHook.filter? fixHook.filter( event, originalEvent ) : event;
 	},
-
+	/*
+	 * 针对特殊事件的处理
+	 */
 	special: {
 		load: {
 			// Prevent triggered image.load events from bubbling to window.load
@@ -6357,6 +6391,7 @@ jQuery.event = {
 			},
 			/*
 			 * 如果委托的时候，冒泡到 div，而 focus 是不支持冒泡的，这个时候就会用到这个属性，用 focusin 代替，它是支持冒泡事件的
+			 * 但是 focusin 支持不是很好，jQuery 也有对应的处理方式
 			 */
 			delegateType: "focusin"
 		},
@@ -6371,6 +6406,12 @@ jQuery.event = {
 		},
 		click: {
 			// For checkbox, fire native event so checked state will be right
+			/*
+			 * 这段就是处理这种情况的
+			 * <input type="checkbox" id="input1">
+			 * $("#input1").on("click",function(){});
+			 * $("#input1").trigger("click");
+			 */
 			trigger: function() {
 				if ( this.type === "checkbox" && this.click && jQuery.nodeName( this, "input" ) ) {
 					this.click();
@@ -6379,12 +6420,22 @@ jQuery.event = {
 			},
 
 			// For cross-browser consistency, don't fire native .click() on links
+			/*
+			 * 主动触发，如果是 a 标签，是不会触发默认行为的，其他标签是可以的
+			 * $("a").on("click",function(){ alert(1); });
+		     * $("a").trigger("click");  弹出 1 ，但是链接并不会跳转
+			 */
 			_default: function( event ) {
 				return jQuery.nodeName( event.target, "a" );
 			}
 		},
-
+		/*
+		 * 关闭页面时候触发，做的是 Firefox 兼容
+		 */
 		beforeunload: {
+			/*
+			 * postDispatch 事件结束之后调用
+			 */
 			postDispatch: function( event ) {
 
 				// Support: Firefox 20+
@@ -6409,6 +6460,9 @@ jQuery.event = {
 				originalEvent: {}
 			}
 		);
+		/*
+		 * 判断是否支持冒泡，支持通过主动触发执行
+		 */
 		if ( bubble ) {
 			jQuery.event.trigger( e, null, elem );
 		} else {
@@ -6519,14 +6573,19 @@ jQuery.Event.prototype = {
 
 // Create mouseenter/leave events using mouseover/out and event-time checks
 // Support: Chrome 15+
+/*
+ * 让 mouseover、mouseout 模拟 mouseenter、mouseleave
+ */
 jQuery.each({
 	mouseenter: "mouseover",
 	mouseleave: "mouseout"
 }, function( orig, fix ) {
 	jQuery.event.special[ orig ] = {
 		delegateType: fix,
-		bindType: fix,
-
+		bindType: fix,  // 当前要触发的事件类型
+		/*
+		 * 具体的兼容处理
+		 */
 		handle: function( event ) {
 			var ret,
 				target = this,
@@ -6535,8 +6594,14 @@ jQuery.each({
 
 			// For mousenter/leave call the handler if related is outside the target.
 			// NB: No relatedTarget if the mouse left/entered the browser window
+			/*
+			 * 看看是否是包含关系，并且两个元素是否相等
+			 */
 			if ( !related || (related !== target && !jQuery.contains( target, related )) ) {
 				event.type = handleObj.origType;
+				/*
+				 * 事件触发
+				 */
 				ret = handleObj.handler.apply( this, arguments );
 				event.type = fix;
 			}
@@ -6547,18 +6612,32 @@ jQuery.each({
 
 // Create "bubbling" focus and blur events
 // Support: Firefox, Chrome, Safari
+/*
+ * 让 focus、blur 支持冒泡操作，原理是通过 trigger 模拟事件行为，因为 trigger 本身是支持冒泡的
+ * $("#div1").on("focus",function(){}); $("input").trigger("focus");
+ */
 if ( !jQuery.support.focusinBubbles ) {
 	jQuery.each({ focus: "focusin", blur: "focusout" }, function( orig, fix ) {
 
 		// Attach a single capturing handler while someone wants focusin/focusout
 		var attaches = 0,
 			handler = function( event ) {
+				/*
+				 * simulate 是用来模拟操作的
+				 */
 				jQuery.event.simulate( fix, event.target, jQuery.event.fix( event ), true );
 			};
 
 		jQuery.event.special[ fix ] = {
+			/*
+			 * 这两个目前就是只是对 focusin、focusout 处理
+			 */
 			setup: function() {
 				if ( attaches++ === 0 ) {
+					/*
+					 * 把函数绑定在 document 上，因为它是支持 focus、blur 这两个事件
+					 * 第三个参数是 true，说明是捕获的操作行为，由于 focus 本身是没有冒泡的，所以就不能写成 false
+					 */
 					document.addEventListener( orig, handler, true );
 				}
 			},
@@ -6707,6 +6786,9 @@ jQuery.fn.extend({
 		}
 	}
 });
+/*
+ * DOM 操作
+ */
 var isSimple = /^.[^:#\[\.,]*$/,
 	rparentsprev = /^(?:parents|prev(?:Until|All))/,
 	rneedsContext = jQuery.expr.match.needsContext,
@@ -6719,14 +6801,23 @@ var isSimple = /^.[^:#\[\.,]*$/,
 	};
 
 jQuery.fn.extend({
+	/*
+	 * $("ul").find("li")
+	 */
 	find: function( selector ) {
 		var i,
 			ret = [],
-			self = this,
+			self = this, // ul
 			len = self.length;
 
+		/*
+		 * $("ul").find($(li))
+		 */
 		if ( typeof selector !== "string" ) {
 			return this.pushStack( jQuery( selector ).filter(function() {
+				/*
+				 * 循环每一个 ul 看看有没有包括要选择的 li ( li 和 ul 是包含关系 return true; )
+				 */
 				for ( i = 0; i < len; i++ ) {
 					if ( jQuery.contains( self[ i ], this ) ) {
 						return true;
@@ -6735,20 +6826,30 @@ jQuery.fn.extend({
 			}) );
 		}
 
+		/*
+		 * 通过循环过后 ret 就会存储我们想要的 li
+		 */
 		for ( i = 0; i < len; i++ ) {
 			jQuery.find( selector, self[ i ], ret );
 		}
 
 		// Needed because $( selector, context ) becomes $( context ).find( selector )
+		/*
+		 * jQuery.unique() 去除重复的 DOM 节点
+		 */
 		ret = this.pushStack( len > 1 ? jQuery.unique( ret ) : ret );
 		ret.selector = this.selector ? this.selector + " " + selector : selector;
 		return ret;
 	},
 
 	has: function( target ) {
-		var targets = jQuery( target, this ),
+		var targets = jQuery( target, this ), // span
 			l = targets.length;
-
+		/*
+		 * $("div").has("span")
+		 * this 就是 div
+		 * 在 div 下面找 span，包含就返回 true
+		 */
 		return this.filter(function() {
 			var i = 0;
 			for ( ; i < l; i++ ) {
@@ -6760,6 +6861,10 @@ jQuery.fn.extend({
 	},
 
 	not: function( selector ) {
+		/*
+		 * pushStack 就是栈的管理，先进后出
+		 * winnow 是筛选的公用的方法
+		 */
 		return this.pushStack( winnow(this, selector || [], true) );
 	},
 
@@ -6773,6 +6878,10 @@ jQuery.fn.extend({
 
 			// If this is a positional/relative selector, check membership in the returned set
 			// so $("p:first").is("p:last") won't return true for a doc with two "p".
+			/*
+			 * rneedsContext 是 Sizzle 的一个正则，判断一些复杂的伪类
+			 * $("p:first").is("p:last") 这个会走 jQuery( selector )
+			 */
 			typeof selector === "string" && rneedsContext.test( selector ) ?
 				jQuery( selector ) :
 				selector || [],
@@ -6784,12 +6893,18 @@ jQuery.fn.extend({
 		var cur,
 			i = 0,
 			l = this.length,
-			matched = [],
+			matched = [], // 筛选到结果放到这里
+			/*
+			 * 判断伪类和元素的情况下用 jQuery( selectors, context || this.context ) 获取到元素
+			 */
 			pos = ( rneedsContext.test( selectors ) || typeof selectors !== "string" ) ?
 				jQuery( selectors, context || this.context ) :
 				0;
 
 		for ( ; i < l; i++ ) {
+			/*
+			 * 通过父级一层层往上找，并且找到一个满足的就不会向上在找了
+			 */
 			for ( cur = this[i]; cur && cur !== context; cur = cur.parentNode ) {
 				// Always skip document fragments
 				if ( cur.nodeType < 11 && (pos ?
@@ -6813,16 +6928,27 @@ jQuery.fn.extend({
 	index: function( elem ) {
 
 		// No argument, return index in parent
+		/*
+		 * 没有传参数的情况
+		 */
 		if ( !elem ) {
 			return ( this[ 0 ] && this[ 0 ].parentNode ) ? this.first().prevAll().length : -1;
 		}
 
 		// index in selector
+		/*
+		 * 传了参数的情况 $("#span1").index("span")
+		 * this[0] 获取的是 $("#span1") 的 DOM 节点
+		 * this[0] 在所有 jQuery(elem) 中的索引位置
+		 */
 		if ( typeof elem === "string" ) {
 			return core_indexOf.call( jQuery( elem ), this[ 0 ] );
 		}
 
 		// Locate the position of the desired element
+		/*
+		 *  $("span").index( $("#span1") ) ;
+		 */
 		return core_indexOf.call( this,
 
 			// If it receives a jQuery object, the first element is used
@@ -6834,6 +6960,10 @@ jQuery.fn.extend({
 		var set = typeof selector === "string" ?
 				jQuery( selector, context ) :
 				jQuery.makeArray( selector && selector.nodeType ? [ selector ] : selector ),
+		    /*
+		     * $("div").add("span"); this.get() => "div"，set => "span"
+		     * 通过 merge() 进行合并
+		     */
 			all = jQuery.merge( this.get(), set );
 
 		return this.pushStack( jQuery.unique(all) );
@@ -6919,6 +7049,10 @@ jQuery.each({
 });
 
 jQuery.extend({
+	/*
+	 * expr 过滤条件
+	 * elems 元素
+	 */
 	filter: function( expr, elems, not ) {
 		var elem = elems[ 0 ];
 
@@ -6926,6 +7060,11 @@ jQuery.extend({
 			expr = ":not(" + expr + ")";
 		}
 
+		/*
+		 * jQuery.find = Sizzle
+		 * 如果是一个元素就会调用 jQuery.find.matchesSelector( elem, expr )
+		 * 多个元素调用 jQuery.find.matches();
+		 */
 		return elems.length === 1 && elem.nodeType === 1 ?
 			jQuery.find.matchesSelector( elem, expr ) ? [ elem ] : [] :
 			jQuery.find.matches( expr, jQuery.grep( elems, function( elem ) {
@@ -6962,7 +7101,13 @@ jQuery.extend({
 });
 
 // Implement the identical functionality for filter and not
-function winnow( elements, qualifier, not ) {
+/*
+ * $("div").filter(".box")
+ * elements 操作的每一个元素 div
+ * qualifier 就是 ".box"
+ * not 就是一个开关 true、false
+ */
+function  winnow( elements, qualifier, not ) {
 	if ( jQuery.isFunction( qualifier ) ) {
 		return jQuery.grep( elements, function( elem, i ) {
 			/* jshint -W018 */
@@ -6979,13 +7124,23 @@ function winnow( elements, qualifier, not ) {
 	}
 
 	if ( typeof qualifier === "string" ) {
+		/*
+		 * isSimple => /^.[^:#\[\.,]*$/ 起始位置是所有字符，后面是不包括":#[.,"
+		 * 匹配成功： .box、div、#div1、:odd、ul li、
+		 * 匹配不成功：div:odd、ul #li、ul[title="hello"]、div.box、ul,ol
+		 */
 		if ( isSimple.test( qualifier ) ) {
 			return jQuery.filter( qualifier, elements, not );
 		}
-
+		/*
+		 * 复杂的选择器是不能加 ":not(" + expr + ")" 的，所以这里没有传 not 这个参数
+		 */
 		qualifier = jQuery.filter( qualifier, elements );
 	}
 
+	/*
+	 * 复杂选择器通过这里来进一步筛选是 filter 还是 not
+	 */
 	return jQuery.grep( elements, function( elem ) {
 		return ( core_indexOf.call( qualifier, elem ) >= 0 ) !== not;
 	});

@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>load()不支持冒泡</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+
+		$(function () {
+
+			// 原生中 load 是不支持冒泡的
+			$(window).on("load", function () {});
+
+			$("img").on("load", function () {});
+
+			$("img").trigger("load");
+
+			// 在 jQuery 源码中对应的就是 special: { load: { noBubble: true }
+
+		});
+
+	</script>
+</head>
+
+<body>
+
+</body>
+</html>

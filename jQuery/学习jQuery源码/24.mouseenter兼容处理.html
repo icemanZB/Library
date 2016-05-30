@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>focus()不支持冒泡</title>
+	<style>
+		#div1 { width: 200px; height: 200px; background: red; }
+
+		#div2 { width: 100px; height: 100px; background: yellow; }
+	</style>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+		window.onload = function () {
+			var oDiv1 = document.getElementById("div1");
+			var oDiv2 = document.getElementById("div2");
+			var oSpan1 = document.getElementById("span1");
+			oDiv1.onmouseover = function (ev) {
+				var oEvent = ev || window.event;
+				var a = this;
+				var b = oEvent.relatedTarget;  // 操作前鼠标所在的元素
+				// 通过这个判断模拟出 mouseenter 和 mouseleave 的效果
+				if (!elContains(a, b) && a != b) {
+					oSpan1.innerHTML += "1";
+				}
+			};
+			oDiv1.onmouseout = function (ev) {
+				var oEvent = ev || window.event;
+				var a = this;
+				var b = oEvent.relatedTarget;
+				if (!elContains(a, b) && a != b) {
+					oSpan1.innerHTML += "2";
+				}
+			};
+		};
+		// 两个元素是否是嵌套关系
+		function elContains(a, b) {
+			return a.contains ? a != b && a.contains(b) : !!(a.compareDocumentPosition(b) & 16);
+		}
+
+	</script>
+</head>
+
+<body>
+<div id="div1">
+	<div id="div2"></div>
+</div>
+<span id="span1">11111111111</span>
+</body>
+</html>
