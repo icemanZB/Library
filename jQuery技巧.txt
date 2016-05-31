@@ -81,17 +81,17 @@ $.fn.clearFields = $.fn.clearInputs = function(includeHidden) {
 keyup() 事件能在用户每次松开按键时触发，focus 事件能在元素得到焦点触发
 trigger("blur") 不仅会触发为元素绑定的 blur 事件，也会触发浏览器默认的 blur 事件，既不能将光标定位到文本框上，
 而 triggerHandler('blur') 只会触发为元素绑定的 blur 事件，而不会触发浏览器默认 blur 事件
-$('form :input').blur(function(){
+$("form :input").blur(function(){
     // 失去焦点处理函数 ..
 }).keyup(function(){
-   $(this).triggerHandler('blur');
+   $(this).triggerHandler("blur");
 }).focus(function(){
-  $(this).triggerHandler('blur');
+  $(this).triggerHandler("blur");
 });
 
 
 11、 substring()  应用
-var imgSrc='images/pro_img/blue_one.jpg';
+var imgSrc="images/pro_img/blue_one.jpg";
 var i = imgSrc.lastIndexOf(".");  // 23
 var unit = imgSrc.substring(i); // .jpg
 imgSrc = imgSrc.substring(0, i); //  images/pro_img/blue_one
@@ -112,14 +112,11 @@ var imgSrc_big = imgSrc + "_big" + unit;
 
 trigger 用法找下
 
-$('#span1').on('hide',function(){
+$("#span1").on("hide",function(){
 		alert(3);
 });
-$('#span1').on('hide',function(){
+$("#span1").on("hide",function(){
     alert(4);
 });
 
-$('#span1').trigger('hide');
-
-
-trigger()、add() 研究下
+$("#span1").trigger("hide");

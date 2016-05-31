@@ -43,14 +43,26 @@ General的设置
 左边空隙（行号，断点）：Gutter background
 选中的文本背景色：Selection background
 选中的文本前景色：Selection foreground
+括号匹配：Font->General->Matched brace
 injected language fragment 背景颜色去掉，就是<!--[if IE 6]><![endif]--> 这样注释的背景色
 
 快捷键
 F2 或Shift+F2	高亮错误或警告快速定位
 
-选中文本，按Ctrl+Shift+F7	高亮显示所有该文本，按Esc高亮消失
+选中文本，按 Ctrl+Shift+F7	 高亮显示所有该文本，按 Esc 高亮消失
 
-勾选上图中的Use Soft Wraps就启用了WebStorm的自动换行的功能，即过长的代码行不会超出屏幕，不会出现横向的滚动条
+Ctrl + P：Parameter info (within method call arguments) 参数信息 包括方法调用参数
+
+Ctrl + Space：Basic code completion (the name of any class, method or variable) 基本代码完成 ( 任何类、函数或者变量名称 )，改为 Alt + .
+
+Alt + Enter：Show intention actions and quick-fixes 意图行动，快速见效
+
+alt+←/→	alt+←/→	切换代码选项卡
+
+勾选上图中的 Use Soft Wraps 就启用了 WebStorm 的自动换行的功能，即过长的代码行不会超出屏幕，不会出现横向的滚动条
+
+添加项目，默认情况下一次只能打开一个项目，如果需要打开多个就按照下面的方法
+File -> settings -> Directories -> Add Content Root 中添加你需要的工程目录。
 
 file status
 added  git add 文件的颜色 #629755
@@ -65,6 +77,8 @@ modify in not active changelist  #6897BB
 webstrom 搜索encoding 设置创建的文件格式为utf-8
 webstrom css->other->keep single-line blocks css保持显示一行 code style css
          css->appearance->show css color
+
+注释在行首而不是紧接着代码？Code Style > Javascript > Wrapping and Braces > comment at first column 取消勾选
 
 Reformat Code  格式化代码
 

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>add()</title>
+	<script src="js/jquery-2.0.2.js"></script>
+	<script>
+		$(function () {
+			// add() 方法把元素添加到已存在的元素组合中。该方法把元素添加到整个文档上，如果规定了 context 参数则只添加到上下文元素内部。
+			$("p").add(document.getElementsByTagName("span")[0]).css("background-color", "yellow");
+		});
+	</script>
+</head>
+<body>
+
+<p>A p element.</p>
+<p>Another p element.</p>
+
+<span>A span element.</span>
+<span>A span element.</span><br><br>
+
+<div>This example adds the same css style for the first span element (index 0), as the existing p elements.</div>
+
+</body>
+</html>

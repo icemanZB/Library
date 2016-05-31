@@ -1,6 +1,6 @@
 js 获取 obj.scrollTop  ==>    $("#obj").scrollTop()
 
-js 获取元素的高度(padding + clientHeight + 滚动条) obj.offsetHeight (获取不到隐藏元素的值，也不包括 margin)  ==>   $("#obj").prop("offsetHeight")、$("#obj").outerHeight() jQuery 可以
+js 获取元素的高度(padding + clientHeight + border) obj.offsetHeight (获取不到隐藏元素的值，也不包括 margin)  ==>   $("#obj").prop("offsetHeight")、$("#obj").outerHeight() jQuery 可以
 
 js 获取可视区的高度 document.getElementById("div1").clientHeight  ==>  $("#obj").innerHeight()
 
@@ -23,3 +23,5 @@ js document.documentElement.clientHeight || document.body.clientHeight() ==> $(w
 js  document.documentElement.scrollHeight || document.body.scrollHeight ==> $(document).height() 在没有滚动条的时候是一样的(有兼容问题)，有滚动条的时候会加上滚动条的高度，也就是整个文档的高度
 
 js obj.scrollHeight，计算方式 ：scrollHeight = topPadding + bottomPadding + 内容的高度( div 的实际的高度，由里面的文字来决定，overflow:scroll )
+
+scrollTop >= $(window).height() - $(document).height() 说明滚动到底部了

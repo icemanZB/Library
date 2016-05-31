@@ -16,10 +16,13 @@
 			// 返回元素的完整的高度和宽度，以像素为单位。当一个元素拥有滚动条时( 比如由于 CSS 的 overflow:scroll 属性，如果为hidden，得到的只是能显示文字所能看到的高度)
 			// 136 = ( div 的实际的高度，由里面的文字来决定，overflow:scroll ) + padding
 			// 如果 overflow：hidden，就只有 136，其它的被隐藏了
-			//	如果去调 overflow，就是 131，为什么 overflow:scroll 却等于 136 呢？因为还包含了滚动条的高度
+			// 如果去调 overflow，就是 131，为什么 overflow:scroll 却等于 136 呢？因为还包含了滚动条的高度
 			console.log(document.getElementById("t1").scrollHeight);  // 没有滚动条时和 offsetHeight 值是相同的，136
 			console.log(document.getElementById("t1").offsetHeight);  // 114 = clientHeight(91) + 滚动条 + 3
 		};
+
+
+
 	</script>
 
 </head>
@@ -31,7 +34,7 @@
 	asddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsad
 	asddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsad
 	asddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsad
-	asddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsad
+	asddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdnsad
 	asddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsad
 	asddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsadasddasdadasdasdasdasdsad
 </div>
