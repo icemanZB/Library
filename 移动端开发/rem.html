@@ -2,30 +2,76 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta content="telephone=no" name="format-detection" />
 	<title>rem</title>
 	<style>
-		/*
-		 * 给手机设置 100px 的字体大小; 对于 320px 的手机匹配是 100px，其他手机都是等比例匹配;
-		 * 因此设计稿上是多少像素的话，那么转换为 rem 的时候，rem = 设计稿的像素/100 即可;
-		 */
-		html { font-size: 100px; }
+		/*html { font-size: 62.5%; } 10 ÷ 16 × 100% = 62.5% / 10px = 1rem 10px chrome 不兼容 */
+		/*解决办法*/
+		html { font-size: 625%; }
 
-		@media (min-width: 320px) {
-			html { font-size: 100px; }
+		body { font-size: 0.16rem; /*0.16rem => 16px*/ }
+
+		p {
+			/*1rem => 100px*/
+			padding: 1rem;
+			background: #AAA;
+			font-size: 0.24rem;
 		}
 
-		@media (min-width: 360px) {
-			html { font-size: 112.5px; }
-		}
-
-		@media (min-width: 400px) {
-			html { font-size: 125px; }
-		}
-
-		@media (min-width: 640px) {
-			html { font-size: 200px; }
+		div {
+			width: 3.2rem;
+			height: 3.2rem;
+			background: red;
 		}
 	</style>
+	<script>
+		// 基于 html font-size:20px; 和 设计稿是 640 做的兼容： 1rem => 20px；那么设计稿量出来是 640px 的话，640px => 64/2 = 32rem，在移动端显示的话就是 16rem
+		// 实际项目不可以设置成 font-size: 62.5%; 因为 chrome 不支持小于 12px 的字体，计算小于 12px 的时候，会默认取 12px 去计算，导致 chrome 的 rem 计算不准确
+		//		(function (doc, win) {
+		//			var docEl     = doc.documentElement,
+		//			    resizeEvt = "orientationchange" in window ? "orientationchange" : "resize",
+		//			    recalc    = function () {
+		//				    var clientWidth = docEl.clientWidth;
+		//				    if (!clientWidth) return;
+		//				    docEl.style.fontSize = 20 * (clientWidth / 320) + "px";
+		//			    };
+		//
+		//			if (!doc.addEventListener) return;
+		//			win.addEventListener(resizeEvt, recalc, false);
+		//			doc.addEventListener("DOMContentLoaded", recalc, false);
+		//		})(document, window);
+
+		// 基于 html font-size:100px; 和 设计稿是 640 做的兼容： 100px => 1rem; 那么设计稿量出来是 640px 的话，换成 rem 就是 6.4rem; 在移动端显示的就是 6.4/2 =3.2rem
+		//		(function (doc, win) {
+		//			var docEl     = doc.documentElement,
+		//			    resizeEvt = "orientationchange" in window ? "orientationchange" : "resize",
+		//			    recalc    = function () {
+		//				    var clientWidth = docEl.clientWidth;
+		//				    if (!clientWidth) return;
+		//				    docEl.style.fontSize = 100 * (clientWidth / 320) + "px";
+		//			    };
+		//
+		//			if (!doc.addEventListener) return;
+		//			win.addEventListener(resizeEvt, recalc, false);
+		//			doc.addEventListener("DOMContentLoaded", recalc, false);
+		//		})(document, window);
+
+		// document.documentElement.style.fontSize = window.innerWidth / 3.75 + "px";
+		//  基于 iphone 6，设计稿是 750 计算的 1rem => 100px，那么设计稿量出来是 750px 的话，那么换成 rem 就是 3.75rem
+		// 为了方便计算，设计稿量出来直接 / 100 就好  window.innerWidth / 3.75 / 2 + "px";
+	</script>
 </head>
-<body></body>
+<body>
+<div></div>
+<h2>这里是测试文本</h2>
+<p>这里是测试文本p</p>
+http://web.jobbole.com/84113/ REM 的精度问题
+http://isux.tencent.com/web-app-rem.html
+https://www.zhihu.com/question/21504656
+「rem」是指根元素（root element，html）的字体大小
+http://stackoverflow.com/questions/20099844/chrome-not-respecting-rem-font-size-on-body-tag
+http://techably.com/chrome-font-size-bug-fix/11996/
+http://www.520ued.com/article/53e98eafbb16a74c41b5de77
+</body>
 </html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="format-detection" content="telephone=no" />
+	<title>jquery.iscroll.plugin</title>
+	<!-- rem 计算有精度问题，所以用到 iScroll 的轮播图插件的话，就引入这个媒体查询的文件 -->
+	<link type="text/css" rel="stylesheet" href="css/media.css" />
+	<link type="text/css" rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<section class="container">
+	<div class="product-intro">
+		<div class="product-pic">
+			<div class="swiper" id="SwiperImg" >
+				<ul class="clearfix">
+					<li class="loading"><img src="" data-src="images/product.jpg" /></li>
+					<li class="loading"><img src="" data-src="images/product.jpg" /></li>
+					<li class="loading"><img src="" data-src="images/product.jpg" /></li>
+					<li class="loading"><img src="" data-src="images/product.jpg" /></li>
+					<li class="loading"><img src="" data-src="images/product.jpg" /></li>
+				</ul>
+				<!--<div class="pager">
+					<a href="#" class="">1</a><a href="#" class="">2</a><a href="#" class="">3</a><a href="#" class="current">4</a><a href="#" class="">5</a>
+				</div>-->
+			</div>
+		</div>
+	</div>
+</section>
+
+<script type="text/javascript" src="js/jquery-2.2.3.js"></script>
+<script type="text/javascript" src="js/iscroll.js"></script>
+<script type="text/javascript" src="js/iscroll.plugin.js"></script>
+
+<script>
+	$(function () {
+		// 滑动
+		$("#SwiperImg").iScroll({
+			hScroll    : true,
+			vScroll    : false,
+			hScrollbar : false,
+			vScrollbar : false,
+			bounce     : false,
+			momentum   : false,
+			snap       : true,
+			pager      : true,
+			onScrollEnd: function () {
+				var $item = $(this.scroller).children().eq(this.currPageX);
+				var $img = $item.find("img");
+				if ($item.hasClass("loading") && !$item.data("swiped")) {
+					$item.data("swiped", true);
+					$img.one("load", function () {
+						$item.removeClass("loading");
+					}).attr("src", $img.data("src"));
+				}
+			}
+			// .data("iScroll").scrollToPage(0, 0); 默认显示第一张( 滚动到第一张 )
+		}).data("iScroll").scrollToPage(0, 0);
+	});
+</script>
+</body>
+</html>

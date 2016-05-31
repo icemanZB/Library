@@ -55,7 +55,7 @@
 			// 获取上面变量 date 的 "年 月"，在生成新的 date 指向这个年的月份的第一天
 
 			date = new Date(date.getFullYear(), date.getMonth());
-
+			
 			// console.log(date);  // Sun May 01 2016 星期天 五月 1号
 
 			this.minDate = $.calendar.parseDate(opts.minDate);

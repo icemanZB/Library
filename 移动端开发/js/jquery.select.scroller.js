@@ -1,16 +1,10 @@
 ﻿(function ($) {
 
 	// 重写 _resize 方法，修复 bug
-
 	!iScroll.prototype._resize_fix && $.extend(iScroll.prototype, {
 		_resize_fix: iScroll.prototype._resize,
 		_resize    : function () {
 			if ($(this.wrapper).is(":visible")) {
-				// 当某个元素隐藏的时候，iScroll 计算高度是有问题的
-				// 场景用在 tab 切换的时候，切到另外个tab，然后再切换回来就会有错乱的情况，因为之前的 tab 已经被隐藏了，高度计算就有问题
-				// 这里当显示的时候，在重新计算一下高度 refresh()，等于手动调用内部方法 _resize()
-				// 具体项目在 E:\project\js\Trunk\商城\webapp\list1.html 看看
-				// iScroll 必须研究下
 				this._resize_fix();
 			}
 		}

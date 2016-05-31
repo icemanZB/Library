@@ -1,0 +1,399 @@
+@charset "utf-8";
+
+body {
+	padding: 0; margin: 0;
+	background: #EFEFEF;
+	font-family: "Arial";
+	-webkit-text-size-adjust: 100%;
+}
+
+a { text-decoration: none; }
+
+table { border-spacing: 0; }
+
+img { border: none; }
+
+.icon {
+	background: url(../images/icon.png) no-repeat;
+}
+
+.icons {
+	background: url(../images/icons.png) no-repeat;
+}
+
+em, i { font-style: normal; }
+
+dt, dd, ol, ul, li { list-style: none; margin: 0; padding: 0; }
+
+.clearfix:before, .clearfix:after { content: ""; display: table; }
+
+.clearfix:after { clear: both; overflow: hidden; }
+
+.clearfix { *zoom: 1; /* IE 6/7 */ }
+
+.font14 { font-size: 14px; }
+
+.red { color: #EB1212 !important; }
+
+.common-top {
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 10;
+	width: 100%;
+	background: #F8F8F8;
+	border-bottom: 1px solid #C3C5C9;
+	color: #FFF;
+	font-weight: bold;
+	text-align: center;
+}
+
+.common-top h2 {
+	color: #EB1212;
+	font: normal 0.3rem "Arial";
+}
+
+.common-top a {
+	position: absolute;
+}
+
+.common-top .back-step {
+	top: 0.04rem;
+	left: 0.1rem;
+	display: block;
+	width: 0.76rem;
+	height: 0.76rem;
+	background-position: 0.18rem -9.84rem;
+	background-size: 0.3rem;
+}
+
+.common-top .top-right {
+	top: 0;
+	right: 0.3rem;
+	line-height: 0.84rem;
+	font-size: 0.24rem;
+	font-weight: normal;
+}
+
+.group-menu {
+	position: fixed;
+	z-index: 10;
+	top: 1rem;
+	right: 0.1rem;
+	display: none;
+}
+
+.group-menu div {
+	background: rgba(51, 51, 51, 0.8);
+	border-radius: 0.1rem;
+}
+
+.group-menu ul {
+	width: 1.1rem;
+	padding: 0 0.1rem;
+}
+
+.group-menu ul li {
+	float: left;
+	width: 1.06rem;
+	padding: 0.08rem 0;
+	border-bottom: 1px solid #404040;
+	font-size: 0.24rem;
+}
+
+.group-menu ul li:nth-last-of-type(1) { border: none; }
+
+.group-menu li a {
+	display: block;
+	padding-bottom: 0.1rem;
+	color: #D9D9D9;
+	text-align: center;
+	overflow: hidden;
+}
+
+.group-menu li a span {
+	display: block;
+	height: 0.44rem;
+	background: url(../images/groupbuy-menu.png) no-repeat;
+	/* 小图标是 75*75 */
+	background-size: 1.6rem auto;
+}
+
+.group-menu .current a {
+	background: rgba(183, 11, 11, 0.85);
+	border-radius: 0.08rem;
+	color: #FFF;
+}
+
+.group-menu .item1 { background-position: 0.26rem 0; }
+
+.group-menu .item2 { background-position: 0.26rem -0.85rem; }
+
+.group-menu .item3 { background-position: 0.26rem -1.7rem; }
+
+.group-menu .item4 { background-position: 0.26rem -2.55rem; }
+
+.group-menu .item5 { background-position: 0.26rem -3.3rem; }
+
+.group-menu .item6 { background-position: 0.26rem -4.15rem; }
+
+.group-menu .item7 { background-position: 0.26rem -4.95rem; }
+
+.group-menu .item8 { background-position: 0.26rem -5.78rem; }
+
+.group-menu .current .item1 { background-position: -0.76rem 0; }
+
+.group-menu .current .item2 { background-position: -0.76rem -0.85rem; }
+
+.group-menu .current .item3 { background-position: -0.76rem -1.7rem; }
+
+.group-menu .current .item4 { background-position: -0.76rem -2.55rem; }
+
+.group-menu .current .item5 { background-position: -0.76rem -3.3rem; }
+
+.group-menu .current .item6 { background-position: -0.76rem -4.15rem; }
+
+.group-menu .current .item7 { background-position: -0.76rem -4.95rem; }
+
+.group-menu .current .item8 { background-position: -0.76rem -5.78rem; }
+
+.group-menu .arrow-top {
+	border: 8px solid transparent; border-bottom-color: rgba(51, 51, 51, 0.8);
+	margin: 0 0 0 -8px;
+	position: absolute;
+	top: -16px;
+	left: 50%;
+}
+
+.container { padding-top: 0.86rem; }
+
+.group-buy-list { padding: 10px; }
+
+.group-buy-item {
+	float: left;
+	width: 50%;
+	margin-bottom: 0.12rem;
+}
+
+.group-buy-item .item-detail {
+	margin-right: 0.06rem;
+	padding: 0.16rem;
+	background: #FFF;
+	border: 1px solid #D5D3D3;
+	border-radius: 0.1rem;
+}
+
+.group-buy-item:nth-of-type(even) { float: right; }
+
+.group-buy-item:nth-of-type(even) .item-detail { margin: 0 0 0 0.06rem; }
+
+.item-detail img {
+	display: block;
+	margin: 0 auto 0.1rem;
+	width: 100%;
+}
+
+.item-detail h4 {
+	margin: 0 auto;
+	height: 0.68rem;
+	font: normal 0.24rem/0.32rem "Arial";
+}
+
+.item-detail p {
+	margin: 0 auto;
+	width: 100%;
+	height: 0.3rem;
+	font-size: 0.24rem;
+	color: #9F9F9F;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.item-detail .price {
+	margin: 0.08rem 0 0.04rem 0;
+	color: #9F9F9F;
+	font-size: 0.4rem;
+}
+
+.item-detail .price em {
+	color: #333;
+	vertical-align: middle;
+}
+
+.item-detail .price font { vertical-align: middle; }
+
+.item-detail .price span {
+	display: inline-block;
+	padding: 0 0.08rem;
+	line-height: 0.32rem;
+	background: #DB2B15;
+	border-radius: 0.2rem;
+	color: #FFF;
+	font-size: 0.24rem;
+	vertical-align: middle;
+}
+
+.overlay-nosale {
+	position: relative;
+}
+
+.overlay-nosale dl {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	padding: 0.16rem 0.16rem 0;
+	margin: -0.16rem 0 0 -0.16rem;
+	background-color: rgba(0, 0, 0, 0.3);
+	border-radius: 4px 4px 0 0;
+}
+
+/* 水平垂直居中 */
+.overlay-nosale dd {
+	width: 100%;
+	height: 100%;
+	display: table;
+}
+
+.overlay-nosale dd span {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 0.32rem;
+	color: #FFF;
+}
+
+/****************************** 图片轮播 ******************************/
+
+.product-intro {
+	margin: 0 auto;
+	width: 12rem;
+}
+
+.product-pic .swiper li {
+	width: 12rem;
+	height: 12rem;
+	float: left;
+	background-color: #FFF;
+}
+
+.product-intro .product-pic img {
+	width: 100%;
+	height: auto;
+	max-height: 600px;
+}
+
+.product-pic .swiper {
+	width: 12rem;
+	height: 12rem;
+	position: relative;
+	border: 1px solid #CCC;
+	border-radius: 0.2rem;
+}
+
+.pager {
+	position: absolute;
+	z-index: 8;
+	left: 0;
+	bottom: 0.8rem;
+	width: 100%;
+	text-align: center;
+	font-size: 0;
+}
+
+.pager a {
+	width: 0.32rem;
+	height: 0.32rem;
+	margin: 0 0.2rem;
+	background-color: #D9D9D9;
+	border-radius: 0.32rem;
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+}
+
+.pager .current {
+	background-color: #EC3F3F;
+}
+
+/****************************** loading动画 ******************************/
+.loading-png {
+	position: relative;
+	margin: 0 auto;
+	width: 0.9rem;
+	height: 0.9rem;
+	line-height: 0.8rem;
+	font-size: 0.24rem;
+	color: #999;
+	text-align: center;
+}
+
+.loading-png .loading-pic {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 0.9rem;
+	height: 0.9rem;
+	background: transparent url(../images/loading.png) no-repeat 0 0;
+	background-size: 0.9rem auto;
+}
+
+.loading-png .loading-pic,
+.loading.global em {
+	-webkit-transition-property: -webkit-transform;
+	-moz-transition-property: -moz-transform;
+	-webkit-animation: rotate 1.3s linear infinite;
+	-moz-animation: rotate 1.3s linear infinite;
+	-o-animation: rotate 1.3s linear infinite;
+	animation: rotate 1.3s linear infinite;
+}
+
+@-webkit-keyframes rotate {
+	from { -webkit-transform: rotate(0deg) }
+	to { -webkit-transform: rotate(360deg) }
+}
+
+@-moz-keyframes rotate {
+	from { -moz-transform: rotate(0deg) }
+	to { -moz-transform: rotate(359deg) }
+}
+
+@-o-keyframes rotate {
+	from { -o-transform: rotate(0deg) }
+	to { -o-transform: rotate(359deg) }
+}
+
+@keyframes rotate {
+	from { transform: rotate(0deg) }
+	to { transform: rotate(359deg) }
+}
+
+.loading.global {
+	margin: 0.1rem auto;
+	background: none;
+	color: #9F9F9F;
+	font-size: 0.14rem;
+	text-align: center;
+}
+
+.loading.global em {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0 0.1rem;
+	width: 0.36rem;
+	height: 0.36rem;
+	background: transparent url(../images/loading-gray.png) no-repeat;
+	background-size: 100%;
+}
+
+/*
+ * .loading.global 样式等级要高于 .loading
+ * 如果是 <div class="loading global"></div> 就会拿 .loading.global 的样式，如果是 <div class="loading"></div> 就会拿 .loading 样式
+ */
+.loading {
+	background: url(../images/loading.gif) no-repeat center center;
+}
+
+.loading img {
+	display: none;
+}

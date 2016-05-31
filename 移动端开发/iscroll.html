@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="format-detection" content="telephone=no" />
+	<title>iscroll</title>
+	<link type="text/css" rel="stylesheet" href="css/style.css" />
+	<script>
+		(function (doc, win) {
+			var docEl     = doc.documentElement,
+			    resizeEvt = "orientationchange" in window ? "orientationchange" : "resize",
+			    recalc    = function () {
+				    var clientWidth = docEl.clientWidth;
+				    if (!clientWidth) return;
+				    docEl.style.fontSize = 100 * (clientWidth / 640) + "px";
+			    };
+			recalc();
+			if (!doc.addEventListener) return;
+			win.addEventListener(resizeEvt, recalc, false);
+		})(document, window);
+	</script>
+</head>
+
+<body class="white-bg">
+<div>
+	<header class="common-top">
+		<h2>聚便宜</h2>
+		<a class="icon back-step" href="#"></a>
+		<a class="top-right red" href="#" id="category-link">商品分类</a>
+	</header>
+	<div class="group-menu" id="category">
+		<div>
+			<ul class="clearfix">
+				<li class="current"><a href="?category=1"><span class="item1"></span>所有商品</a></li>
+				<li><a href="?category=2"><span class="item2"></span>手机数码</a></li>
+				<li><a href="?category=3"><span class="item3"></span>电脑城</a></li>
+				<li><a href="?category=4"><span class="item4"></span>家用电器</a></li>
+				<li><a href="?category=5"><span class="item5"></span>家居百货</a></li>
+				<li><a href="?category=6"><span class="item6"></span>时尚男女</a></li>
+				<li><a href="?category=7"><span class="item7"></span>奢侈品</a></li>
+				<li><a href="?category=8"><span class="item8"></span>服饰/饮食/母婴</a></li>
+			</ul>
+		</div>
+		<span class="arrow-top"></span>
+	</div>
+
+	<section class="container">
+		<div class="group-buy-list clearfix" id="product-list" data-page-count="3">
+			<div class="group-buy-item">
+				<div class="item-detail">
+					<div class="overlay-nosale">
+						<dl>
+							<dd>
+								<span>已售罄</span>
+							</dd>
+						</dl>
+						<img src="images/product2.jpg">
+					</div>
+					<h4>SK-II 环采臻皙钻白小灯泡套组!</h4>
+					<p>已售4000</p>
+					<div class="price"><em>355.</em><font>00</font> <span>x10期</span></div>
+					<p>总价：2499.00元</p>
+				</div>
+			</div>
+			<div class="group-buy-item">
+				<div class="item-detail">
+					<img src="images/product2.jpg">
+					<h4>环臻皙钻白小灯泡套组!</h4>
+					<p>已售4000</p>
+					<div class="price"><em>355.</em><font>00</font> <span>x36期</span></div>
+					<p>总价：2499.00元</p>
+				</div>
+			</div>
+			<div class="group-buy-item">
+				<div class="item-detail">
+					<img src="images/product2.jpg">
+					<h4>SK-II 环采臻皙钻白小灯泡套组!</h4>
+					<p>已售4000</p>
+					<div class="price"><em>7355.</em><font>00</font> <span>x10期</span></div>
+					<p>总价：2499.00元</p>
+				</div>
+			</div>
+			<div class="group-buy-item">
+				<div class="item-detail">
+					<img src="images/product2.jpg">
+					<h4>SK-II 环采臻皙钻白小灯泡套组!</h4>
+					<p>已售4000</p>
+					<div class="price"><em>11355.</em><font>00</font> <span>x10期</span></div>
+					<p>总价：2499.00元</p>
+				</div>
+			</div>
+			<div class="group-buy-item">
+				<div class="item-detail">
+					<img src="images/product2.jpg">
+					<h4>SK-II 环采臻皙钻白小灯泡套组!</h4>
+					<p>已售4000</p>
+					<div class="price"><em>355.</em><font>00</font> <span>x10期</span></div>
+					<p>总价：2499.00元</p>
+				</div>
+			</div>
+			<div class="group-buy-item">
+				<div class="item-detail">
+					<img src="images/product2.jpg">
+					<h4>SK-II 环采臻皙钻白小灯泡套组!</h4>
+					<p>已售4000</p>
+					<div class="price"><em>355.</em><font>00</font> <span>x10期</span></div>
+					<p>总价：2499.00元</p>
+				</div>
+			</div>
+
+		</div>
+	</section>
+</div>
+
+</body>
+</html>
+
+<script src="js/jquery-2.2.3.js"></script>
+<script src="js/iscroll-4.1.9.min.js"></script>
+<script>
+
+	function loadImg(img) {
+		var $img = $(img);
+		var src = $img.attr("data-src");
+		if (src) {
+			$img.attr("src", src).removeAttr("data-src");
+		}
+	}
+
+	$(function () {
+
+		var $category = $("#category");
+
+		$("img").each(function () {
+			loadImg(this);
+		});
+
+		$('#category-link').click(function () {
+			$category.toggle();
+			resetCategory();
+			return false;
+		});
+
+		$(window).bind("scroll", function () {
+			$category.hide();
+		});
+
+		$("#product-list").bind("touchmove", function () {
+			$category.hide();
+		});
+
+		$category.on("click", "a", function () {
+			var $li = $(this).parent();
+			$li.addClass("current").siblings().removeClass("current");
+			return false;
+		});
+
+		$(window).resize(function () {
+			resetCategory();
+		});
+
+		function resetCategory() {
+
+			if ($category.css("display") == "none" || $("body").hasClass("nofixed")) {
+				return;
+			}
+
+			var height = $(window).height() - (parseInt($category.css("top")) || 0);  // 处理横屏
+
+			var $div = $category.find("div");
+
+			// 由于横屏竖屏的rem会变动，所以先设置自适应高度，然后再获取
+			height = Math.min(height, $div.height("auto").height());
+
+			$div.css("height", height);
+
+			var iscroll = $div.data("iScroll");
+			if (iscroll) {
+				iscroll.refresh();
+			} else {
+				iscroll = new iScroll($div[0], {
+					hScroll   : false,
+					vScroll   : true,
+					hScrollbar: false,
+					vScrollbar: true,
+					bounce    : true,
+					momentum  : true,
+					snap      : "li"
+				});
+
+				$div.data("iScroll", iscroll);
+
+			}
+
+			$(iscroll.vScrollbarWrapper).css({width: 3}).children().css({
+				border    : 0,
+				background: "rgba(0, 0, 0, 0.6)"
+			});
+		}
+
+	});
+</script>
