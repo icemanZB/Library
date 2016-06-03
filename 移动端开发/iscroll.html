@@ -119,7 +119,73 @@
 <script src="js/jquery-2.2.3.js"></script>
 <script src="js/iscroll-4.1.9.min.js"></script>
 <script>
-
+	/*
+	 *  hScroll：是否允许水平滚动                 默认值：true
+	 *  vScroll：是否允许垂直滚动                 默认值：true
+	 *  bounce：是否超过实际位置反弹               默认值：true
+	 *  bounceLock：当内容少于滚动是否可以反弹      默认值：true
+	 *  momentum：是否开启拖动惯性                默认值：false
+	 * lockDirection：当水平或垂直拖动时是否锁定另一边的拖动        默认值：true
+	 * useTransform：是否使用CSS变形             默认值：true
+	 * useTransition：是否使用CSS变换            默认值：false
+	 * checkDOMChanges：是否自动检测内容变化      默认值：false
+	 * topOffset：已经滚动的基准值(一般用在拖动刷新)              默认值：0
+	 * x：滚动水平初始位置(负值)               	默认值：0
+	 * y：滚动垂直初始位置（负值）	            默认值：0
+	 *
+	 *
+	 *                  Scrollbar 的相关参数
+	 * hScrollbar：是否显示水平滚动条             默认值：true
+	 * vScrollbar：是否显示垂直滚动条             默认值：true
+	 * fixedScrollbar：在 iOS 系统上，当元素拖动超出了 scroller 的边界时，滚动条会收缩，设置为 true 可以禁止滚动条超出 scroller 的可见区域。	默认在 Android 上为 true， iOS 上为 false
+	 * hideScrollbar：是否隐藏滚动条             默认在 Android 上为 false， iOS 上为 true
+	 * fadeScrollbar：滚动条是否渐隐渐显	      默认在 Android 上为 false， iOS 上为 true
+	 * scrollbarClass：字定义滚动条的样式名，自定义 class
+	 *
+	 *
+	 *                  Zoom 放大相关的参数
+	 * zoom：是否放大            	    默认值：false
+	 * zoomMin：放大的最小倍数	        默认值：1
+	 * zoomMax：放大的最大倍数	        默认值：4
+	 * doubleTapZoom：双击放大倍数	    默认值：2
+	 * wheelAction：鼠标滚动行为 ( 还可以是 zoom )	none 不支持 "scroll" 鼠标滚动 "zoom" 鼠标缩放 "scroll"
+	 *
+	 *
+	 *                  snap 捕捉元素相关的参数
+	 * snap	是否开启捕捉元素，snap 值可以为 true 或是 DOM 元素的 tagname，当为true 时，捕捉的元素会根据可滚动的位置和滚动区域计算得到可滑动几页。如果为 tagname，则滑动会对齐到捕捉的元素上
+	 * snapThreshold：滑动的长度限制，只有大于这个距离才会触发捕捉元素事件
+	 *
+	 *
+	 *                 自定义 Events 的相关参数
+	 * onBeforeScrollStart：开始滚动前的事件回调，默认是阻止浏览器默认行为 null 不设置         默认值：function (e) { e.preventDefault(); }
+	 * Function 自定义函数
+	 * onRefresh：refresh 的回调
+	 * onScrollStart：开始滚动的回调
+	 * onBeforeScrollMove：在内容移动前的回调
+	 * onScrollMove：内容移动的回调
+	 * onBeforeScrollEnd：在滚动结束前的回调
+	 * onScrollEnd：在滚动完成后的回调
+	 * onTouchEnd：手离开屏幕后的回调
+	 * onDestroy：销毁实例的回调
+	 * onZoomStart：放大开始时的回调
+	 * onZoom：放大的回调
+	 * onZoomEnd：放大结束后的回调
+	 *
+	 *
+	 *                 iScroll 方法API
+	 * destroy：销毁你实例化的 iScroll 实例，包括之前绑定的所有 iscroll 事件。
+	 * refresh：这个方法非常有用，当你的滚动区域的内容发生改变或是滚动区域不正确，都用通过调用 refresh 来使得 iscroll 重新计算滚动的区域，包括滚动条，让 iscroll 适应当前的 DOM
+	 * scrollTo：这个方法接受 4 个参数 x, y, time, relative；x 为移动的 x 轴坐标，y 为移动的 y 轴坐标, time 为移动时间，relative 表示是否相对当前位置
+	 * scrollToElement：这个方法实际上是对 scrollTo 的进一步封装，接受两个参数 (el,time)，el 为需要滚动到的元素引用，time 为滚动时间
+	 * scrollToPage：此方法接受三个参数 (pageX,pageY,time)，当滚动内容的高宽大于滚动范围时，iscroll 会自动分页
+	 *               然后就能使用 scrollToPage 方法滚动到页面。当然，当 hscroll 为 false 的时候，不能左右滚动。pageX 这个参数就失去效果
+	 * disable：调用这个方法会立即停止动画滚动，并且把滚动位置还原成 0，取消绑定 touchmove, touchend、touchcancel 事件
+	 * enable：调用这个方法，使得 iscroll 恢复默认正常状态
+	 * stop：立即停止动画
+	 * zoom：改变内容的大小倍数，此方法接受 4 个参数 (x,y,scale,time)，分别表示的意思为：放大的基准坐标、以及放大倍数、动画时间
+	 * isReady：当 iscroll 没有处于正在滚动，没有移动过，没有改变大小时，此值为 true
+	 *
+	 */
 	function loadImg(img) {
 		var $img = $(img);
 		var src = $img.attr("data-src");
