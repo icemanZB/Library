@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="format-detection" content="telephone=no" />
+	<title>marquee</title>
+	<link rel="stylesheet" href="css/tip.css">
+	<script>
+		(function (doc, win) {
+			var docEl     = doc.documentElement,
+			    resizeEvt = "orientationchange" in window ? "orientationchange" : "resize",
+			    recalc    = function () {
+				    var clientWidth = docEl.clientWidth;
+				    if (!clientWidth) return;
+				    docEl.style.fontSize = 20 * (clientWidth / 320) + "px";
+			    };
+
+			if (!doc.addEventListener) return;
+			win.addEventListener(resizeEvt, recalc, false);
+			doc.addEventListener("DOMContentLoaded", recalc, false);
+		})(document, window);
+	</script>
+</head>
+<body>
+<input id="btn1" value="按钮1" type="button" />
+<input id="btn2" value="ok" type="button" />
+<input id="btn3" value="confirm" type="button" />
+<input id="btn4" value="loading" type="button" />
+<input id="txt" value="请填写信息" type="text" />
+<div class="tipContent" id="Tip1" style="display: none;">
+	<div class="tipText tc">
+		<table align="center" class="floatTable">
+			<tbody>
+			<tr>
+				<th>经停城市：</th>
+				<td>太原</td>
+			</tr>
+			<tr>
+				<th>到达时间：</th>
+				<td>15:00</td>
+			</tr>
+			<tr>
+				<th>起飞时间：</th>
+				<td>17:00</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="btnContent tc">
+		<button type="button" class="confirmBtn" role="close">确 定</button>
+	</div>
+</div>
+<script type="text/javascript" src="js/jquery-2.2.3.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+
+<script>
+	$(function () {
+		$("#btn1").click(function(){
+			Common.Popup({content:$("#Tip1")});
+		});
+		$("#btn2").click(function(){
+			Common.Popup.ok("带有确定按钮的提示框");
+		});
+		$("#btn3").click(function(){
+			Common.Popup.confirm("确定删除吗？");
+		});
+		$("#txt").focus(function(){
+			Common.Popup.showTip({content: '<span>请填写信息</span>', autoClose: true});
+		});
+		$("#btn4").click(function(){
+			Common.Popup.showLoading("loading");
+		});
+
+	});
+</script>
+</body>
+</html>

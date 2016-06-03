@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="format-detection" content="telephone=no" />
+	<title>marquee</title>
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/marquee.css">
+	<script>
+		(function (doc, win) {
+			var docEl     = doc.documentElement,
+			    resizeEvt = "orientationchange" in window ? "orientationchange" : "resize",
+			    recalc    = function () {
+				    var clientWidth = docEl.clientWidth;
+				    if (!clientWidth) return;
+				    docEl.style.fontSize = 20 * (clientWidth / 320) + "px";
+			    };
+
+			if (!doc.addEventListener) return;
+			win.addEventListener(resizeEvt, recalc, false);
+			doc.addEventListener("DOMContentLoaded", recalc, false);
+		})(document, window);
+	</script>
+</head>
+<body>
+<div class="notice-float">
+	<span class="icons_w"></span>
+	<div class="notice-con marquee" id="Marquee">
+		<div class="roll-con">系统公告：受国庆长假影响，9月30日至10月7日起受国庆长假影响，9月30日至10月7日起受国庆长假影响。</div>
+	</div>
+</div>
+
+<script src="js/jquery-2.2.3.js"></script>
+<script>
+	$(function () {
+		var $Marquee = $("#Marquee");
+		var match = navigator.userAgent.match(/android ([0-9])/i);
+		if (match && match.length) {
+			var ver = parseInt(match.pop());
+			if (ver < 4) {
+				// 安卓 4.0 以下设备，使用原生 marquee 标签
+				$Marquee.html('<marquee>' + $Marquee.find('.roll-con').html() + '</marquee>');
+			}else{
+				marquee($Marquee.find(".roll-con"));
+			}
+		}
+
+		function marquee($div) {
+			var pwidth = $div.parent().width();
+			var swidth = $div.width();
+			$div.css("margin-left", pwidth);
+			function go() {
+				setTimeout(function () {
+					pwidth = pwidth - 1;
+					$div.css("margin-left", pwidth);
+					if (pwidth < -swidth) {
+						marquee($div);
+					} else {
+						go();
+					}
+				}, 15);
+			}
+
+			go();
+		}
+
+	});
+</script>
+</body>
+</html>

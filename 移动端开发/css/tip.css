@@ -1,0 +1,171 @@
+.popup {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 999;
+}
+
+.popup.modal {
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.tipContent {
+	width: 10rem;
+	padding: 0.75rem 0.5rem;
+	background: #EEE;
+	border: 1px solid #B7B7B7;
+	border-radius: 5px;
+}
+
+.tipContent .tipText {
+	color: #666;
+	font-size: 0.6rem;
+	line-height: 1.1rem;
+	padding: 0.15rem 0;
+	text-align: center;
+}
+
+ .tc{
+	text-align: center;
+}
+
+.floatTable {
+	width: 6.2rem;
+	color: #333;
+	font-size: 0.7rem;
+}
+
+.floatTable th {
+	padding-right: 0.1rem;
+	color: #666;
+	text-align: right;
+	font-weight: normal;
+}
+
+.floatTable td {
+	text-align: left;
+}
+
+.tipContent .btnContent {
+	margin: 0.55rem 0 0;
+	text-align: center;
+}
+
+.tipContent .tipBtn,
+.tipContent .confirmBtn {
+	width: 4rem;
+	height: 1.5rem;
+	border-radius: 0.8rem;
+	text-align: center;
+	font-size: 0.7rem;
+	font-family: "黑体";
+}
+
+.tipContent .tipBtn {
+	background: #FFF;
+	border: 1px solid #00ABF3;
+	color: #00ABF3;
+	margin-right: 0.5rem;
+}
+
+.tipContent .confirmBtn {
+	background: #00ABF3;
+	border: 1px solid #00ABF3;
+	color: #FFF;
+}
+
+.popup.modalTip { background-color: rgba(0, 0, 0, 0.1); }
+
+.filter-float {
+	width: 250px;
+	background: rgba(0, 0, 0, 0.7);
+	border: none; border-radius: 5px;
+}
+
+.filter-float .tipText {
+	color: #FFF;
+}
+
+.loading{
+	background:url(../images/loading.gif) no-repeat center center;
+}
+
+.tipContent .loading {
+	margin: 0.5rem 0;
+	font-size: 0.7rem;
+}
+
+.tipContent .tc .loading {
+	display: inline-block;
+	width: 2.5rem;
+	height: 1.75rem;
+	line-height: 1.75rem;
+	padding-left:1.8rem;
+	background-position: 0 center;
+}
+
+
+/*
+
+.tipContent .tipText h4 {
+	margin: 0 0 5px;
+	color: #333;
+	font-size: 14px;
+	font-weight: normal;
+}
+
+
+.tipText .listDecimal li { margin-left: 25px; line-height: 1.3em; }
+
+.tipTable { line-height: 18px; }
+
+.tipTable th { font-weight: normal; vertical-align: top; text-align: right; }
+
+.tipTable td { padding-bottom: 5px; }
+
+.warm-tip { margin: 25px 0 0; }
+
+.warm-tip p { margin: 5px 0; }
+
+.tipContent .close {
+	width: 16px; height: 16px; display: inline-block;
+	background-size: 100% auto; background-position: 0 -100px;
+}
+
+
+
+.succeedTip {
+	padding: 20px 0; text-align: center;
+}
+
+.succeedTip .font14 {
+	vertical-align: middle;
+}
+
+.limit-h {
+	max-height: 300px; overflow-y: auto;
+}
+
+.limit-h2 {
+	max-height: 250px; overflow-y: auto;
+}
+
+.limit-h3 {
+	max-height: 220px; overflow-y: auto;
+}
+
+.tipText h6 {
+	margin: 5px auto 0;
+	color: #333; font-size: 12px; font-weight: normal;
+}
+
+
+
+.tp-text {
+	padding: 10px 0;
+	color: #666; font-size: 12px; line-height: 20px;
+}
+
+*/

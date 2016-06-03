@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>geolocation</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta content="telephone=no" name="format-detection" />
+	<link rel="stylesheet" href="css/reset.css" />
+</head>
+<body>
+<a href="#" id="GetLocation">定位</a>
+<script src="js/jquery-2.2.3.js"></script>
+<script src="js/common.js"></script>
+<script src="js/geolocation.js"></script>
+<script>
+	$(function () {
+		$("#GetLocation").click(function () {
+			window["GetLocation"] && GetLocation(function (city) {
+				console.log(city);
+			});
+			return false;
+		});
+	});
+</script>
+</body>
+</html>

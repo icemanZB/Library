@@ -1,0 +1,38 @@
+.notice-float {
+	width: 100%;
+	height: 1.45rem;
+	background: #F8DD5F;
+	position: fixed;
+	top: 42px;
+	left: 0;
+	z-index: 2;
+}
+
+.icons_w {
+	position: absolute;
+	left: 0.5rem;
+	top: 0.35rem;
+	width: 1rem;
+	height: 1rem;
+	background: url(../images/icon_w30_white.png) no-repeat 0 -9.45rem;
+	background-size: 50%;
+}
+
+.notice-con {
+	margin-left: 1.5rem;
+}
+
+.notice-con .roll-con,
+.notice-con marquee {
+	line-height: 1.5rem;
+	color: #333;
+	font-size: 0.3rem;
+}
+
+.marquee .roll-con { white-space: nowrap; }
+
+.marquee { overflow: hidden; }
+
+.marquee marquee { display: block; margin: 0; }
+
+

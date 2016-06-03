@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>jquery.sorted</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta content="telephone=no" name="format-detection" />
+	<link rel="stylesheet" href="css/reset.css" />
+	<style>
+		.box { width: 50px; height: 50px; }
+	</style>
+</head>
+<body>
+<div class="container">
+	<div class="box" data-filter="3|0755|3.6|CA" data-time="0755" data-price="410" style="background: red">0755</div>
+	<div class="box" data-filter="3|0830|5.5|MU" data-time="0830" data-price="500" style="background: gray">0830</div>
+	<div class="box" data-filter="2|0900|6|HU" data-time="0900" data-price="880" style="background: green">0900</div>
+	<div class="box" data-filter="3|1020|8.5|MU" data-time="1020" data-price="740" style="background: rebeccapurple">1020</div>
+	<div class="box" data-filter="1|1245|9|MU" data-time="1245" data-price="1220" style="background: pink">1245</div>
+
+</div>
+<script src="js/jquery-2.2.3.js"></script>
+<script src="js/jquery.sorted.js"></script>
+
+<script>
+
+	$(function () {
+		doSort(true, "data-time");
+		function doSort(reversed, by) {
+			var $cont = $(".container");
+			var $list = $cont.children();
+			// by 重写了，覆盖内部的方法
+			$list.sorted({
+				reversed: reversed,
+				by      : function (elem) {
+					return parseFloat(elem.attr(by));
+				}
+			}).prependTo($cont);
+		}
+	});
+</script>
+</body>
+</html>
