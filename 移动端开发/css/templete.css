@@ -1,0 +1,81 @@
+.icon {
+	background: url(../images/sprite.png) no-repeat;
+}
+
+.icons {
+	background: url(../images/icon_w30.png) no-repeat;
+}
+
+.f-option {
+	margin: 0;
+	padding: 0 0.75rem;
+	background: #FFF;
+	border: 1px solid #D9D9D9;
+	border-right-style: none;
+	border-left-style: none;
+}
+
+.order-slt { margin: 0.5rem auto; }
+
+.order-slt-list li {
+	width: 100%;
+	padding: 0.5rem 0;
+	float: left;
+	line-height: 1rem;
+	border-top: 1px solid #D5D5D5;
+	font-size: 0.28rem;
+}
+
+.order-slt-list li:first-child { border: none; }
+
+.order-slt-list li span { float: left; }
+
+.order-slt-list li .name {
+	width: 35%;
+	line-height: 2rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	word-break: keep-all;
+}
+
+.select-icon{
+	width: 1rem;
+	height: 1rem;
+	display: inline-block;
+	margin-top: -0.1rem;
+	vertical-align: middle;
+	background-position: 0 -40.7rem;
+	background-size: 1rem;
+}
+
+.selected .select-icon{
+	background-position: 0 -31.2rem;
+}
+
+
+.order-slt-list li .slt-num {
+	width: 50%;
+	padding-left: 0.2rem;
+	color: #999;
+}
+
+
+.order-slt-list li .slt-op {
+	width: 10%;
+	text-align: right;
+	float: right;
+}
+
+.edit-icon{
+	width: 0.8rem;
+	height: 1.5rem;
+	display: inline-block;
+	margin-top: 0.2rem;
+	background-position: 0 -38rem;
+	background-size: 0.8rem auto;
+}
+
+
+
+

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="format-detection" content="telephone=no" />
+	<title>templete</title>
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/templete.css">
+	<script>
+		(function (doc, win) {
+			var docEl     = doc.documentElement,
+			    resizeEvt = "orientationchange" in window ? "orientationchange" : "resize",
+			    recalc    = function () {
+				    var clientWidth = docEl.clientWidth;
+				    if (!clientWidth) return;
+				    docEl.style.fontSize = 20 * (clientWidth / 320) + "px";
+			    };
+
+			if (!doc.addEventListener) return;
+			win.addEventListener(resizeEvt, recalc, false);
+			doc.addEventListener("DOMContentLoaded", recalc, false);
+		})(document, window);
+	</script>
+</head>
+<body>
+<div id="HasPassenger">
+	<div class="f-option order-slt">
+		<ul id="PsgList" class="order-slt-list order-slt-psg clearfix">
+			<li data-id="1001" class="selected">
+				<span class="psg_id" style="display:none;">1001</span>
+				<span class="name">
+					<em class="icon select-icon"></em>
+					<i>张山</i>
+				</span>
+				<span class="slt-num">
+					<em><font>二代身份证</font> <font>成人</font></em>
+					<i>310115198001011959</i></span>
+				<span class="slt-op">
+					<a href="#edit" class="icons edit-icon"><em></em></a>
+				</span>
+			</li>
+			<li data-id="1002">
+				<span class="psg_id" style="display:none;">1002</span>
+				<span class="name">
+					<em class="icon select-icon"></em>
+					<i>张三丰</i>
+				</span>
+				<span class="slt-num">
+					<em><font>二代身份证</font> <font>成人</font></em>
+					<i>310115198001012652</i></span>
+				<span class="slt-op">
+					<a href="#edit" class="icons edit-icon"><em></em></a>
+				</span>
+			</li>
+			<li data-id="1003">
+				<span class="psg_id" style="display:none;">1003</span>
+				<span class="name">
+					<em class="icon select-icon"></em>
+					<i>六小龄童</i>
+				</span>
+				<span class="slt-num">
+					<em><font>二代身份证</font> <font>成人</font></em>
+					<i>310115198001010059</i></span>
+				<span class="slt-op">
+					<a href="#edit" class="icons edit-icon"><em></em></a>
+				</span>
+			</li>
+			<li data-id="1004">
+				<span class="psg_id" style="display:none;">1004</span>
+				<span class="name">
+					<em class="icon select-icon"></em>
+					<i>李四</i>
+				</span>
+				<span class="slt-num">
+					<em><font>二代身份证</font> <font>成人</font></em>
+					<i>310115198001011932</i></span>
+				<span class="slt-op">
+					<a href="#edit" class="icons edit-icon"><em></em></a>
+				</span>
+			</li>
+			<li data-id="1005">
+				<span class="psg_id" style="display:none;">1005</span>
+				<span class="name">
+					<em class="icon select-icon"></em>
+					<i>小六小龄童</i>
+				</span>
+				<span class="slt-num">
+					<em><font>二代身份证</font> <font>成人</font></em>
+					<i>310115198001011174</i></span>
+				<span class="slt-op">
+					<a href="#edit" class="icons edit-icon"><em></em></a>
+				</span>
+			</li>
+			<li data-id="1006">
+				<span class="psg_id" style="display:none;">1006</span>
+				<span class="name">
+					<em class="icon select-icon"></em>
+					<i>王二麻</i>
+				</span>
+				<span class="slt-num">
+					<em><font>二代身份证</font> <font>成人</font></em>
+					<i>310115198001011510</i></span>
+				<span class="slt-op">
+					<a href="#edit" class="icons edit-icon"><em></em></a>
+				</span>
+			</li>
+		</ul>
+	</div>
+
+</div>
+
+<script id="PassengerTemplate" type="text/html">
+	<li data-id="{{id}}" class="{{if selected}}selected{{/if}}">
+		<span class="psg_id" style="display:none;">{{id}}</span>
+			<span class="name">
+				<em class="icon select-icon"></em>
+				<i>{{name}}</i>
+			</span>
+			<span class="slt-num">
+				<em><font>{{cert_type}}</font> <font>{{type}}</font></em>
+				<i>{{cert_number}}</i></span>
+			<span class="slt-op">
+				<a href="#edit" class="icons edit-icon"><em></em></a>
+			</span>
+	</li>
+</script>
+
+<script src="js/jquery-2.2.3.js"></script>
+<script src="js/template.js"></script>
+<script>
+	$(function () {
+		var psg = {
+			"id"         : "15afb0fd00000011",
+			"cert_type"  : "二代身份证",
+			"name"       : "成人十一",
+			"type"       : "成人",
+			"cert_number": "310108199912223333"
+		};
+		var html = template('PassengerTemplate', psg);
+		$('#PsgList').append(html).on("click", "li", function () {
+			$(this).toggleClass("selected");
+		});
+	});
+</script>
+</body>
+</html>
