@@ -24,11 +24,21 @@
 			var oDiv2 = $div2.detach();
 			// 删除后的元素在重新添加回去
 			$("body").append(oDiv1, oDiv2);
+
+			// 这里是删除的元素中包含有 <script> 的时候， remove() 会在执行 <script> 标签中的内容，而 detach() 是不会的
+
+			var $p = $("p").remove();
+			$("body").append($p);
+
 		});
 	</script>
 </head>
 <body>
 <div id="div1">测试div1</div>
 <div id="div2">测试div2</div>
+<p>
+	<span>span</span>
+	<script>alert(1)</script>
+</p>
 </body>
 </html>

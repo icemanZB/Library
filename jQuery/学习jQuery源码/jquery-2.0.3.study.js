@@ -6793,6 +6793,9 @@ var isSimple = /^.[^:#\[\.,]*$/,
 	rparentsprev = /^(?:parents|prev(?:Until|All))/,
 	rneedsContext = jQuery.expr.match.needsContext,
 	// methods guaranteed to produce a unique set when starting from a unique set
+	/*
+	 * 这几个是不存在重复情况的
+	 */
 	guaranteedUnique = {
 		children: true,
 		contents: true,
@@ -6959,6 +6962,10 @@ jQuery.fn.extend({
 	add: function( selector, context ) {
 		var set = typeof selector === "string" ?
 				jQuery( selector, context ) :
+				/*
+				 * selector.nodeType 判断是不是原生的，如果是直接转成数组
+				 * selector 是 jQuery 获取到的元素，转成特殊形式的数组
+				 */
 				jQuery.makeArray( selector && selector.nodeType ? [ selector ] : selector ),
 		    /*
 		     * $("div").add("span"); this.get() => "div"，set => "span"
@@ -6970,6 +6977,12 @@ jQuery.fn.extend({
 	},
 
 	addBack: function( selector ) {
+		/*
+		 * $("div").find("span").css("color","red").addBack().css("border","1px solid red");
+		 * this => "span"
+		 * 当 selector 没有值的时候，通过 this.prevObject 找到栈的下一层 "div"
+		 * 有筛选条件的时候，通过 filter 进行筛选
+		 */
 		return this.add( selector == null ?
 			this.prevObject : this.prevObject.filter(selector)
 		);
@@ -6977,14 +6990,25 @@ jQuery.fn.extend({
 });
 
 function sibling( cur, dir ) {
+	/*
+	 * 兄弟节点中可能会有文本节点，所以要去掉文本节点
+	 * <span>span</span>asdddd<p>p</p>
+	 * 直到找到元素节点 return 出去
+	 */
 	while ( (cur = cur[dir]) && cur.nodeType !== 1 ) {}
 
 	return cur;
 }
 
+/*
+ * 节点获取的相关方法
+ */
 jQuery.each({
 	parent: function( elem ) {
 		var parent = elem.parentNode;
+		/*
+		 * parent.nodeType !== 11 排除掉文档碎片，因为他是属于 DOM 一种，也有 nodeType
+		 */
 		return parent && parent.nodeType !== 11 ? parent : null;
 	},
 	parents: function( elem ) {
@@ -7011,19 +7035,40 @@ jQuery.each({
 	prevUntil: function( elem, i, until ) {
 		return jQuery.dir( elem, "previousSibling", until );
 	},
+	/*
+	 * <div>div</div>
+	 * <span>span</span>
+	 * ( elem.parentNode || {} ).firstChild => "div"
+	 * elem => "span"
+	 */
 	siblings: function( elem ) {
 		return jQuery.sibling( ( elem.parentNode || {} ).firstChild, elem );
 	},
 	children: function( elem ) {
 		return jQuery.sibling( elem.firstChild );
 	},
+	/*
+	 * 会获取到元素节点、空白节点、文本节点、注释节点
+	 * elem.childNodes 在原生中本身就会获取所有的节点类型
+	 * elem.contentDocument 是在 iframe 操作，就是获取 iframe 节点的那个页面的 document，elem.contentDocument 只有 ifrmae 中有，其他会返回 undefined
+	 */
 	contents: function( elem ) {
 		return elem.contentDocument || jQuery.merge( [], elem.childNodes );
 	}
 }, function( name, fn ) {
+	/*
+	 * 扩展 jQuery 对象下的方法
+	 */
 	jQuery.fn[ name ] = function( until, selector ) {
+		/*
+		 * $("span").parent().css("border","1px solid red");
+		 * this => "span"，fn 就是遍历中的函数
+		 */
 		var matched = jQuery.map( this, fn, until );
 
+		/*
+		 * 判断函数名字有没有 Until，有的话 "until" 参数就是筛选条件
+		 */
 		if ( name.slice( -5 ) !== "Until" ) {
 			selector = until;
 		}
@@ -7032,14 +7077,40 @@ jQuery.each({
 			matched = jQuery.filter( selector, matched );
 		}
 
+		/*
+		 * 判断是否是多个元素
+		 */
 		if ( this.length > 1 ) {
 			// Remove duplicates
+			/*
+			 * 判断有没有重复的
+			 * <div>div<p>p<span>span</span></p></div>
+			 * <p>p<span>span</span></p>
+			 * $("span").parents().css("border","1px solid red");
+			 * 这个时候就会出现重复的 body 和 html
+			 * guaranteedUnique = {
+			 *      children: true,  // 只能获取元素节点
+			 *      contents: true, // 能获取元素节点和文本节点
+			 *      next: true,
+			 *      prev: true
+			 * }
+			 */
 			if ( !guaranteedUnique[ name ] ) {
+				/*
+				 * unique 不仅会去重，而且会进行重新排序
+				 */
 				jQuery.unique( matched );
 			}
 
 			// Reverse order for parents* and prev-derivatives
+			/*
+			 * rparentsprev = /^(?:parents|prev(?:Until|All))/
+			 * 有 parents、prev 是需要从内向外的排序顺序，除了这两个剩下的都是从外向内的( 或者先写的会在数组的前面一项 )
+			 */
 			if ( rparentsprev.test( name ) ) {
+				/*
+				 * 修正排序
+				 */
 				matched.reverse();
 			}
 		}
@@ -7071,13 +7142,25 @@ jQuery.extend({
 				return elem.nodeType === 1;
 			}));
 	},
-
+	/*
+	 * elem：当前要操作的每一个元素
+	 * dir：通过它决定公用方法是操作父级还是同辈节点
+	 * until：截止到什么位置结束
+	 */
 	dir: function( elem, dir, until ) {
 		var matched = [],
-			truncate = until !== undefined;
-
+			truncate = until !== undefined;  // 看看有没截止的操作，有的话就是 true，没有的话就是 false
+		/*
+		 * elem.nodeType !== 9  指的是 html，那么 html 的 parentNode 是存在的，他是 document，那么 document 不属于页面上的标签，所以要排除掉
+		 */
 		while ( (elem = elem[ dir ]) && elem.nodeType !== 9 ) {
+			/*
+			 * 判断是不是元素节点
+			 */
 			if ( elem.nodeType === 1 ) {
+				/*
+				 * 有截止操作就进这个 if，如果是 parentUntil("body") 就会直接跳出
+				 */
 				if ( truncate && jQuery( elem ).is( until ) ) {
 					break;
 				}
@@ -7091,6 +7174,9 @@ jQuery.extend({
 		var matched = [];
 
 		for ( ; n; n = n.nextSibling ) {
+			/*
+			 * n.nodeType === 1 判断是不是元素节点
+			 */
 			if ( n.nodeType === 1 && n !== elem ) {
 				matched.push( n );
 			}
@@ -7178,8 +7264,16 @@ wrapMap.th = wrapMap.td;
 
 jQuery.fn.extend({
 	text: function( value ) {
+		/*
+		 * jQuery.access() 进行统一的获取或者设置
+		 */
 		return jQuery.access( this, function( value ) {
 			return value === undefined ?
+				/*
+				 * jQuery.text( this ) 获取 ( Sizzle.getText )，是 Sizzle 中的一个功能，就是专门获取文本节点
+				 * this.empty().append( ( this[ 0 ] && this[ 0 ].ownerDocument || document ).createTextNode( value ) ) 设置
+				 * 设置的时候会先清空，在 document 下直接调用原生的 createTextNode() 可以把 value 整体的字符串当做文本添加
+				 */
 				jQuery.text( this ) :
 				this.empty().append( ( this[ 0 ] && this[ 0 ].ownerDocument || document ).createTextNode( value ) );
 		}, null, value, arguments.length );
@@ -7187,6 +7281,10 @@ jQuery.fn.extend({
 
 	append: function() {
 		return this.domManip( arguments, function( elem ) {
+			/*
+			 * 在 IE 低版本中，要把 tr 直接放到 body 里面，会出现一个小问题，他会自动添加 tbody 标签
+			 * 这个时候添加就会出问题
+			 */
 			if ( this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9 ) {
 				var target = manipulationTarget( this, elem );
 				target.appendChild( elem );
@@ -7196,6 +7294,11 @@ jQuery.fn.extend({
 
 	prepend: function() {
 		return this.domManip( arguments, function( elem ) {
+			/*
+			 * this.nodeType === 1 => 元素
+			 * this.nodeType === 11 => 文档碎片
+			 * this.nodeType === 9 => document
+			 */
 			if ( this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9 ) {
 				var target = manipulationTarget( this, elem );
 				target.insertBefore( elem, target.firstChild );
@@ -7214,6 +7317,9 @@ jQuery.fn.extend({
 	after: function() {
 		return this.domManip( arguments, function( elem ) {
 			if ( this.parentNode ) {
+				/*
+				 * 添加到下一个兄弟节点的前面
+				 */
 				this.parentNode.insertBefore( elem, this.nextSibling );
 			}
 		});
@@ -7222,16 +7328,35 @@ jQuery.fn.extend({
 	// keepData is for internal use only--do not document
 	remove: function( selector, keepData ) {
 		var elem,
+		    /*
+		     * selector 是一个筛选的参数
+		     */
 			elems = selector ? jQuery.filter( selector, this ) : this,
 			i = 0;
 
 		for ( ; (elem = elems[i]) != null; i++ ) {
+			/*
+			 * remove() 操作就会走 if，这句话就是删除相关的数据
+			 */
 			if ( !keepData && elem.nodeType === 1 ) {
+				/*
+				 * getAll() 的作用就是获取当前元素下的所有子元素，返回一个集合，搜索 getAll( context, tag ) 在下面找到这个方法
+				 */
 				jQuery.cleanData( getAll( elem ) );
 			}
 
+			/*
+			 * 判断有没有父级，只有父级才能调用 elem.parentNode.removeChild
+			 */
 			if ( elem.parentNode ) {
+				/*
+				 * 这里是删除的元素中包含有 <script> 的时候， remove() 会在执行 <script> 标签中的内容，而 detach() 是不会的
+				 * 一旦是 detach() 就调用了 setGlobalEval()，作用就是把 JavaScript 设置为全局的，这样就只会执行一次
+				 */
 				if ( keepData && jQuery.contains( elem.ownerDocument, elem ) ) {
+					/*
+					 * getAll( elem, "script" ) 在元素下找 script 标签
+					 */
 					setGlobalEval( getAll( elem, "script" ) );
 				}
 				elem.parentNode.removeChild( elem );
@@ -7246,21 +7371,33 @@ jQuery.fn.extend({
 			i = 0;
 
 		for ( ; (elem = this[i]) != null; i++ ) {
+			/*
+			 * 判断是不是元素节点
+			 */
 			if ( elem.nodeType === 1 ) {
 
 				// Prevent memory leaks
+				/*
+				 * 清除数据缓存，并且是对里面的子元素进行清空
+				 */
 				jQuery.cleanData( getAll( elem, false ) );
 
 				// Remove any remaining nodes
+				/* 调用原生的方法，置空所有内容 */
 				elem.textContent = "";
 			}
 		}
 
 		return this;
 	},
-
+	/*
+	 * deepDataAndEvents：是针对子元素 clone 出来的也有事件，如果是 false，子元素就不会触发事件
+	 */
 	clone: function( dataAndEvents, deepDataAndEvents ) {
 		dataAndEvents = dataAndEvents == null ? false : dataAndEvents;
+		/*
+		 * 当第二个参数不存在的情况下，默认已第一个为准 就是会变成 clone(true) => clone(true,true)
+		 */
 		deepDataAndEvents = deepDataAndEvents == null ? dataAndEvents : deepDataAndEvents;
 
 		return this.map( function () {
@@ -7273,15 +7410,29 @@ jQuery.fn.extend({
 			var elem = this[ 0 ] || {},
 				i = 0,
 				l = this.length;
-
+			/*
+			 * 获取的操作
+			 */
 			if ( value === undefined && elem.nodeType === 1 ) {
 				return elem.innerHTML;
 			}
 
 			// See if we can take a shortcut and just use innerHTML
+			/*
+			 * rnoInnerhtml.test( value ) 这个正则的作用，rnoInnerhtml = /<(?:script|style|link)/i 就是检查这些标签
+			 * $("span").get(0).innerHTML="<script>alert(1)<\/script>"; 不执行 <script> 标签 ( 不解析 )
+			 * $("span").html("<script>alert(1)<\/script>");  会执行 <script> 标签的内容
+			 * 如果有正则里面的标签就不会走这个 if
+			 *
+			 * !wrapMap[ ( rtagName.exec( value ) || [ "", "" ] )[ 1 ].toLowerCase() ] 这个是针对 XML 规范的一个判断
+			 * $("span").get(0).innerHTML="<tr></tr>"; 这个是不符合 XML 规范的，在原生中是不会添加内容的
+			 * $("span").html("<tr></tr>"); jQuery 可以添加，也就是说一旦检测到不符合规范的就不会走这个 if
+			 */
 			if ( typeof value === "string" && !rnoInnerhtml.test( value ) &&
 				!wrapMap[ ( rtagName.exec( value ) || [ "", "" ] )[ 1 ].toLowerCase() ] ) {
-
+				/*
+				 * 找是不是单标签 $("span").html("<div/>") 处理这种情况的，解析出来的是<div></div>
+				 */
 				value = value.replace( rxhtmlTag, "<$1></$2>" );
 
 				try {
@@ -7290,6 +7441,9 @@ jQuery.fn.extend({
 
 						// Remove element nodes and prevent memory leaks
 						if ( elem.nodeType === 1 ) {
+							/*
+							 * 清空子元素的内容(数据)
+							 */
 							jQuery.cleanData( getAll( elem, false ) );
 							elem.innerHTML = value;
 						}
@@ -7300,7 +7454,9 @@ jQuery.fn.extend({
 				// If using innerHTML throws an exception, use the fallback method
 				} catch( e ) {}
 			}
-
+			/*
+			 * 通过 append() 添加，触发 <script>
+			 */
 			if ( elem ) {
 				this.empty().append( value );
 			}
@@ -7342,6 +7498,9 @@ jQuery.fn.extend({
 	domManip: function( args, callback, allowIntersection ) {
 
 		// Flatten any nested arrays
+		/*
+		 * 转数组
+		 */
 		args = core_concat.apply( [], args );
 
 		var fragment, first, scripts, hasScripts, node, doc,
@@ -7353,25 +7512,49 @@ jQuery.fn.extend({
 			isFunction = jQuery.isFunction( value );
 
 		// We can't cloneNode fragments that contain checked, in WebKit
+		/*
+		 * 文档碎片针对 checked 在老版本的 WebKit 是不兼容的
+		 * <span></span><span></span><span></span><div>div</div>
+		 * $("span").append($("div")); 那么三个 span 里面都有 div，后面两个是 clone() 操作，那么 clone() 对 chekcbox 的选中状态就会有问题
+		 * 那么就会进这个 if，就没有走 clone()，而是直接创建出来的
+		 */
 		if ( isFunction || !( l <= 1 || typeof value !== "string" || jQuery.support.checkClone || !rchecked.test( value ) ) ) {
 			return this.each(function( index ) {
 				var self = set.eq( index );
 				if ( isFunction ) {
+					/*
+					 * $("span").append(function(i,html){ return "hello"; });
+					 * value => function
+					 * args[ 0 ] => "hello"
+					 */
 					args[ 0 ] = value.call( this, index, self.html() );
 				}
+				/*
+				 * 回调处理之后的结果在调用 doManip
+				 */
 				self.domManip( args, callback, allowIntersection );
 			});
 		}
 
 		if ( l ) {
+			/*
+			 * jQuery.buildFragment：创建文档碎片
+			 */
 			fragment = jQuery.buildFragment( args, this[ 0 ].ownerDocument, false, !allowIntersection && this );
 			first = fragment.firstChild;
 
+			/*
+			 * jQuery.buildFragment => "<h1>h1</h1>" 此时 fragment.childNodes.length === 1
+			 */
 			if ( fragment.childNodes.length === 1 ) {
 				fragment = first;
 			}
 
 			if ( first ) {
+				/*
+				 * 获取 scripts，但不执行 <script> 中的内容，原理就是 <script type="true"></script> 解析的时候就不认为是 <script>，因为 type 类型不匹配
+				 * disableScript() 这个函数就是做的这个事情
+				 */
 				scripts = jQuery.map( getAll( fragment, "script" ), disableScript );
 				hasScripts = scripts.length;
 
@@ -7379,7 +7562,9 @@ jQuery.fn.extend({
 				// being emptied incorrectly in certain situations (#8070).
 				for ( ; i < l; i++ ) {
 					node = fragment;
-
+					/*
+					 * 有一个是直接添加的，剩下都是 clone
+					 */
 					if ( i !== iNoClone ) {
 						node = jQuery.clone( node, true, true );
 
@@ -7394,6 +7579,11 @@ jQuery.fn.extend({
 					callback.call( this[ i ], node, i );
 				}
 
+				/*
+				 * <span><div>div</div></span><span><div>div</div></span><span><div>div</div></span>
+				 * $("span").append("<script>alert(123)<\/script>") 只会弹一次，但是每个标签中都添加了 <script> 标签
+				 * 也就是说 clone 出来的并不会执行 <script>
+				 */
 				if ( hasScripts ) {
 					doc = scripts[ scripts.length - 1 ].ownerDocument;
 
@@ -7403,9 +7593,15 @@ jQuery.fn.extend({
 					// Evaluate executable scripts on first document insertion
 					for ( i = 0; i < hasScripts; i++ ) {
 						node = scripts[ i ];
+						/*
+						 * 判断有没有设置全局缓存的 key 值，有的话就不会走这里的 if
+						 */
 						if ( rscriptType.test( node.type || "" ) &&
 							!data_priv.access( node, "globalEval" ) && jQuery.contains( doc, node ) ) {
 
+							/*
+							 * $("span").append("<script src="a.js"><\/script>")
+							 */
 							if ( node.src ) {
 								// Hope ajax is available...
 								jQuery._evalUrl( node.src );
@@ -7450,13 +7646,27 @@ jQuery.each({
 });
 
 jQuery.extend({
+	/*
+	 * 内部的 clone()
+	 */
 	clone: function( elem, dataAndEvents, deepDataAndEvents ) {
 		var i, l, srcElements, destElements,
+		    /*
+		     * 原生的 clone()
+		     */
 			clone = elem.cloneNode( true ),
 			inPage = jQuery.contains( elem.ownerDocument, elem );
 
-		// Support: IE >= 9
+		// Support: IE >= 9，IE11 是会被选中的
 		// Fix Cloning issues
+		/*
+		 * 处理兼容问题的
+		 * <input type="checkbox">
+		 * $("input").prop("checked",true); $("input").clone().appendTo("body");
+		 * 那么 clone 出来的是会选中的，但是在原生中是不会选中的
+		 *
+		 * jQuery.support.noCloneChecked IE 9、10 是返回 false
+		 */
 		if ( !jQuery.support.noCloneChecked && ( elem.nodeType === 1 || elem.nodeType === 11 ) && !jQuery.isXMLDoc( elem ) ) {
 
 			// We eschew Sizzle here for performance reasons: http://jsperf.com/getall-vs-sizzle/2
@@ -7469,7 +7679,13 @@ jQuery.extend({
 		}
 
 		// Copy the events from the original to the clone
+		/*
+		 * 是否要 clone() 事件
+		 */
 		if ( dataAndEvents ) {
+			/*
+			 * 判断子项是否要 clone()
+			 */
 			if ( deepDataAndEvents ) {
 				srcElements = srcElements || getAll( elem );
 				destElements = destElements || getAll( clone );
@@ -7484,6 +7700,9 @@ jQuery.extend({
 
 		// Preserve script evaluation history
 		destElements = getAll( clone, "script" );
+		/*
+		 * clone 的元素包含 <script> 标签的时候，他会把 <script> 变成全局的
+		 */
 		if ( destElements.length > 0 ) {
 			setGlobalEval( destElements, !inPage && getAll( elem, "script" ) );
 		}
@@ -7578,7 +7797,9 @@ jQuery.extend({
 
 		return fragment;
 	},
-
+	/*
+	 * 清除相关数据缓存和事件 ( remove() )
+	 */
 	cleanData: function( elems ) {
 		var data, elem, events, type, key, j,
 			special = jQuery.event.special,
@@ -7592,15 +7813,24 @@ jQuery.extend({
 					events = Object.keys( data.events || {} );
 					if ( events.length ) {
 						for ( j = 0; (type = events[j]) !== undefined; j++ ) {
+							/*
+							 * 这里的 if 是为了针对两种不同的情况，一种是很多事模拟的事件( 主动触发 )，还有一种就是真正的事件
+							 */
 							if ( special[ type ] ) {
 								jQuery.event.remove( elem, type );
 
 							// This is a shortcut to avoid jQuery.event.remove's overhead
 							} else {
+								/*
+								 * 这里是删除真正的事件
+								 */
 								jQuery.removeEvent( elem, type, data.handle );
 							}
 						}
 					}
+					/*
+					 * 删除数据缓存
+					 */
 					if ( data_priv.cache[ key ] ) {
 						// Discard any remaining `private` data
 						delete data_priv.cache[ key ];
@@ -7628,6 +7858,7 @@ jQuery.extend({
 // Manipulating tables requires a tbody
 function manipulationTarget( elem, content ) {
 	return jQuery.nodeName( elem, "table" ) &&
+		/* 看看是不是 tr，然后获取 tbody，如果没有就手动创建，实现兼容 */
 		jQuery.nodeName( content.nodeType === 1 ? content : content.firstChild, "tr" ) ?
 
 		elem.getElementsByTagName("tbody")[0] ||
@@ -7656,7 +7887,9 @@ function restoreScript( elem ) {
 function setGlobalEval( elems, refElements ) {
 	var l = elems.length,
 		i = 0;
-
+	/*
+	 * 利用 refElements 缓存开关来进行触发，在 domManip 中可以看到相关代码
+	 */
 	for ( ; i < l; i++ ) {
 		data_priv.set(
 			elems[ i ], "globalEval", !refElements || data_priv.get( refElements[ i ], "globalEval" )
@@ -7680,7 +7913,9 @@ function cloneCopyEvent( src, dest ) {
 		if ( events ) {
 			delete pdataCur.handle;
 			pdataCur.events = {};
-
+			/*
+			 * 把原生的事件 copy 到当前的 clone 出来的
+			 */
 			for ( type in events ) {
 				for ( i = 0, l = events[ type ].length; i < l; i++ ) {
 					jQuery.event.add( dest, type, events[ type ][ i ] );
@@ -7700,10 +7935,16 @@ function cloneCopyEvent( src, dest ) {
 
 
 function getAll( context, tag ) {
+	/*
+	 * 第二个参数没写就是获取所有元素，写了就是获取指定的标签
+	 */
 	var ret = context.getElementsByTagName ? context.getElementsByTagName( tag || "*" ) :
 			context.querySelectorAll ? context.querySelectorAll( tag || "*" ) :
 			[];
-
+	/*
+	 * 当第二个参数没写的时候就会走：jQuery.merge( [ context ], ret ) 把自身合并进去
+	 * 如果是 getAll(elem,false) 返回的结果就是不包含当前的元素
+	 */
 	return tag === undefined || tag && jQuery.nodeName( context, tag ) ?
 		jQuery.merge( [ context ], ret ) :
 		ret;
@@ -7714,6 +7955,9 @@ function fixInput( src, dest ) {
 	var nodeName = dest.nodeName.toLowerCase();
 
 	// Fails to persist the checked state of a cloned checkbox or radio button.
+	/*
+	 *  manipulation_rcheckableType = /^(?:checkbox|radio)$/i 判断是不是复选框或者是单选框
+	 */
 	if ( nodeName === "input" && manipulation_rcheckableType.test( src.type ) ) {
 		dest.checked = src.checked;
 
