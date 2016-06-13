@@ -3,36 +3,26 @@
 <head>
 	<meta charset="UTF-8">
 	<title>jQuery</title>
-	<style>
-		.tabSwitch {
-			width: 100px;
-			height: 100px;
-		}
-		.clearfix{
-			width: 20px;
-			height: 100px;
-			transform: translate();
-		}
-	</style>
 
 </head>
 
 <body>
-	<input type="checkbox" id="aa" checked>爱好
-	<div class="tabSwitch">
 
-	</div>
-	<script src="jquery-2.0.3.study.js"></script>
-	<script>
-		$(function() {
-			$("#aa").attr("checked", false);
-			$(".tabSwitch").click(
+<div id="div1" style="width: 100px;height: 100px;background: red;">
 
-			});
+</div>
+<script src="jquery-2.0.3.study.js"></script>
+<script>
+	// console.log(rrelNum.exec( "+=200px" ));
+	//  ["+=200", "+", "200", index: 0, input: "+=200px"]
+	// (+ + 1) == 1、(- + 1) == -1
+	// value = ( ret[1] + 1 ) * ret[2] + parseFloat( jQuery.css( elem, name ) )
+	// jQuery.css( elem, name ) => 100 获取原来的值
+	$(function () {
+		$.style(document.getElementById("div1"), "width", "200px");
+	});
 
-		});
-
-	</script>
+</script>
 </body>
 
 </html>

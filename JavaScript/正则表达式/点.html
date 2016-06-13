@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>点</title>
+	<script>
+		// .(点) 表示"任意字符"
+		// [\w\W] 用了互补的集合，来表示"任意字符"，和.(点) 的概念差不多
+		// 但.(点) 在默认的情况下是不支持换行符的，用 [\w\W] 就可以匹配任意的字符，也包括换行符
+
+		var str = "abcde";
+
+		console.log(str.match(/./));  // ["a", index: 0, input: "abcde"]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

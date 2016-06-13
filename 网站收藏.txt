@@ -164,13 +164,13 @@ http://blog.csdn.net/phunxm/article/details/42174937  iPhone屏幕尺寸、分�
 
 http://cubic-bezier.com/#.25,.1,.25,1  bezier 曲线
 
-http://tgideas.qq.com/webplat/info/news_version3/804/808/811/m579/201412/293834.shtml
+http://tgideas.qq.com/webplat/info/news_version3/804/808/811/m579/201412/293834.shtml 移动页前端性能优化
 
 https://www.qianduan.net/high-performance-css3-animations/
 
-http://www.tuicool.com/articles/NBbQjy3
+http://www.tuicool.com/articles/NBbQjy3   前端性能优化
 
-http://www.w3cplus.com/css3/introduction-to-hardware-acceleration-css-animations.html
+http://www.w3cplus.com/css3/introduction-to-hardware-acceleration-css-animations.html  css 动画加速
 
 http://rapheal.sinaapp.com/tag/jquery-2/ jQuery 源码
 
@@ -184,3 +184,5 @@ webapp:  http://www.cocoachina.com/webapp/20151110/14148.html
          http://bluereader.org/article/93156625
          http://blog.csdn.net/phunxm/article/details/42174937
          http://www.chinaz.com/web/2015/0918/448237.shtml
+
+http://www.blogjava.net/onejavaer/articles/79070.html 正则表达式

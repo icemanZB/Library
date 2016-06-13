@@ -117,7 +117,7 @@ var
 	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
 	// Strict HTML recognition (#11290: must start with <)
 	/*
-	 * ?:\s*(<[\w\W]+>)[^>]* 匹配元素标签 (创建标签可能会用到) 例如：<p>aaa
+	 * (?:\s*(<[\w\W]+>)[^>]*|#([\w-]*)) 匹配元素标签 (创建标签可能会用到) 例如：<p>aaa
 	 * #([\w-]*) 匹配元素 ID 的形式，防止 XSS 注入类似 ( #<div>不在创建 div ) 例如：#div1
 	 */
 	rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,
