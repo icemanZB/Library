@@ -17,8 +17,8 @@
 		new F().hide();    // 这个实现隐藏？
 
 		/*
-		 * new F() 可以看做是 this?.style 这里的 this. 可能会跳起来抢答道：”那 new F() 的 return 值 = DOM 元素不就完事 OK 啦！
-		 * —— this.style.hide = new F().style.hide = DOM.style.hide”！ 错了
+		 * new F() 可以看做是 this?.style 这里的 this. 可能会跳起来抢答道：那 new F() 的 return 值 = DOM 元素不就完事 OK 啦！
+		 * —— this.style.hide = new F().style.hide = DOM.style.hide ！ 错了
 		 *
 		 * 只要 new 表达式之后的 constructor 返回 ( return ) 一个引用对象（数组、对象、函数等）都将覆盖 new 创建的匿名对象
 		 * 如果返回 （ return ） 一个原始类型（ 无 return 时其实为 return 原始类型 undefined），那么就返回 new 创建的匿名对象。

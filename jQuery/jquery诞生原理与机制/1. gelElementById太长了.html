@@ -10,7 +10,7 @@
 			    image  = document.getElementById("image");
 
 			button.onclick = function () {
-				// image.style.display = "none";
+				image.style.display = "none";
 			};
 
 			/*
@@ -18,7 +18,7 @@
 			 * 好像到了公司发现卡没带又回家重新拿卡的感觉，我希望越简单越好。恩， 我很喜欢钱，$ 这个符号我很喜欢，我打算改造一番简化我的工作
 			 */
 
-			// 这里的 $() 就是最简单的包装器，只是返回的是原生的DOM对象
+			// 这里的 $() 就是最简单的包装器，只是返回的是原生的 DOM 对象
 			var $ = function (id) {
 				return document.getElementById(id);
 			};
