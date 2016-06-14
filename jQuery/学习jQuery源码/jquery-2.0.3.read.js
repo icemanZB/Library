@@ -20,7 +20,7 @@
 //"use strict";
 var
 	// A central reference to the root jQuery(document)
-	/*
+	/**
 	 * 1、为了压缩考虑，jQuery(document) 这种无法压缩
 	 * 2、定义变量，有利于后期代码进行可维护
 	 */
@@ -31,13 +31,14 @@ var
 
 	// Support: IE9
 	// For `typeof xmlNode.method` instead of `xmlNode.method !== undefined`
-	/*
-	 * 在老版本的 IE6 7 8 9中，如果是判断 xml节点 (或方法)，window.a == undefined 这种方式判断会有问题，为了兼容使用 typeof window.a == "undefined"
+	/**
+	 * 在老版本的 IE6 7 8 9中，如果是判断 XML 节点 (或方法)，window.a == undefined 这种方式判断会有问题
+	 * 为了兼容使用 typeof window.a == "undefined" 使 core_strundefined = "undefined"
 	 */
 	core_strundefined = typeof undefined,  // "undefined"
 
 	// Use the correct document accordingly with window argument (sandbox)
-	/*
+	/**
 	 * 使用正确的文档与窗口参数存储为变量用于压缩
 	 */
 	location = window.location,
@@ -45,35 +46,39 @@ var
 	docElem = document.documentElement,
 
 	// Map over jQuery in case of overwrite
-	/*
+	/**
 	 * 变量冲突的时候使用，如果在外部定义过 window.jQuery = "jQuery"; 那么此时这个变量存的值就是 _jQuery = "jQuery"; 如果外部没有定义，那么 _jQuery = undefined
+	 * 在 noConflict 方法中详细阐述
 	 */
 	_jQuery = window.jQuery,
 
 	// Map over the $ in case of overwrite
-	/*
+	/**
 	 * 变量冲突的时候使用同理上述 _jQuery 变量
 	 */
 	_$ = window.$,
 
 	// [[Class]] -> type pairs
-	/* 用于类型判断 $.type()
-	 * 	class2type ={
-	 *	    "[object Array]": "array",
-	 *	    "[object Boolean]": "boolean",
-	 *	    "[object Date]": "date",
-	 *	    "[object Error]": "error",
-	 *	    "[object Function]": "function",
-	 *	    "[object Number]": "number",
-	 *	    "[object Object]": "object",
-	 *	    "[object RegExp]": "regexp",
-	 *	    "[object String]": "string"
-	 *   };
-	 *
+	/**
+	 * 用于类型判断 $.type()，存储的内容如下，在下方会有遍历的代码
+	 * class2type ={
+	 *     "[object Array]": "array",
+	 *	   "[object Boolean]": "boolean",
+	 *	   "[object Date]": "date",
+	 *	   "[object Error]": "error",
+	 *	   "[object Function]": "function",
+	 *	   "[object Number]": "number",
+	 *	   "[object Object]": "object",
+	 *	   "[object RegExp]": "regexp",
+	 *	   "[object String]": "string"
+	 *  };
 	 */
 	class2type = {},
 
 	// List of deleted data cache ids, so we can reuse them
+	/**
+	 * 存放一个数组，之后会重复使用
+	 */
 	core_deletedIds = [],
 
 	core_version = "2.0.3",
@@ -85,76 +90,76 @@ var
 	core_indexOf = core_deletedIds.indexOf,
 	core_toString = class2type.toString,
 	core_hasOwn = class2type.hasOwnProperty,
-	/* 去掉前后空格，ECMA5 中的字符串方法 */
+	/**
+	 * 去掉前后空格，ECMA5 中的字符串方法，源码中只有 trim() 静态方法中使用到
+	 */
 	core_trim = core_version.trim,
 
 	// Define a local copy of jQuery
-	/*
+	/**
 	 * 构建 jQuery 对象
 	 */
 	jQuery = function( selector, context ) {
 		// The jQuery object is actually just the init constructor 'enhanced'
-		/*
-		 * jQuery 对象实际上只是初始化构造函数的"强化"，jQuery.fn.init() 才是构造函数
-		 * 其实就是 jQuery.prototype.init()   => jQuery.fn = jQuery.prototype
+		/**
+		 * jQuery 对象实际上只是初始化构造函数的 "强化"，jQuery.fn.init() 才是构造函数，之后会详细分析
 		 */
 		return new jQuery.fn.init( selector, context, rootjQuery );
 	},
 
 	// Used for matching numbers
-	/*
+	/**
 	 * 找数字，正负号、小数点、科学计数法
 	 */
 	core_pnum = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source,
 
 	// Used for splitting on whitespace
-	/*
-	 * 用空格分隔单词，匹配空格分隔开
+	/**
+	 * 用空格分隔单词，匹配空格分隔开，作用类似 "once memory".split(" ")
+	 * "once memory" => ["once", "memory"]
 	 */
 	core_rnotwhite = /\S+/g,
 
 	// A simple way to check for HTML strings
 	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
 	// Strict HTML recognition (#11290: must start with <)
-	/*
-	 * (?:\s*(<[\w\W]+>)[^>]*|#([\w-]*)) 匹配元素标签 (创建标签可能会用到) 例如：<p>aaa
-	 * #([\w-]*) 匹配元素 ID 的形式，防止 XSS 注入类似 ( #<div>不在创建 div ) 例如：#div1
+	/**
+	 * 匹配的是 $("<li>hello")、$("<div>")、$("#div")
+	 * 匹配HTML标记和ID表达式，<前面可以匹配任何空白字符，包括空格、制表符、换页符等等
 	 */
 	rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,
 
 	// Match a standalone tag
-	/*
-	 * 匹配 "成对" 的独立单标签 例如：<div></div> 、 <p></p>、<li>
+	/**
+	 * 匹配"成对"的独立单标签 例如：<div></div> 、 <p></p>、<li></li>
 	 */
 	rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
 
 	// Matches dashed string for camelizing
-	/*
-	 * 用在 IE 的 CSS 属性转换上 (驼峰式)
+	/**
+	 * 用在 IE 的 CSS 属性转换上 ( 驼峰式 )
 	 * 例如： MsMarginLeft，其他的前缀是 webkitMarginLeft
 	 */
 	rmsPrefix = /^-ms-/,
 
-	/*
-	 * 找到 "-" + "字符" 转成大写，例如： -l ==> L
+	/**
+	 * 找到 "-" 加上数字或者任意(a-z)字符，转成大写，例如： -l ==> L
 	 * margin-left ==> marginLeft 或者匹配 CSS3 的数字 ( -2d -> 2d )
-	 */
+	 **/
 	rdashAlpha = /-([\da-z])/gi,
 
 	// Used by jQuery.camelCase as callback to replace()
-	/*
-	 * 用于转驼峰的回调函数 ( all-> 正则，letter -> 正则中的子项 )
+	/**
+	 * 用于转驼峰的回调函数 ( all => 正则，letter => 正则中的子项 )
+	 * 例如：all ==> /-([\da-z])/gi，第一个子项就是 [\da-z] 匹配到对应的数字或者(a-z)字符，转成大写
 	 */
 	fcamelCase = function( all, letter ) {
-		/*
-		 * 例如： all ==> /-([\da-z])/gi，子项就是 [\da-z] 匹配到对应的字符，转成大写
-		 */
 		return letter.toUpperCase();
 	},
 
 	// The ready event handler and self cleanup method
-	/*
-	 * DOM 加载成功后触发
+	/**
+	 * DOM 加载成功后触发回调，里面的代码到时候具体分析
 	 */
 	completed = function() {
 		/*
@@ -176,19 +181,14 @@ jQuery.fn = jQuery.prototype = {
 	jquery: core_version,
 
 	constructor: jQuery,
-	/*
-	 *  入口
-	 *  构造函数 function init(){} 初始化和参数的管理
-	 *  原型对象 init.prototype = jQuery.prototype
-	 *  return this; $() 的返回值是 $.fn.init 的原型对象 ( Object{ } "空" )，于是通过 jQuery.fn.init.prototype = jQuery.fn;
-	 *  $() 的返回值从 $.fn.init.prototype 一下子变成 $.fn
-	 *  这样所有通过 $ 创建出来的对象都将共享 fn 对象上的成员。因此，jQuery 对象都有了类似 attr 、html 等等方法了
+	/**
+	 * 入口函数/真正的构造函数 init()
 	 */
 	init: function( selector, context, rootjQuery ) {
 		var match, elem;
 
 		// HANDLE: $(""), $(null), $(undefined), $(false)
-		/*
+		/**
 		 * 处理当传入 ""、null、undefined、false 这些值时，直接返回 return
 		 */
 		if ( !selector ) {
@@ -196,51 +196,62 @@ jQuery.fn = jQuery.prototype = {
 		}
 
 		// Handle HTML strings
-		/*
+		/**
 		 * 例如传入的是 $("div")、$(".box")、$("#div")、$("#div div.box")、$("<div>")、$("<li>hello") ( 这种写法会生成<li></li>不会添加 hello 文本 )
 		 */
 		if ( typeof selector === "string" ) {
-			/*
-			 * 判断字符串最左边的字符是否是 "<" 并且最右边的字符是否是 ">" 并且长度大于等于3，所以这个判断是去找标签
+			/**
+			 * 判断字符串最左边的字符是否是 "<" 并且最右边的字符是否是 ">" 并且长度大于等于3，所以这个判断是去找标签，例如：$("<div>")
 			 */
 			if ( selector.charAt(0) === "<" && selector.charAt( selector.length - 1 ) === ">" && selector.length >= 3 ) {
 				// Assume that strings that start and end with <> are HTML and skip the regex check
-				/*
-				 * $("<div>")  -> match = [null , "<div>" , null]
+				/**
+				 * 假定字符串的开始和结束用<> HTML tag，跳过的正则表达式检测
+				 * $("<div>") =>  match = [null , "<div>" , null]
 				 */
 				match = [ null, selector, null ];
 
 			} else {
-				/*
-				 * 使用正则匹配标签加文字 $("<li>hello") 或者 ID 的形式 $("#div")
-				 * 像 $("div")、$(".box')、$("#div div.box") 匹配这些复杂选择器的时候 match = null;就会调用 find() -> 最终会调用 sizzle
-				 * $("#div1")  -> match = ["#div1",null,"div1"];
-				 * $("<li>hello") -> match = ["<li>hello","<li>",undefined];
+				/**
+				 * 使用 rquickExpr 正则匹配 $("#div")、$("<li>hello")、$("<div>")
+				 *
+				 * $("#div") => match = ["#div", undefined, "div", index: 0, input: "#div"]
+				 *
+				 * $("<li>hello") => match = ["<li>hello", "<li>", undefined, index: 0, input: "<li>hello"]
+				 *
+				 * $("<div>") => match = ["<div>", "<div>", undefined, index: 0, input: "<div></div>"]
 				 */
 				match = rquickExpr.exec( selector );
 			}
 
 			// Match html or make sure no context is specified for #id
-			/*
-			 * 其实只有在创建标签和获取 ID 元素 的时候 match 才会有值
-			 * match[1] 有值的话，那肯定是创建标签，没有值的话并且不指定上下文的时候肯定是获取 ID 元素
+			/**
+			 * 想要进入这个 if 只有两种情况，第一获取 ID 元素并且不传 context，第二是创建标签，传不传 context 无所谓
 			 */
 			if ( match && (match[1] || !context) ) {
-
 				// HANDLE: $(html) -> $(array)
-				/* match[1] 有值的时候，就是创建标签 $("<li>") */
+				/**
+				 * match[1] 有值的时候，就是创建标签 例如：$("<li>hello")、$("<div>")
+				 */
 				if ( match[1] ) {
-					/* $("<li>",document) 或者 $("<li>",$(document)) */
+					/**
+					 * 创建标签例如：$("<li>",document) 或者 $("<li>",$(document))
+					 * 如果是 $("<div></div>",document.getElementById("p1")); 这种情况 context 最后还是 document
+					 * 所以无论是那一种情况，最后 context 都会变成 document
+					 */
 					context = context instanceof jQuery ? context[0] : context;
 
 					// scripts is true for back-compat
-					/*
-					 * jQuery.parseHTML 把字符串转成节点数组，jQuery.merge() 是用在合并 json，但是 json 格式一定是这样子的类数组格式
-					 * 最终形成 Object {0:li,1:li,length:2,....}
+					/**
+					 * jQuery.parseHTML(match[1],document,true) 把字符串转成节点数组，如果为 true，可以解析字符中的 <script>，并且执行 <script> 中的脚本
+					 * this 就是 jQuery 对象
+					 * 这里有个疑问为什么外面还要 merge 一下？？？
 					 */
 					jQuery.merge( this, jQuery.parseHTML(
 						match[1],
-						/* 最终 context = document */
+						/**
+						 * 最终 context = document
+						 */
 						context && context.nodeType ? context.ownerDocument || context : document,
 						true
 					) );
@@ -277,6 +288,7 @@ jQuery.fn = jQuery.prototype = {
 
 				// HANDLE: $(#id)
 				/*
+				 * match[1] 没有值的话并且不指定上下文的时候肯定是获取 ID 元素
 				 * 这个就是获取ID的时候 $("#div1")
 				 */
 				} else {
@@ -314,6 +326,8 @@ jQuery.fn = jQuery.prototype = {
 			// HANDLE: $(expr, $(...))
 			/*
 			 * 当是这种情况的时候 $("div")、$(".box')、$("#div div.box")，就会调用 find
+			 *
+			 *  像 $("div")、$(".box')、$("#div div.box") 匹配这些复杂选择器的时候 match = null;就会调用 find() -> 最终会调用 sizzle
 			 */
 			/*
 			 * 当 context 不存在的时候，肯定进入了这个 if，那么值肯定是 rootjQuery，rootjQuery = $(document)
@@ -918,63 +932,73 @@ jQuery.extend({
 	// data: string of html
 	// context (optional): If specified, the fragment will be created in this context, defaults to document
 	// keepScripts (optional): If true, will include scripts passed in the html string
-	/*
+	/**
 	 * $("<li></li>") -> $.parseHTML() -> context.createElement( parsed[1] )
 	 * $("<li></li><li></li>") -> $.parseHTML() -> jQuery.buildFragment( [ data ], context, scripts )
 	 */
 	parseHTML: function( data, context, keepScripts ) {
-		/*
+		/**
 		 * 如果不是字符串就直接 return null
 		 */
 		if ( !data || typeof data !== "string" ) {
 			return null;
 		}
-		/*
-		 * 对第二个参数的容错，如果没有传，传了 true、false 直接赋值给第三个参数
+		/**
+		 * 如果第二个参数传的是boolean，那么表示其实 context 是没有传的，boolean 值实际是对应 keepScripts
+		 * 那么对第二个参数进行容错处理，直接把 boolean 值赋值给第三个参数，并且 context = false; 那么之后默认上下文就是 document
 		 */
 		if ( typeof context === "boolean" ) {
 			keepScripts = context;
 			context = false;
 		}
-		/*
+		/**
 		 * 默认指定 document，这个上下文只能是 document，只不过可能是 iframe 下的 document
 		 */
 		context = context || document;
 
-		/*
-		 * rsingleTag 这个是个正则，判断是不是单标签
+		/**
+		 * rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>|)$/  匹配"成对"的独立单标签 例如：<div></div> 、 <p></p>、<li></li>
+		 * rsingleTag.exec("<div></div>"); => ["<div></div>", "div", index: 0, input: "<div></div>"]
 		 */
 		var parsed = rsingleTag.exec( data ),
-		    /*
-		     * scripts 默认是 false ( 就是没有传这个参数 )，那么此时 scripts = []
+		    /**
+		     * keepScripts 默认是 false ( 就是没有传这个参数 )，那么此时 scripts = []
 		     */
 			scripts = !keepScripts && [];
 
 		// Single tag
-		/*
-		 * 如果是单标签直接创建
+		/**
+		 * 如果是单标签直接创建，parsed[1] = "div"
+		 *  [ context.createElement( parsed[1] ) ] = [ div ]
 		 */
 		if ( parsed ) {
 			return [ context.createElement( parsed[1] ) ];
 		}
 
-		/*
-		 * 处理多标签的情况，创建多个标签，这里会把 scripts 标签创建出来放到数组里面
+		/**
+		 * 处理多标签的情况，创建多个标签，默认情况下，这里会把 scripts 标签内的东西删除
+		 *
+		 * $("<div></div><div></div>", document, false)  => data = ["<div></div><div></div>"] 、context = document 、scripts = true
+		 *
+		 * jQuery.buildFragment( [ data ], context, scripts ) ，这个方法也会调用一次 merge()
+		 * parsed =>  #documentFragment { children=HTMLCollection,  firstElementChild=div,  lastElementChild=div..}
+		 * scripts => [scripts]
+		 *
+		 * $("<div></div><div></div>", document, true) => data = ["<div></div><div></div>"] 、context = document 、scripts = false
+		 * parsed =>  #documentFragment { children=HTMLCollection,  firstElementChild=div,  lastElementChild=div..}
+		 * scripts => false
 		 */
 		parsed = jQuery.buildFragment( [ data ], context, scripts );
-
-		/*
-		 * scripts - > [scripts] -> 然后把这个标签 remove 掉
-		 * 如果传的是 false ，那么就不会删除，script 就会留下
+		/**
+		 * 如果传的是 true，scripts - > [scripts] -> 然后把这个标签 remove 掉
+		 * 如果传的是 false，那么就不会删除，script 就会留下
 		 */
 		if ( scripts ) {
 			jQuery( scripts ).remove();
 		}
-
-		/*
-		 * parsed.childNodes 得到的是 DOM 节点，通过 merge 转为节点数组
-		 * 然后上面 在 merge 转为 json ， 但是 json 格式一定是这样子的类数组格式
-		 * 比如 $("<li></li>") 就会走 "if ( match[1] )" 搜索下看到相应的代码，最终形成 Object {0:li,1:li,length:2,....}
+		/**
+		 * parsed.childNodes 得到的是 DOM 节点
+		 * 通过 merge 转为节点数组 [div, div]
 		 */
 		return jQuery.merge( [], parsed.childNodes );
 	},
@@ -1200,14 +1224,14 @@ jQuery.extend({
 		return arr == null ? -1 : core_indexOf.call( arr, elem, i );
 	},
 
-	/*
-	 * 对外就是合并数组，对内是转特定格式的 json
+	/**
+	 * 对外就是合并数组，返回的是数组，对内是转特定格式的 json
 	 */
 	merge: function( first, second ) {
 		var l = second.length,
 			i = first.length,
 			j = 0;
-		/*
+		/**
 		 * 这个是判断第二个参数是不是 json，因为 json 是没有长度的
 		 * $.merge(["a","b"],["c","d"])、$.merge(["a","b"],{0:"c",1:"d"}) 一般都是外部使用
 		 * if -> $.merge(["a","b"],["c","d"])
@@ -1223,7 +1247,7 @@ jQuery.extend({
 			}
 		}
 
-		/*
+		/**
 		 * 改变 length 值
 		 */
 		first.length = i;
@@ -1555,7 +1579,7 @@ jQuery.ready.promise = function( obj ) {
 			 * };
 		     * DOM 没有加载完成进行检测
 			 */
-			/* 
+			/*
 			 * DOMContentLoaded 是高于 load 的，那为什么要检测这两个，而不只检测 DOMContentLoaded
 			 * 主要是因为有些浏览器会缓存 load，有可能在一些浏览器 (FF)，缓存了 load 以后会先触发 load 事件
 			 * 为了保证第一时间走最快的 DOM 加载，所以就两个都写了

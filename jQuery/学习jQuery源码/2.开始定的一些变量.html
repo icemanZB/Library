@@ -9,7 +9,7 @@
 			/**
 			 * 1、为了压缩考虑，jQuery(document) 这种无法压缩
 			 * 2、定义变量，有利于后期代码进行可维护
-			 **/
+			 */
 			rootjQuery,
 
 			// The deferred used on DOM ready
@@ -20,12 +20,12 @@
 			/**
 			 * 在老版本的 IE6 7 8 9中，如果是判断 XML 节点 (或方法)，window.a == undefined 这种方式判断会有问题
 			 * 为了兼容使用 typeof window.a == "undefined" 使 core_strundefined = "undefined"
-			 **/
+			 */
 			core_strundefined = typeof undefined,  // "undefined"
 
 			/**
 			 * 使用正确的文档与窗口，存储为变量用于压缩
-			 **/
+			 */
 			location = window.location,
 			document = window.document,
 			docElem = document.documentElement,
@@ -33,19 +33,19 @@
 			// Map over jQuery in case of overwrite
 			/**
 			 * 变量冲突的时候使用，如果在外部定义过 window.jQuery = "jQuery"; 那么此时这个变量存的值就是 _jQuery = "jQuery"; 如果外部没有定义，那么 _jQuery = undefined
-			 * 之后会详细讲到
-			 **/
+			 * 在 noConflict 方法中详细阐述
+			 */
 			_jQuery = window.jQuery,
 
 			// Map over the $ in case of overwrite
 			/**
 			 * 变量冲突的时候使用同理上述 _jQuery 变量
-			 **/
+			 */
 			_$ = window.$,
 
 			// [[Class]] -> type pairs
 			/**
-			 * 用于类型判断 $.type()，存储的内容如下，在下方会有遍历的代码，之后会讲到
+			 * 用于类型判断 $.type()，存储的内容如下，在下方会有遍历的代码
 			 * class2type ={
 			 *     "[object Array]": "array",
 			 *	   "[object Boolean]": "boolean",
@@ -57,13 +57,13 @@
 			 *	   "[object RegExp]": "regexp",
 			 *	   "[object String]": "string"
 			 *  };
-			 **/
+			 */
 			class2type = {},
 
 			// List of deleted data cache ids, so we can reuse them
 			/**
 			 * 存放一个数组，之后会重复使用
-			 **/
+			 */
 			core_deletedIds = [],
 
 			core_version = "2.0.3",
@@ -71,7 +71,7 @@
 			// Save a reference to some core methods
 			/**
 			 * 存储核心方法的引用
-			 **/
+			 */
 			core_concat = core_deletedIds.concat,
 			core_push = core_deletedIds.push,
 			core_slice = core_deletedIds.slice,
@@ -81,64 +81,58 @@
 
 			/**
 			 * 去掉前后空格，ECMA5 中的字符串方法，源码中只有 trim() 静态方法中使用到
-			 **/
+			 */
 			core_trim = core_version.trim,
 
 			// Define a local copy of jQuery
-			/*
+			/**
 			 * 构建 jQuery 对象
 			 */
 			jQuery = function( selector, context ) {
 				// The jQuery object is actually just the init constructor 'enhanced'
 				/**
 				 * jQuery 对象实际上只是初始化构造函数的 "强化"，jQuery.fn.init() 才是构造函数
-				 * jQuery.fn = jQuery.prototype => jQuery.prototype.init(); 之后会详细分析
-				 **/
+				 */
 				return new jQuery.fn.init( selector, context, rootjQuery );
 			},
 
 			// Used for matching numbers
 			/**
 			 * 找数字，正负号、小数点、科学计数法
-			 * .source 会直接返回当前正则表达式的字符串，获得正则表达式本身
-			 * /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source => "[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)"
-			 * 在 css() 方法中有使用到 var rrelNum = new RegExp( "^([+-])=(" + core_pnum + ")", "i" ); 找类似 "+=200px"
-			 * 转换相对数字符串 +=/-= 为相应的数字; (+ + 1) == 1、(- + 1) == -1 ( +1 转数字，然后再帮前面的符号结合 )
-			 * console.log(rrelNum.exec( "+=200px" )); => ["+=200", "+", "200", index: 0, input: "+=200px"]
-			 * 之后会详细讨论
-			 **/
+			 */
 			core_pnum = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source,
 
 			// Used for splitting on whitespace
 			/**
 			 * 用空格分隔单词，匹配空格分隔开，作用类似 "once memory".split(" ")
 			 * "once memory" => ["once", "memory"]
-			 **/
+			 */
 			core_rnotwhite = /\S+/g,
 
 			// A simple way to check for HTML strings
 			// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
 			// Strict HTML recognition (#11290: must start with <)
 			/**
-			 * (?:\s*(<[\w\W]+>)[^>]*|#([\w-]*)) 匹配元素标签 (创建标签的时候会用到) 例如：<p>aaa
-			 **/
+			 * 匹配的是 $("<li>hello")、$("<div>")、$("#div")
+			 * 匹配HTML标记和ID表达式，<前面可以匹配任何空白字符，包括空格、制表符、换页符等等
+			 */
 			rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,
 
 			// Match a standalone tag
 			/**
-			 * 匹配 "成对" 的独立单标签 例如：<div></div> 、 <p></p>、<li>，之后具体分析
-			 **/
+			 * 匹配 "成对" 的独立单标签 例如：<div></div> 、 <p></p>、<li></li>
+			 */
 			rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
 
 			// Matches dashed string for camelizing
 			/**
 			 * 用在 IE 的 CSS 属性转换上 ( 驼峰式 )
 			 * 例如： MsMarginLeft，其他的前缀是 webkitMarginLeft
-			 **/
+			 */
 			rmsPrefix = /^-ms-/,
 
 			/**
-			 * 找到 "-" 加上任意(a-z)字符，转成大写，例如： -l ==> L
+			 * 找到 "-" 加上数字或者任意(a-z)字符，转成大写，例如： -l ==> L
 			 * margin-left ==> marginLeft 或者匹配 CSS3 的数字 ( -2d -> 2d )
 			 **/
 			rdashAlpha = /-([\da-z])/gi,
@@ -146,8 +140,8 @@
 			// Used by jQuery.camelCase as callback to replace()
 			/**
 			 * 用于转驼峰的回调函数 ( all => 正则，letter => 正则中的子项 )
-			 * 例如： all ==> /-([\da-z])/gi，子项就是 [\da-z] 匹配到对应的字符，转成大写
-			 **/
+			 * 例如：all ==> /-([\da-z])/gi，第一个子项就是 [\da-z] 匹配到对应的数字或者(a-z)字符，转成大写
+			 */
 			fcamelCase = function( all, letter ) {
 				return letter.toUpperCase();
 			},
@@ -155,7 +149,7 @@
 			// The ready event handler and self cleanup method
 			/**
 			 * DOM 加载成功后触发回调，里面的代码到时候具体分析
-			 **/
+			 */
 			completed = function() {
 				document.removeEventListener( "DOMContentLoaded", completed, false );
 				window.removeEventListener( "load", completed, false );

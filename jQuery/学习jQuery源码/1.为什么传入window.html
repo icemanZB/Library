@@ -9,7 +9,7 @@
 			/**
 			 * 1. window 是最顶层的对象，根据作用域的原理，不断的往上查找影响性能
 			 * 2. 为了压缩，window 对象不可压缩，但是作为参数传入可以压缩
-			 **/
+			 */
 
 			// 第二个参数 undefined 的意义
 			console.log(undefined);  // undefined
@@ -19,7 +19,7 @@
 			 * 为什么要这样做？
 			 * 由于 undefined 不是保留字，也不是关键字，说明 undefined 可以被修改，所以 jQuery 为了防止外面对 undefined 进行了这样的处理
 			 * 如果内部代码中用到 "undefined"，肯定是使用这个参数，这个参数的值就是 undefined
-			 **/
+			 */
 
 		})(window);
 

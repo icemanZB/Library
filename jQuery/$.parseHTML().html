@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.parseHTML()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+			var str = "<li>1</li><li>2</li><li>3</li>";
+
+			// 把字符串转成节点数组 $.parseHTML(str);
+			var arr = $.parseHTML(str, document, false);
+
+			console.log(arr);  // ["li","li","li"]
+
+			$.each(arr, function (i) {
+				$("#ul1").append(arr[i]);
+			});
+
+			var str2 = "<li>1</li><li>2</li><li>3</li><script>alert(4)<\/script>";
+
+			var arr2 = $.parseHTML(str2, document, true);
+
+			// 第三个参数默认是 false，如果为 true 的时候可以解析字符中的 <script>
+			// 此时会弹出 alert(4)
+			$.each(arr2, function (i) {
+				$("#ul2").append(arr2[i]);
+			});
+
+		});
+	</script>
+</head>
+<body>
+<ul id="ul1">
+</ul>
+<ul id="ul2">
+
+</ul>
+</body>
+</html>

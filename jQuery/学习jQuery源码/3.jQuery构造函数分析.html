@@ -9,7 +9,7 @@
 				/**
 				 * jQuery 对象实际上只是初始化构造函数的 "强化"，这里 new jQuery.fn.init() 才是真正的构造函数
 				 * jQuery.fn.init() = jQuery.prototype.init()
-				 **/
+				 */
 				return new jQuery.fn.init(selector, context);
 			};
 
@@ -17,7 +17,7 @@
 				constructor: jQuery,
 				/**
 				 * 入口函数/真正的构造函数 init()
-				 **/
+				 */
 				init       : function (selector, context) {
 					console.log(this);  //  Object { constructor=function(),  init=function() ,... }
 					return this;
@@ -50,13 +50,14 @@
 			 * 从代码写法简单的角度来讲，别人扩展 $ 的功能习惯在 $ 的原型里边写，即 $.fn
 			 * 而 $.fn.init.prototype = $.fn 结合起来就刚好完成了内部写法简单和外部功能完善。
 			 *
-			 **/
+			 */
 			jQuery.fn.init.prototype = jQuery.fn;
 
 			window.jQuery = window.$ = jQuery;
 
 		})();
 
+		// 调用
 		$();
 
 

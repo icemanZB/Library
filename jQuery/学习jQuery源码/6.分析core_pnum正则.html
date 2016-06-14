@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>分析 core_pnum 正则</title>
+	<script>
+
+		/**
+		 * http://stackoverflow.com/questions/14299524/clarifcation-on-regular-expression-in-jquery-source
+		 *
+		 * /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source，作用是找数字，正负号、小数点、科学计数法
+		 *
+		 * /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source => "[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)"
+		 *
+		 * [\-+]?   这是匹配 一个正负号(可选)，可有可无的
+		 *
+		 *  \d 匹配与一个数字字符
+		 * (?:\d*\.|)   这是个非捕获组，匹配 0个或者多个数字加上"."(点)，或者什么也不匹配
+		 *
+		 * \d+ 匹配 一个或多个连续的数字
+		 *
+		 * + 匹配至少包含 1 个或者多个
+		 * (?:[eE][\-+]?\d+|)   这个是非捕获组，首先是匹配一个小写或大写的"E"(科学计数法)，后面跟着一个正负号(可选)可有可无的，再跟上1个或多个数字，或者什么也没有
+		 *
+		 * 在 css() 方法中有使用到 var rrelNum = new RegExp( "^([+-])=(" + core_pnum + ")", "i" ); 找类似 "+=200px";
+		 */
+
+		var core_pnum = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source;
+
+		console.log(/[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.exec("200px"));  // ["200", index: 0, input: "200px"]
+
+		/**
+		 * .source 会直接返回当前正则表达式的字符串，获得正则表达式本身
+		 */
+		var rrelNum = new RegExp("^([+-])=(" + core_pnum + ")", "i"), ret, value, type;
+
+		if (ret = rrelNum.exec("+=200px")) {
+
+			/**
+			 * new RegExp("^([+-])=(" + core_pnum + ")", "i")
+			 * 必须要是 加号或者减号开头，全局匹配
+			 */
+			console.log(ret);  // ["+=200", "+", "200", index: 0, input: "+=200px"]
+
+			/**
+			 * 转换相对数字符串 +=/-= 为相应的数字; (+ + 1) == 1、(- + 1) == -1 ( +1 转数字，然后再帮前面的符号结合 )
+			 */
+			// value = ( ret[1] + 1 ) * ret[2] + parseFloat(jQuery.css(elem, name));
+			// Fixes bug #9237
+			type = "number";
+		}
+
+		console.log(rrelNum.exec("200px"));  // null
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

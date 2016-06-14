@@ -17,3 +17,5 @@ jQuery 我相信大家听到这个一定不陌生，没用过也肯定是久仰�
 好像又看见长长的重复的东西，xxx.style.display = "none", 看到有重复的代码就想优化提炼
 
 形象点就是 new F("image") 出了一拳，又反弹到自己脸上了。
+
+http://stackoverflow.com/questions/14299524/clarifcation-on-regular-expression-in-jquery-source  core_pnum 正则分析
