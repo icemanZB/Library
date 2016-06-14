@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>jQuery</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+		/**
+		 * 很多人迷惑 jQuery 为什么能像数组一样操作，通过对象 get() 或者直接通过下标 0 索引就能转成 DOM 对象
+		 * jQuery 内部就采用了一种叫 "类数组对象" 的方式作为存储结构，所以我们即可以像对象一样处理 jQuery 操作
+		 * 也能像数组一样可以使用 push、pop、shift、unshift、sort、each、map 等类数组的方法操作jQuery 对象
+		 **/
+		$(function () {
+			var $li = $("li");
+
+			/**
+			 * {
+			 *	 0:li(DOM),
+			 *	 1:li(DOM),
+			 *	 2:li(DOM),
+			 *	 context:document,
+			 *	 length:3, // 添加了 length 属性用于 for 循环
+			 *	 prevObject:jQuery.fn.jQuery.init[1],
+			 *	 selector:"li"
+			 * }
+			 **/
+			console.log($li);
+			/**
+			 * 这个"1"就是通过 key 来获取对应的 value
+			 **/
+			$li[1].style.background = "red";
+		});
+
+
+	</script>
+</head>
+<body>
+<ul>
+	<li></li>
+	<li></li>
+	<li></li>
+</ul>
+</body>
+</html>
