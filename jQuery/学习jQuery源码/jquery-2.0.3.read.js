@@ -425,22 +425,23 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	// Start with an empty selector
-	/*
-	 * 存储选择到元素的字符串形式
+	/**
+	 * 存储选择到元素的字符串形式，例如：$("#div1") => selector = "#div1"
 	 */
 	selector: "",
 
 	// The default length of a jQuery object is 0
-	/*
-	 * this 对象的长度
+	/**
+	 * this ( jQuery 对象 ) 对象的长度
 	 */
 	length: 0,
 
-	/*
-	 * 功能是把类数组转为真正的数组，并且是实例下的方法，只能给 jQuery 对象使用 $("div").toArray();
+	/**
+	 * 功能是把类数组转为真正的数组
+	 * 并且是实例下的方法，只能给 jQuery 对象使用 $("div").toArray();
 	 */
 	toArray: function() {
-		/*
+		/**
 		 * [].slice.call(this)，this 是上下文，改变执行环境
 		 */
 		return core_slice.call( this );
@@ -448,14 +449,14 @@ jQuery.fn = jQuery.prototype = {
 
 	// Get the Nth element in the matched element set OR
 	// Get the whole matched element set as a clean array
-	/*
+	/**
 	 * 可以选择到一个原生的集合，或者是指定集合当中的某一个
 	 */
 	get: function( num ) {
-		/*
+		/**
 		 * 首先看 num 不存在的情况下，其实就是要一个集合，调用 toArray() 方法，转成原生的数组
-		 * 如果有 num 并且是负数，就是从后往前找 (this.length + num)
-		 * 如果有 num，num 是正数就是走的是 this[ num ]，获取数组中的指定的一个
+		 * 如果有 num，并且 num 是负数，就是从后往前找 (this.length + num)
+		 * 如果有 num，并且 num 是正数，就是走的是 this[ num ]，获取数组中的指定的一个
 		 */
 		return num == null ?
 
@@ -463,36 +464,40 @@ jQuery.fn = jQuery.prototype = {
 			this.toArray() :
 
 			// Return just the object
-			/*
-			 * this 是 jQuery 对象，"[]" 代表着去找 json(特殊形式) 对应的属性，这里 this 不是数组)
-			 * this -> Object {0:li,1:li,length:2,....}
+			/**
+			 * this 是 jQuery 对象，"[]" 代表着去找 json (特殊形式) 对应的属性，这里 this 不是数组)
+			 * this -> Object { 0:li,1:li,length:2,.... }
 			 */
 			( num < 0 ? this[ this.length + num ] : this[ num ] );
 	},
 
 	// Take an array of elements and push it onto the stack
 	// (returning the new matched element set)
-	/*
-	 * jQuery 对象入栈
+	/**
+	 * jQuery 对象入栈 ( 先进后出 )
 	 * 这个概念有点类似于进电梯，先进的人在后面，后进的人在前面，出电梯的时候，后进的人先出，先进的人后出
-	 * 总结：先进后出
 	 */
 	pushStack: function( elems ) {
-		/*
-		 * this.constructor() -> 得到一个空的 jQuery 对象
+		/**
+		 * this.constructor() => 得到一个空的 jQuery 对象
 		 * elems 参数 就是传进来的 DOM 对象
-		 * 通过 jQuery.merge() 方法打包成一个 json 对象，例如：$("div").pushStack( $("span") )
-		 * { 0: span,context: document,length: 1,prevObject: jQuery.fn.jQuery.init[1],selector: "span" }
+		 * 通过 jQuery.merge() 方法把 DOM 扩展到 jQuery 对象上，例如：$("div").pushStack( $("span") )
+		 * ret = { 0: span,context: document,length: 1,prevObject: jQuery.fn.jQuery.init[1],selector: "span" }
 		 */
 		// Build a new jQuery matched element set
 		var ret = jQuery.merge( this.constructor(), elems );
-
 		// Add the old object onto the stack (as a reference)
-		/*
+		/**
 		 * 添加一个 prevObject 属性，存之前的对象。也就是说在 span 下面添加了一个 prevObject 属性存 div
-		 * 存这个属性是为了方便找到先入栈的那个元素，例如 $("div").pushStack( $("span") ).css("background","red").end().css("background","yellow");
+		 * 存这个属性是为了方便找到先入栈的那个元素
+		 *
+		 * 例如 $("div").pushStack( $("span") ).css("background","red").end().css("background","yellow");
+		 * span 变红，原理是因为，先获取的 div 放在栈的底部，在调用方法，在获取 span，span 就在 div 的上面了
+		 * 根据先进后出的原则，span 先出来，所以是 span 变红
+		 *
 		 * 这里的 end() 方法就可以找到 div
-		 * { 0: div,context: document,length: 1,prevObject: jQuery.fn.jQuery.init[1],selector: "div"}
+		 *
+		 * this 显然指的是 $("div")
 		 */
 		ret.prevObject = this;
 		ret.context = this.context;
@@ -505,20 +510,20 @@ jQuery.fn = jQuery.prototype = {
 	// (You can seed the arguments with an array of args, but this is
 	// only used internally.)
 	each: function( callback, args ) {
-		/*
+		/**
 		 * 调用 jQuery.each() 是工具方法(静态方法)
 		 */
 		return jQuery.each( this, callback, args );
 	},
 
-	/*
+	/**
 	 * rootjQuery.ready( selector ); 上面这句就是对应调用这个实例方法
 	 */
 	ready: function( fn ) {
 		// Add the callback
-		/*
+		/**
 		 * jQuery.ready.promise() 先创建了延迟对象，在适当的时候触发 fn
-		 * jQuery.ready.promise  搜索下，在下面
+		 * jQuery.ready.promise  搜索下，在下面具体分析
 		 */
 		jQuery.ready.promise().done( fn );
 
@@ -526,10 +531,14 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	slice: function() {
-		/*
+		/**
+		 * <p>内容内容</p> <p>内容内容</p> <p>内容内容</p> <p>内容内容</p>
+		 *
+		 * $("p").slice(1, 3)
+		 *
 		 * this -> { 0: p,1: p,2: p,3: p,context: document,length: 4,prevObject: jQuery.fn.jQuery.init[1],selector: "p" }
-		 * core_slice.apply( this, arguments ) -> [].slice.apply(this,[1,3])
-		 * 传入 this 是要改变原来的 Array 的指向
+		 *
+		 * core_slice.apply( this, arguments ) -> [].slice.apply(this,[1,3]); 传入 this 是要改变原来的 Array 的指向
 		 */
 		return this.pushStack( core_slice.apply( this, arguments ) );
 	},
@@ -544,14 +553,18 @@ jQuery.fn = jQuery.prototype = {
 
 	eq: function( i ) {
 		var len = this.length,
-			/*
-			 * +i 就是转数字
+			/**
+			 * +i 就是转数字，隐式转换
+			 * i < 0 就是从后往前找; 例如 i = -2,len = 5; 那么 j = 3，最后就是取下标是 3 的 DOM 元素
 			 */
 			j = +i + ( i < 0 ? len : 0 );
 
 		return this.pushStack( j >= 0 && j < len ? [ this[j] ] : [] );
 	},
 
+	/**
+	 * 将一个数组转换为另一个数组
+	 */
 	map: function( callback ) {
 		return this.pushStack( jQuery.map(this, function( elem, i ) {
 			return callback.call( elem, i, elem );
@@ -559,17 +572,18 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	end: function() {
-		/*
+		/**
 		 * end() 方法就是利用了栈的原理
 		 * 例如：$("div").pushStack( $("span") ).css("background","red").end().css("background","yellow");
-		 * 此时的 this 就是 span，那么 span 的 prevObject 就是 div 了，如果没有的话就不做任何处理了
+		 * 此时的 this 就是 span，那么 span 的 prevObject 就是 div 了
+		 * 如果没有的话就不做任何处理了，返回空的 jQuery 对象
 		 */
 		return this.prevObject || this.constructor(null);
 	},
 
 	// For internal use only.
 	// Behaves like an Array's method, not like a jQuery method.
-	/*
+	/**
 	 * 这三个方法是 jQuery 内部使用的，jQuery 把这三个数组的方法挂载到了 jQuery 对象下，所以 jQuery 就有了数组的这三个方法，不建议在外面使用
 	 */
 	push: core_push,
@@ -578,11 +592,15 @@ jQuery.fn = jQuery.prototype = {
 };
 
 // Give the init function the jQuery prototype for later instantiation
-/*
- * 将 jQuery.fn 赋值给 jQuery.fn.init.prototype ( jQuery.fn.init.prototype 的原型也就是 jQuery 的原型对象 )
- * jQuery.prototype = jQuery.fn = jQuery.fn.init.prototype
- * 让 jQuery 原型中的 init 方法中的原型对象指向 jQuery 的原型 ( init.prototype = jquery.prototype; )，以便使用 jQuery 的原型对象中的属性和方法
- * 这样所有通过 $ 创建出来的对象都将共享 fn 对象上的成员。因此，jQuery 对象都有了类似 attr 、html 等等方法了
+/**
+ * 让 jQuery 原型中的 init 方法的原型对象指向 jQuery 的原型，这样做的原因就是让 jQuery.fn.init.prototype 同时拥有 jQuery.prototype 中的方法
+ * 换句话说jQuery的原型对象覆盖了 init 构造器的原型对象，因为是引用传递所以不需要担心这个循环引用的性能问题。
+ * 这样通过调用 $() 内部使用 init() 构造函数创建出来的对象都将共享 jQuery.prototype 中的方法
+ * 所以之后再 jQuery.fn 上扩展的实例方法( attr() 、html()、css() )，那么在 jQuery.fn.init.prototype 中也同时拥有
+ * 这样做是为什么？ 就是为了：静态与实例方法共享设计，并且实例方法取于静态方法
+ * $(".aaron").each()   // 作为实例方法存在 、 $.each() // 作为静态方法存在
+ * 从代码写法简单的角度来讲，别人扩展 $ 的功能习惯在 $ 的原型里边写，即 $.fn
+ * 而 $.fn.init.prototype = $.fn 结合起来就刚好完成了内部写法简单和外部功能完善。
  */
 jQuery.fn.init.prototype = jQuery.fn;
 
@@ -1207,7 +1225,9 @@ jQuery.extend({
 
 	// results is for internal usage only
 	/**
-	 * 第二个参数是内部使用的
+	 * 传一个参数的时候就是把类数组转为真正的数组 (平时用的)
+	 * 传两个参数的时候就会变成 json (特殊的拥有 length，下标属性的)，一般是源码内部使用
+	 * 这个方法是工具方法，可以给 jQuery 对象使用，也可以给原生的 JavaScript 使用
 	 */
 	makeArray: function( arr, results ) {
 		/**
@@ -1314,8 +1334,8 @@ jQuery.extend({
 	},
 
 	// arg is for internal usage only
-	/*
-	 * 最后一个参数是内部使用的
+	/**
+	 * 将一个数组转换为另一个数组，最后一个参数是内部使用的
 	 */
 	map: function( elems, callback, arg ) {
 		var value,
@@ -1325,7 +1345,7 @@ jQuery.extend({
 			ret = [];
 
 		// Go through the array, translating each of the items to their
-		/*
+		/**
 		 * 数组、类数组、特殊的 json
 		 */
 		if ( isArray ) {
@@ -1333,8 +1353,8 @@ jQuery.extend({
 				value = callback( elems[ i ], i, arg );
 
 				if ( value != null ) {
-					/*
-					 * 把结果添加到新数组中，添加过一次 ret.length 就会自动累加
+					/**
+					 * 把筛选的结果添加到新数组中，添加过一次 ret.length 就会自动累加
 					 */
 					ret[ ret.length ] = value;
 				}
@@ -1342,7 +1362,7 @@ jQuery.extend({
 
 		// Go through every key on the object,
 		} else {
-			/*
+			/**
 			 * 如果 elems 是 json 就会走这里
 			 */
 			for ( i in elems ) {
@@ -1355,9 +1375,9 @@ jQuery.extend({
 		}
 
 		// Flatten any nested arrays
-		/*
+		/**
 		 * 避免得到复合数组 core_concat = core_deletedIds.concat => [].concat.apply([],ret)
-		 * [1,2,3,4]. $.map( arr , function(n){
+		 * $.map( [1,2,3,4]  , function(n){
 		 *	   return [n+1];
 		 * } );
 		 * console.log( arr );  // [2,3,4,5]

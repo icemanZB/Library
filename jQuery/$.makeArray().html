@@ -2,20 +2,22 @@
 <html>
 <head lang="en">
 	<meta charset="UTF-8">
-	<title>jQuery</title>
-	<script src="jquery-2.0.3.study.js"></script>
+	<title>$.makeArray</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
 	<script>
 		$(function(){
+
+			// 传一个参数的时候就是把类数组转为真正的数组
 
 			var aDiv = document.getElementsByTagName("div");
 
 			console.log( $.makeArray(aDiv) );  // [div, div, div]
 
-			console.log( $.makeArray(aDiv,{length:0}) );
-
 			var str = "hello";
 
 			// 第二个参数是内部使用的
+			console.log( $.makeArray(aDiv,{length:0}) );
+
 			console.log( $.makeArray( str , {length:0} ) );
 
 		});

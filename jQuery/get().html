@@ -15,6 +15,17 @@
 			// 转为 DOM 对象  $("p").get() 是返回一个数组
 			console.log($("p").get(0));
 
+			var $div = $("div");
+			// 转原生的方法，负数就是从最后一个开始
+			// 同理：$div.get(2).innerHTML = "222222222";
+			$div.get(-1).innerHTML = "222222222";
+
+			var arr = $div.get();  // [div, div, div] 得到原生的集合
+
+			for (var i = 0; i < arr.length; i++) {
+				$div.get(i).innerHTML = "222222";
+			}
+
 		});
 	</script>
 </head>
@@ -26,5 +37,10 @@
 	<input type="text" name="password" value="password"/>
 	<input type="text" name="url" value="http://w3school.com.cn/"/>
 </form>
+
+<div>11111111</div>
+<div>22222222</div>
+<div>3333333</div>
+
 </body>
 </html>
