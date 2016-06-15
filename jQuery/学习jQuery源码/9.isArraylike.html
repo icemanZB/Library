@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>isArraylike</title>
+	<script>
+		/**
+		 * 类数组、数组、特殊 json 的判断，内部使用
+		 * 这里主要研究其中一部分
+		 */
+		function isArraylike(obj) {
+			var length = obj.length;
+			/**
+			 * 这句是判断特殊的 json 或者 arguments ( 类数组 )
+			 * ( length === 0 || typeof length === "number" && length > 0 && ( length - 1 ) in obj )
+			 *
+			 * 如果一个类数组( document.getElementsByTagName("li") )，length = 3，那么 (3-1) in arguments => true
+			 * length === 0 是针对 isArraylike( {length: 0} ) 情况下，如果不写 length === 0，那么 arguments = 0; (0-1) in arguments => false，就有问题了
+			 * 写了 length === 0，由于 "||"，前者返回 true(遵循"短路"原理) ，后面就不走了
+			 */
+
+			return typeof obj !== "function" && (length === 0 ||
+					typeof length === "number" && length > 0 && ( length - 1 ) in obj);
+		}
+
+		function test(a, b, c) {
+
+			/**
+			 * 如果一个函数的 arguments 长度为 3 那么 length = 3;  (3-1) in arguments => true
+			 */
+			console.log(2 in arguments);  // true
+
+		}
+
+		// test("a","b","c");
+
+		function test2() {
+
+			/**
+			 * length === 0，那么 arguments = 0; (0-1) in arguments => false
+			 */
+			console.log(-1 in arguments);  // false
+
+		}
+
+		// test2();
+
+		window.onload = function () {
+
+			/**
+			 * 当使用 $("li",document.getElementsByTagName("ul")); 这种情况的时候
+			 * 就会调用这句 this.constructor( context ).find( selector ); 在执行 jQuery.makeArray( selector, this );
+			 * 此时的 selector 是 document.getElementsByTagName("ul"));
+			 * 在 makeArray() 中 会调用到 isArraylike()
+			 */
+			// isArraylike(Object(document.getElementsByTagName("ul")));  // true
+
+			//isArraylike(test);  // false
+
+			//isArraylike(test2) ;  // false
+
+			// isArraylike(document.getElementsByTagName("li")) ;  // true
+
+			console.log( isArraylike({length: 0}) );
+		};
+
+
+	</script>
+</head>
+<body>
+<ul>
+	<li></li>
+	<li></li>
+</ul>
+</body>
+</html>
