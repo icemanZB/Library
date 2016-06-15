@@ -245,39 +245,55 @@ jQuery.fn = jQuery.prototype = {
 					/**
 					 * jQuery.parseHTML(match[1],document,true) 把字符串转成节点数组，如果为 true，可以解析字符中的 <script>，并且执行 <script> 中的脚本
 					 * this 就是 jQuery 对象
-					 * 这里有个疑问为什么外面还要 merge 一下？？？
+					 * 利用 merge 对 jQuery 实例对象进行扩充
+					 * 也就是用 parseHTML() 将字符串转化为 DOM，然后将之合并到 this 中，这样就可以调用 jQuery 中的方法进行 DOM 操作
 					 */
 					jQuery.merge( this, jQuery.parseHTML(
 						match[1],
 						/**
 						 * 最终 context = document
+						 * ownerDocument 和 documentElement 的区别
+						 * ownerDocument 是 Node 对象的一个属性，返回的是某个元素的根节点文档对象：即 documen t对象
+						 * documentElement是 Document 对象的属性，返回的是文档根节点
+						 * 对于 HTML 文档来说，documentElement 是 <html> 标签对应的 Element 对象，ownerDocument 是 document 对象
 						 */
 						context && context.nodeType ? context.ownerDocument || context : document,
 						true
 					) );
 
 					// HANDLE: $(html, props)
-					/*
+					/**
 					 * 这段是处理创建标签带有属性的 $("<li></li>",{title : "hi",html : "abcd",css : {background:"red"}}).appendTo( "ul" );
-					 * rsingleTag 匹配单标签 (<li></li>)，jQuery.isPlainObject() 必须是个 {title : "hi",html : "abcd"}
+					 * 此时 context = {title : "hi",html : "abcd",css : {background:"red"}}
+					 *
+					 * rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>|)$/; 匹配"成对"的独立单标签 例如：<div></div> 、 <p></p>、<li></li>
+					 *
+					 * rsingleTag.exec("<li></li>"); => ["<li></li>", "li", index: 0, input: "<li></li>"]
+					 * match[1] => "li"
+					 *
+					 * jQuery.isPlainObject() 判断是否是对象字面量 ( var obj={}; var obj = new Object() ) 只有这两种返回 true
 					 */
 					if ( rsingleTag.test( match[1] ) && jQuery.isPlainObject( context ) ) {
-						/*
-						 * 此时 context = { title : "hi",html : "abcd" }
-						 */
+
 						for ( match in context ) {
 							// Properties of context are called as methods if possible
-							/*
-							 * match 的值 就是 title 、html，在 jQuery 中 this["title"] 没有这个方法，但是有 this["html"] = this.html()
+							/**
+							 * 遍历 context = { title : "hi",html : "abcd",css : {background:"red"} };
+							 * 
+							 * jQuery.isFunction(); 判断是不是一个方法
+							 * this 自然是 jQuery 对象， 在 jQuery 对象中 判断 this["title"] 有没有这个方法，没有方法就添加属性
+							 * 有这个方法如：this["html"] = this.html(); 就进行函数调用
 							 */
 							if ( jQuery.isFunction( this[ match ] ) ) {
-								/* 当有这个方法的时候进行html()函数调用了 this.html( "abcd" ); */
+								/**
+								 * 当有这个方法的时候进行 html() 函数调用，this["html"]( "abcd" );
+								 */
 								this[ match ]( context[ match ] );
 
 							// ...and otherwise set as attributes
 							} else {
-								/*
-								 * 没有方法就添加属性，调用 attr(title,"hi")
+								/**
+								 * 没有方法就添加属性，调用 attr(title,"hi");
 								 */
 								this.attr( match, context[ match ] );
 							}
@@ -287,36 +303,35 @@ jQuery.fn = jQuery.prototype = {
 					return this;
 
 				// HANDLE: $(#id)
-				/*
-				 * match[1] 没有值的话并且不指定上下文的时候肯定是获取 ID 元素
-				 * 这个就是获取ID的时候 $("#div1")
-				 */
 				} else {
-					/*
-					 * $("#div1")  -> match = ["#div1",null,"div1"];  match[2] = "div1"
+					/**
+					 * match[1] 没有值的话并且不指定上下文的时候肯定是获取 ID 元素
+					 *
+					 * $("#div") => match = ["#div", undefined, "div", index: 0, input: "#div"]
 					 */
 					elem = document.getElementById( match[2] );
-
+					
 					// Check parentNode to catch when Blackberry 4.6 returns
 					// nodes that are no longer in the document #6963
-					/*
+					/**
 					 * 一般来说只要判断 elem 存不存在就可以了，但是在 Blackberry 4.6 下，可能这个元素已经不再页面上了但是还能找到
 					 * 例如克隆一个节点，然后删除以后，他仍旧能找到，所以在判断看看有没有父级
 					 */
 					if ( elem && elem.parentNode ) {
 						// Inject the element directly into the jQuery object
-						/*
-						 * jQuery 选择元素的时候是存成一个类数组，所以设置长度为 1，第 0 项就是对应这个 DOM 元素
+						/**
+						 * jQuery 选择元素的时候是存成一个类数组，所以设置长度为 1
+						 * this[0] 就是对应这个 DOM 元素
 						 */
 						this.length = 1;
 						this[0] = elem;
 					}
 
-					/*
-					 * ID 选择符上下文肯定是 document
+					/**
+					 * 设置 context， ID 选择符上下文肯定是 document
 					 */
 					this.context = document;
-					/*
+					/**
 					 * 就是外面传进来的 #div1，存到 this.selector
 					 */
 					this.selector = selector;
@@ -329,75 +344,82 @@ jQuery.fn = jQuery.prototype = {
 			 *
 			 *  像 $("div")、$(".box')、$("#div div.box") 匹配这些复杂选择器的时候 match = null;就会调用 find() -> 最终会调用 sizzle
 			 */
-			/*
+			/**
 			 * 当 context 不存在的时候，肯定进入了这个 if，那么值肯定是 rootjQuery，rootjQuery = $(document)
 			 * 传了 context，并且要看 context.jquery 就是表示 这个 context 是不是 jQuery 对象，如果是就调用 context.find( selector );
-			 * 例如： $("ul",$(document))   -> $(document).find("ul");
+			 * 例如： $("ul",$(document)) => $(document).find("ul");
 			 */
 			} else if ( !context || context.jquery ) {
-				/*
-				 * find() -> 最终会调用 sizzle
+				/**
+				 * find() -> 最终会调用 Sizzle
 				 */
 				return ( context || rootjQuery ).find( selector );
 
 			// HANDLE: $(expr, context)
 			// (which is just equivalent to: $(context).find(expr)
-			/*
-			 * 传了 context，但是不是 jQuery 对象就走 else，this.constructor = jQuery
-			 * 例如： $("ul",document)  ->  jQuery(document).find("ul");
-			 */
 			} else {
+				/**
+				 * 传了 context，但是不是 jQuery 对象就走 else，this.constructor = jQuery
+				 * 例如： $("ul",document)  =>  jQuery(document).find("ul");
+				 *
+				 * $("li",document.getElementsByTagName("ul"));
+				 * 会先把 document.getElementsByTagName("ul") 选择到的 DOM 转换为 jQuery 对象
+				 *
+				 * this.constructor( context )  => jQuery( document.getElementsByTagName("ul") );
+				 *
+				 * 这样子的话会先调用 jQuery.makeArray( selector, this ); 把 DOM 元素扩展到 jQuery 对象上，然后再调用 find() => Sizzle
+				 */
 				return this.constructor( context ).find( selector );
 			}
 
 		// HANDLE: $(DOMElement)
-		/*
+		/**
 		 * 这里的 else if 是帮上面判断 typeof selector === "string" 连在一起的
-		 * 选择节点例如：$(this)、$(document)，如果是节点类型肯定有 nodeType
+		 * 选择节点例如：$(this)、$(document)、$(document.getElementById("div1")) 如果是节点类型肯定有 nodeType
 		 */
 		} else if ( selector.nodeType ) {
-			/*
-			 * 连等赋值：selector(DOM节点) 赋值到 this[0] (对象的第0个属性上)，接着在设置执行上下文 (因为节点不需要有什么上下文就直接赋值即可)
+			/**
+			 * 连等赋值：selector( DOM 节点) 赋值到 this[0] ( 对象的第 0 个属性上 )，接着在设置执行上下文 ( 因为节点不需要有什么上下文就直接赋值即可 )
 			 */
 			this.context = this[0] = selector;
 			this.length = 1;
-			/*
-			 * 其实就是想办法把所找到的元素都存到 this 上，形成带下标，length形式的对象
+			/**
+			 * 其实就是想办法把所找到的元素都扩展到 this ( jQuery ) 上，形成带下标，length 形式的对象
 			 */
 			return this;
 
 		// HANDLE: $(function)
 		// Shortcut for document ready
-		/*
+		/**
 		 * $(function(){})，文档加载
 		 * jQuery.isFunction() 判断是不是函数，如果是则调用 ready() 方法
 		 */
 		} else if ( jQuery.isFunction( selector ) ) {
-			/*
-			 * 这句就是平时外面写的 $(document).ready(function(){});，这句理解成对应的源码就是$().ready(); $()就是创建对象，在调用实例方法ready()
+			/**
+			 * rootjQuery = $(document) 
+			 * 这句就是平时外面写的 $(document).ready(function(){});，这句理解成对应的源码就是 $().ready(); $()就是创建对象，在调用实例方法 ready()
 			 * 其实就是下面的 ready: function( fn ) { // Add the callback  jQuery.ready.promise().done( fn ); return this; }
 			 */
 			return rootjQuery.ready( selector );
 		}
-		/*
-		 * 这个 if 是用来处理 $( $("#div1") ) 这种情况的
+		/**
+		 * 这个 if 是用来处理 $( $("#div1") ) 这种情况的，其实会转换成 $("#div1")，他是先调用里面的 $("#div1")，然后返回了一个 jQuery 对象，之后再走的这个 if
 		 * selector.selector 的意思就是表示是否是个 jQuery 对象，如果是的话 selector 肯定有值
 		 */
 		if ( selector.selector !== undefined ) {
-			/*
-			 * 这两句其实就是 $("#div1")，表示的是一个意思
+			/**
+			 * selector.selector = "#div1"
+			 * selector.context = document
 			 */
 			this.selector = selector.selector;
 			this.context = selector.context;
 		}
-		/*
-		 * 处理 $([])、$({})
-		 * jQuery.makeArray() 传一个参数的时候就是把类数组转为真正的数组(平时用的)
-		 *                    传两个参数的时候就会变成 json (特殊的拥有 length，下标属性的)，一般是源码内部使用、
-		 *                    这个方法是工具方法，可以给 jQuery 对象使用，也可以给原生的 JavaScript 使用
-		 *                    工具方法一般可以看做 jQuery 底层方法，实例方法可以看成更高一层的方法
+		/**
+		 * 处理 $([])、$({})、$(document.getElementsByTagName("li"))
 		 *
-		 * 这个方法类似 jQuery.merge()  最终形成 Object {0:li,1:li,length:2,....}
+		 * jQuery.makeArray() 传一个参数的时候就是把类数组转为真正的数组(平时用的)
+		 * 传两个参数的时候就会变成 json (特殊的拥有 length，下标属性的)，一般是源码内部使用、
+		 * 这个方法是工具方法，可以给 jQuery 对象使用，也可以给原生的 JavaScript 使用
 		 */
 		return jQuery.makeArray( selector, this );
 	},
@@ -807,8 +829,10 @@ jQuery.extend({
 	// See test/unit/core.js for details concerning isFunction.
 	// Since version 1.3, DOM methods and functions like alert
 	// aren't supported. They return false on IE (#2968).
-	/*
-	 * 原生的函数 (alert)，或者 DOM 方法，在低版本的 IE 返回 object，而不是 function
+	/**
+	 * 原生的函数 (alert)，或者 DOM 方法( document.getElementById )，在 IE8 以下返回 object，而不是 function
+	 * typeof document.getElementById、typeof alert IE8 以下是 object
+	 * 但是这个版本的jQuery 已经放弃了 IE8 以下的浏览器，所以其实可以不用考虑这个问题
 	 */
 	isFunction: function( obj ) {
 		return jQuery.type(obj) === "function";
@@ -820,8 +844,8 @@ jQuery.extend({
 	isArray: Array.isArray,
 
 	isWindow: function( obj ) {
-		/*
-		 * obj!=null 意思是除了null 和 undefined 以外都可以走到后面那句，因为 null 和 undefined 是不会有属性的，防止报错
+		/**
+		 * obj!=null 意思是除了 null 和 undefined 以外都可以走到后面那句，因为 null 和 undefined 是不会有属性的，防止报错
 		 * window.window 的意思就是全局对象下的浏览器窗口
 		 */
 		return obj != null && obj === obj.window;
@@ -843,31 +867,30 @@ jQuery.extend({
 	 */
 	type: function( obj ) {
 		if ( obj == null ) {
-			/*
-			 * 把 null 和 undefined 类型 转为字符串 -> ( "null"、"undefined" )
+			/**
+			 * 把 null 和 undefined 类型 转为字符串 => ( "null"、"undefined" )
 			 */
 			return String( obj );
 		}
 
 		// Support: Safari <= 5.1 (functionish RegExp)
-		/*
+		/**
 		 * 解释：在老版本的 chrone 和 safari typeof RegExp 返回的是 "function"，正常的应该返回 "object"
-		 */
-
-		/*
-		 * core_toString -> class2type.toString，class2type 存的是 {}
-		 * {}.toString.call([]) == "[object Array]"
-		 * typeof obj === "object" || typeof obj === "function" 这两个都不满足的话肯定是基本类型，那么 typeof 就能够判断
-		 * 这个双重判断就是为了兼容低版本的浏览器
-		 * class2type[ core_toString.call(obj) ] 就是找属性的方式 搜索这个注释找到相应的代码 // Populate the class2type map
-		 * class2type[ core_toString.call(obj) ] -> 这个属性就会返回对应的 value 值  array
+		 * core_toString => class2type.toString，class2type 存的是 {} => function toString() { [native code] }
+		 *
+		 * toString.call([]) == "[object Array]"
+		 *
+		 * typeof obj === "object" || typeof obj === "function" 这两个都不满足的话肯定是基本类型，那么 typeof 就能够判断，这个双重判断就是为了兼容低版本的浏览器
+		 *
+		 * class2type[ core_toString.call(obj) ] 就是找属性的方式，搜索这个注释找到相应的代码  // Populate the class2type map
+		 * class2type[ core_toString.call(obj) ] => 这个属性就会返回对应的 value 值  array
 		 */
 		return typeof obj === "object" || typeof obj === "function" ?
 			class2type[ core_toString.call(obj) ] || "object" :
 			typeof obj;
 	},
 
-	/*
+	/**
 	 * 判断是否是对象字面量 ( var obj={}; var obj = new Object() ) 只有这两种返回 true
 	 */
 	isPlainObject: function( obj ) {
@@ -875,10 +898,11 @@ jQuery.extend({
 		// - Any object or value whose internal [[Class]] property is not "[object Object]"
 		// - DOM nodes
 		// - window
-		/*
+		/**
 		 * 不满足条件的就会返回 false
-		 * 如果把一个 DOM 节点 放到 jQuery.type(DOM); 会返回 object，DOM 节点肯定有 nodeType 排除 DOM 节点
-		 * jQuery.type(window); 会返回 object ，所以在判断下是不是 window
+		 * 如果把一个 DOM 节点 放到 jQuery.type(DOM); 会返回 object
+		 * DOM 节点肯定有 nodeType 排除 DOM 节点
+		 * jQuery.type(window); 会返回 object ，所以在判断下是不是 window，排除掉 window
 		 */
 		if ( jQuery.type( obj ) !== "object" || obj.nodeType || jQuery.isWindow( obj ) ) {
 			return false;
@@ -888,18 +912,21 @@ jQuery.extend({
 		// The try/catch suppresses exceptions thrown when attempting to access
 		// the "constructor" property of certain host objects, ie. |window.location|
 		// https://bugzilla.mozilla.org/show_bug.cgi?id=814622
-		/*
+		/**
 		 * 这里是针对 window.location 这类方法，因为 jQuery.type(window.location); 返回 object 他又不是 DOM，也不是 window
-		 * core_hasOwn -> {}.hasOwnProperty -> 判断对象下的属性是不是自身下面的
-		 * 所有对象都继承 Object 只有 Object 才有 isPrototypeOf 属性，其他对象都是通过原型链查找到的
-		 * 那么 Object.hasOwnPrototypeOf("isPrototypeOf") 一定返回 true，其他的比如 Array 下肯定没有 "isPrototypeOf"，那么肯定返回 false
-		 * core_hasOwn.call( obj.constructor.prototype, "isPrototypeOf" ) 这只有对象自变量才会返回 true
-		 * isPrototypeOf() 其实是判断属性和原型之间的关系
+		 *
+		 * core_hasOwn => function hasOwnProperty() { [native code] } => 判断对象下的属性是不是自身下面的
+		 * 所有对象都继承 Object，只有 Object.prototype 才有 isPrototypeOf 属性，其他对象都是通过原型链查找到的
+		 * 那么 Object.prototype.hasOwnProperty("isPrototypeOf") 一定返回 true，其他的比如 Array 下肯定没有 "isPrototypeOf"，那么肯定返回 false
+		 *
+		 * core_hasOwn.call( obj.constructor.prototype, "isPrototypeOf" )  obj.constructor.prototype 是指向，"isPrototypeOf" 是参数
+		 * 判断 "isPrototypeOf" 这个属性是不是 Object 下的
+		 *
 		 * 这里的 try 是处理 Firefox < 20 情况下，window.location 频繁调用的时候，会出现递归泄漏的情况
 		 */
 		try {
 			if ( obj.constructor &&
-					!core_hasOwn.call( obj.constructor.prototype, "isPrototypeOf" ) ) {
+				!core_hasOwn.call( obj.constructor.prototype, "isPrototypeOf" ) ) {
 				return false;
 			}
 		} catch ( e ) {
@@ -1179,34 +1206,38 @@ jQuery.extend({
 	},
 
 	// results is for internal usage only
-	/*
+	/**
 	 * 第二个参数是内部使用的
 	 */
 	makeArray: function( arr, results ) {
-		/*
-		 * 这句是看有没有第二个参数，如果有的话就是 {length:0}，没有的话就是[]
+		/**
+		 * 这句是看有没有第二个参数，如果有的话就是 this ( jQuery 对象 )，没有的话就是 []
 		 */
 		var ret = results || [];
 
 		if ( arr != null ) {
-			/*
+			/**
 			 * Object(arr) 把 arr 放在 Object 中，是因为 isArraylike() 内部私有的方法只能针对的是对象，判断不了像 123 这种参数
 			 * isArraylike( Object(123) ) 实际的是返回 false，因为没有 length，那么就会走 else
 			 * isArraylike( Object("hello") ) 字符串调用 Object，会有 length，只要有长度就是会为 true
+			 *
+			 * jQuery.makeArray( selector, this ); 一定是走进了这个 if，把 DOM 扩展到 jQuery 对象上
 			 */
 			if ( isArraylike( Object(arr) ) ) {
-				/*
-				 * 最后还是调用的是 merge，在内部可以转成特殊形式的 json
-				 * 这里有个判断，如果是字符串的话，就直接放到了数组里面，如果是 arguments ，或者 nodeList 就用 merge 转换
+				/**
+				 * 最后还是调用的是 merge，把 ret( 如果是 jQuery 对象 ) 就把 arr ( arguments、nodeList ) 扩展到 ret ( jQuery 对象上 )
+				 * 如果 ret = []; 就执行单纯的数组合并
+				 * 这里有个判断，如果是字符串的话，就直接放到了数组里面
 				 */
 				jQuery.merge( ret,
 					typeof arr === "string" ?
 					[ arr ] : arr
 				);
 			} else {
-				/*
-				 * core_push = core_deletedIds.push，core_deletedIds 变量就是 []
-				 * 其实最后是调用 [].call([],arr);   [].call([],123); 把 123 添加进去了
+				/**
+				 * core_push = core_deletedIds.push => core_deletedIds 变量就是 []
+				 * 其实最后是调用 [].push.call([],arr);
+				 * [].push.call([],123); 把 123 添加进去了
 				 */
 				core_push.call( ret, arr );
 			}
@@ -1601,30 +1632,34 @@ jQuery.each("Boolean Number String Function Array Date RegExp Object Error".spli
 	class2type[ "[object " + name + "]" ] = name.toLowerCase();
 });
 
-/*
- * 类数组或者数组或者特殊 json 的判断，内部使用
+/**
+ * 类数组、数组、特殊 json 的判断，内部使用
  */
 function isArraylike( obj ) {
 	var length = obj.length,
 		type = jQuery.type( obj );
-	/*
-	 * 判断是不是 window，因为要避免在 window 下挂载一些类似 length 属性和下面的判断有冲突
+	/**
+	 * 判断是不是 window ，因为要避免在 window 下挂载一些类似 length 属性和下面的判断有冲突
 	 */
 	if ( jQuery.isWindow( obj ) ) {
 		return false;
 	}
-	/*
+	/**
 	 * 判断是不是元素节点并且 length 是否大于 0，如果都满足肯定是一组元素节点的类数组
 	 */
 	if ( obj.nodeType === 1 && length ) {
 		return true;
 	}
-	/*
-	 * 先判断了 type !== "function" ，因为函数也是对象，也可以挂载类似 length 属性，但是函数不是我们要的，所以要排除掉
+	/**
+	 * type !== "function" ，因为函数也是对象，也可以挂载类似 length 属性，但是函数不是我们要的，所以要排除掉
+	 *
 	 * 这句是判断特殊的 json 或者 arguments ( 类数组 )
 	 * ( length === 0 || typeof length === "number" && length > 0 && ( length - 1 ) in obj )
-	 * 如果一个函数的 arguments 长度为 3 那么 (3-1) in arguments -> true
-	 * length === 0 是针对函数没有参数的情况下，如果不写 length === 0，那么 arguments = 0; (0-1) in arguments -> false，就有问题了
+	 *
+	 * 如果一个类数组( document.getElementsByTagName("li") )，length = 3，那么 (3-1) in arguments => true
+	 * length === 0 是针对 isArraylike( {length: 0} ) 情况下
+	 * 如果不写 length === 0，那么 arguments = 0; (0-1) in arguments => false，就有问题了
+	 * 写了 length === 0，由于 "||"，前者返回 true(遵循"短路"原理) ，后面就不走了
 	 */
 	return type === "array" || type !== "function" &&
 		( length === 0 ||
