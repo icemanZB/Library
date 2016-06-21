@@ -25,7 +25,7 @@
 			// 给匿名函数添加个名字 obj["bindclick"]["bindchange"]
 			// 如果有就走匿名函数，如果没有就给他
 			obj["bind" + ev]["bind" + fn] = obj["bind" + ev]["bind" + fn] || function () {
-						fn.call(obj,event);
+						fn.call(obj,event);  // 这里的 event 没有做兼容  event = window.event
 					};
 			// 事件绑定，绑定的是 obj["bind" + event]["bind" + fn] 这个给定的匿名函数
 			obj.attachEvent('on' + ev, obj["bind" + ev]["bind" + fn]);
