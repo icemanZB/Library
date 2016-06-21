@@ -8,7 +8,7 @@
 
 <body>
 
-<div id="div1" style="width: 100px;height: 100px;background: red;">
+<div id="box" style="width: 100px;height: 100px;background: red; display: none;">
 	<p id="p1">
 
 	</p>
@@ -19,12 +19,17 @@
 	<li></li>
 </ul>
 <span></span>
+
 <script src="jquery-2.0.3.read.js"></script>
 <script>
-	var arr = "1,2,3,4,5,jQuery,CSS,5".split(",");
-	arr = $.map(arr, function (val, index) {
-		return isNaN(val) ? val : null;
-	});
+	function aaa() {
+		console.log("aaaaaa");
+	}
+	var cb = $.Callbacks();
+	cb.add(aaa);
+	cb.fire();
+
+
 </script>
 </body>
 

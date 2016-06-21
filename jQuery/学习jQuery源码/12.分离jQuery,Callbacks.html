@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>pushStack()</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+		// String to Object options format cache
+		var optionsCache = {};
+
+		// Convert String-formatted options into Object-formatted ones and store in cache
+		function createOptions(options) {
+			var object = optionsCache[options] = {};
+			/**
+			 * 用空格分隔单词，匹配空格分隔开，例如："once memory"
+			 * core_rnotwhite = /\S+/g ; =>  ["once", "memory"]
+			 */
+			jQuery.each(options.match(/\S+/g) || [], function (_, flag) {
+				object[flag] = true;
+			});
+			return object;
+		}
+
+		function Callbacks(options) {
+			// Convert options from String-formatted to Object-formatted if needed
+			// (we check in cache first)
+			/**
+			 * 通过字符串在 optionsCache 寻找有没有相应缓存，有则引用
+			 * 如果没有则创建一个，就按照空格切分，例如："once memory"
+			 * options : { once : true , memory : true }、optionsCache : {"once memory" : { once : true , memory : true }}
+			 * 如果是对象则通过 jQuery.extend 深复制后赋给 options
+			 */
+			options = typeof options === "string" ?
+					( optionsCache[options] || createOptions(options) ) :
+					jQuery.extend({}, options);
+
+			var // Last fire value (for non-forgettable lists)
+					/**
+					 * 最后一次触发回调时传的参数
+					 */
+					memory,
+					// Flag to know if list was already fired
+					/**
+					 * 列表中的函数是否已经回调至少一次
+					 */
+					fired,
+					// Flag to know if list is currently firing
+					/**
+					 * 列表中的函数是否正在回调中
+					 */
+					firing,
+					// First callback to fire (used internally by add and fireWith)
+					/**
+					 * 回调的起点
+					 */
+					firingStart,
+					// End of the loop when firing
+					/**
+					 * 回调时的循环结尾
+					 */
+					firingLength,
+					// Index of currently firing callback (modified by remove if needed)
+					/**
+					 * 当前正在回调的函数索引
+					 */
+					firingIndex,
+					// Actual callback list
+					/**
+					 * 回调函数列表
+					 */
+					list  = [],
+					// Stack of fire calls for repeatable lists
+					/**
+					 * 可重复的回调函数堆栈，用于控制触发回调时的参数列表
+					 */
+					stack = !options.once && [],
+					// Fire callbacks
+					/**
+					 * 触发回调函数列表
+					 *
+					 */
+					fire  = function (data) {
+						/**
+						 * data 是包含了作用域( this 就是 Callback 对象 ) 和 cb.fire("hello") 中的 "hello" 参数
+						 * 如果参数 memory 为 true，则记录 data
+						 */
+						memory = options.memory && data;
+						/**
+						 * 标记触发回调，说明已经 fire() 过一次了
+						 */
+						fired = true;
+						firingIndex = firingStart || 0;
+						firingStart = 0;
+						/**
+						 * var cb = Callbacks();
+						 * cb.add(aaa);
+						 * cb.fire();
+						 * 此时 firingLength = list.length = 1;
+						 */
+						firingLength = list.length;
+						/**
+						 * 触发进行时，标记正在触发回调
+						 */
+						firing = true;
+						for (; list && firingIndex < firingLength; firingIndex++) {
+							/**
+							 * data[0] 对应的就是执行环境 ( this 就是 Callback 对象 ) ，data[1] 就是 "hello"
+							 * 当每个回调函数中 return false; 或者写了 stopOnFalse = true 的话，就跳出循环不会往后执行了
+							 * 也就是说，由于参数 stopOnFalse 为 true，所以当有回调函数返回值为 false 时退出循环
+							 */
+							if (list[firingIndex].apply(data[0], data[1]) === false && options.stopOnFalse) {
+								/**
+								 * 阻止未来可能由于 add 所产生的回调
+								 */
+								memory = false; // To prevent further calls using add
+								break;
+							}
+						}
+						/**
+						 * 触发结束，标记回调结束
+						 */
+						firing = false;
+						if (list) {
+							/**
+							 * stack = [];  => true
+							 */
+							if (stack) {
+								if (stack.length) {
+									/**
+									 * 这里把 stack 中的第一个取出来，在重新进行递归 fire()
+									 */
+									fire(stack.shift());
+								}
+							} else if (memory) {
+								/**
+								 * 如果有记忆
+								 * var cb = $.Callbacks("once memory"); cb.add( aaa );cb.fire();cb.add( bbb );cb.fire(); // 这句就是执行了空数组了
+								 * 有 "once" 参数的时候，就只执行一次，清空 list ( 等于讲下次在调用 cb.fire()的时候就是执行的是空数组 )，再有 memory 的时候
+								 * 没有 memory 的时候走的是 self.disable();
+								 */
+								list = [];
+							} else {
+								/**
+								 * 阻止回调列表中的回调
+								 */
+								self.disable();
+							}
+						}
+					},
+					// Actual Callbacks object
+					/**
+					 * 暴露在外的Callbacks对象,对外接口
+					 */
+					self  = {
+						// Add a callback or a collection of callbacks to the list
+						/**
+						 * 回调列表中添加一个回调或回调的集合
+						 */
+						add     : function () {
+							/**
+							 * 一上来的时候，list = []; => true
+							 */
+							if (list) {
+								// First, we save the current length
+								/**
+								 * 存储当前列表长度，一上来的时候肯定是 0
+								 */
+								var start = list.length;
+								/**
+								 * function aaa(){}、function bbb(){}
+								 * 这里是针对这一的写法 cb.add(aaa,bbb);、cb.add(aaa)
+								 */
+								(function add(args) {
+									/**
+									 * 对 args ( aaa,bbb)  传进来的列表的每一个对象执行操作
+									 */
+									jQuery.each(args, function (_, arg) {
+										var type = jQuery.type(arg);
+										/**
+										 * 如果是 function，就 push 到 list 中
+										 */
+										if (type === "function") {
+											/**
+											 * 看看有没有 unique 参数，有的话，就会走后面 !self.has(arg)，确保是不可以重复
+											 * self.has( arg ) 看看 arg( aaa,bbb ) 在数组中有没有存在
+											 */
+											if (!options.unique || !self.has(arg)) {
+												list.push(arg);
+											}
+										} else if (arg && arg.length && type !== "string") {
+											// Inspect recursively
+											/**
+											 * 如果是类数组或对象进行递归，针对 cb.add( [aaa,bbb] ); 这种情况的
+											 */
+											add(arg);
+										}
+									});
+								})(arguments);
+								// Do we need to add the callbacks to the
+								// current firing batch?
+								/**
+								 * 如果是这样的情况：
+								 * var cb = Callbacks();
+								 * cb.add(aaa);
+								 * cb.fire();
+								 * firing 是 undefined
+								 *
+								 * 如果回调列表中的回调正在执行时，其中的一个回调函数执行了 Callbacks.add 操作 ( 如果在执行 Callbacks.add 操作的状态为 firing 时 )
+								 * 那么需要更新 firingLength 值
+								 */
+								if (firing) {
+									firingLength = list.length;
+									// With memory, if we're not firing then
+									// we should call right away
+								} else if (memory) {
+									/**
+									 * 如果 options.memory 为 true，则将 memory 做为参数，应用最近增加的回调函数
+									 * 这里有个流程说明下，var memoryCb = $.Callbacks("memory"); memoryCb.add(aaa); memoryCb.fire(); memoryCb.add(ccc);
+									 * 上来先 add 的时候，这里的 memory 是 false，然后 memory、fire()，源码中 fire() 的一句话就是 memory = options.memory && data;
+									 * 此时 memory 就存起来了，在 memoryCb.add(ccc); 的时候就会进入这个 if(memory)，然后在调用 fire() 方法
+									 */
+									firingStart = start;
+									fire(memory);
+								}
+							}
+							return this;
+						},
+						// Remove a callback from the list
+						/**
+						 * 从函数列表中删除函数(集)
+						 */
+						remove  : function () {
+							if (list) {
+								jQuery.each(arguments, function (_, arg) {
+									var index;
+									/**
+									 * 查看这个 arg 在 list 中 存不存在，存在的话并赋值给 index
+									 * while 循环的意义在于借助于强大的 jQuery.inArray 删除函数列表中相同的函数引用 ( 没有设置unique的情况 )
+									 * jQuery.inArray 将每次返回查找到的元素的 index 作为自己的第三个参数继续进行查找，直到函数列表的尽头
+									 */
+									while (( index = jQuery.inArray(arg, list, index) ) > -1) {
+										/**
+										 * splice 删除数组元素，修改数组的结构
+										 */
+										list.splice(index, 1);
+										// Handle firing indexes
+										/**
+										 * 在函数列表处于 firing 状态时，最主要的就是维护 firingLength 和 firgingIndex 这两个值
+										 * 保证 fire 时函数列表中的函数能够被正确执行( fire 中的 for 循环需要这两个值 )
+										 */
+										if (firing) {
+											if (index <= firingLength) {
+												firingLength--;
+											}
+											if (index <= firingIndex) {
+												firingIndex--;
+											}
+										}
+									}
+								});
+							}
+							return this;
+						},
+						// Check if a given callback is in the list.
+						// If no argument is given, return whether or not list has callbacks attached.
+						/**
+						 * 判断在 list 中有没有填加过 fn (  回调函数是否在列表中 )
+						 * fn 不存在的时候，看看 list 有没有内容，有的话就会有长度，返回 true
+						 */
+						has     : function (fn) {
+							return fn ? jQuery.inArray(fn, list) > -1 : !!( list && list.length );
+						},
+						// Remove all callbacks from the list
+						/**
+						 * 从列表中删除所有回调函数
+						 */
+						empty   : function () {
+							list = [];
+							firingLength = 0;
+							return this;
+						},
+						// Have the list do nothing anymore
+						/**
+						 * 禁用回调列表中的回调
+						 */
+						disable : function () {
+							/*
+							 * 阻止后续的操作
+							 */
+							list = stack = memory = undefined;
+							return this;
+						},
+						// Is it disabled?
+						/**
+						 * 列表中否被禁用
+						 */
+						disabled: function () {
+							/**
+							 * 是否是禁止的，list = undefined 就是是禁止的
+							 */
+							return !list;
+						},
+						// Lock the list in its current state
+						/**
+						 * 列表是否被锁
+						 */
+						lock    : function () {
+							stack = undefined;
+							if (!memory) {
+								self.disable();
+							}
+							return this;
+						},
+						// Is it locked?
+						locked  : function () {
+							return !stack;
+						},
+						// Call all callbacks with the given context and arguments
+						/**
+						 * 以给定的上下文和参数调用所有回调函数
+						 * var cb = Callbacks();
+						 * cb.add(aaa);
+						 * cb.fire();
+						 * 此时的 args 是 []
+						 */
+						fireWith: function (context, args) {
+							/**
+							 * 此时的 list = [function aaa(){}]
+							 * fired 第一次调用的时候就是 undefined， !fired = true; 就会进 if
+							 *
+							 * 第二次调用的时候，就要看 stack，stack = !options.once && []
+							 * 如果有了 once 参数，那就返回 false，那么 if 就不会走就只会触发一次 fire()
+							 * 如果没有传的话 stack = []，那就会进 if，可以再次执行 fire()
+							 */
+							if (list && ( !fired || stack )) {
+								args = args || [];
+								/**
+								 * 这里是针对传参的情况  cb.fire("hello");
+								 * args 包含了作用域，和具体的参数两个值放进了数组中
+								 * args.slice 就是判断是不是数组，是数组的话就直接 args.slice() 返回
+								 */
+								args = [context, args.slice ? args.slice() : args];
+								/**
+								 * 此时的 firing = undfined;
+								 *
+								 * 在之前内部 fire() 的时候，for 循环没有走完 firing = true
+								 * 然后把 args 添加到 stack 中
+								 * 将参数推入堆栈，等待当前回调结束再调用
+								 */
+								if (firing) {
+									stack.push(args);
+								} else {
+									/**
+									 * 直接调用
+									 * 这里就把 cb.fire("hello") 中的 "hello" 参数带到了每一个函数中
+									 */
+									fire(args);
+								}
+							}
+							return this;
+						},
+						// Call all the callbacks with the given arguments
+						/**
+						 * 以给定的参数调用所有回调函数
+						 * var cb = Callbacks();
+						 * cb.add(aaa);
+						 * cb.fire();
+						 * 先调用这里的 fire()，在去调用 fireWidth(this, arguments);
+						 * this 是回调对象 ( Callback )
+						 */
+						fire    : function () {
+							self.fireWith(this, arguments);
+							return this;
+						},
+						// To know if the callbacks have already been called at least once
+						/**
+						 * 回调函数列表是否至少被调用一次
+						 */
+						fired   : function () {
+							/**
+							 * 判断有没有调用过 fire()，只要调用过一次 fired = true
+							 */
+							return !!fired;
+						}
+					};
+
+			return self;
+		}
+
+		function aaa() {
+			console.log("aaaaaa");
+		}
+		var cb = Callbacks();
+		cb.add(aaa);
+		cb.fire();
+
+	</script>
+</head>
+<body>
+</body>
+</html>

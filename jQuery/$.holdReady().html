@@ -6,18 +6,23 @@
 	<script src="js/jquery-2.0.3.min.js"></script>
 	<script>
 		// 实际应用就是保证顺序，先让文件加载完成，然后在 DOM 加载
-		$.holdReady(true);  // 推迟 DOM 触发
+		// 是指等所有的文件都 hold 完成以后，在一次次释放，用于多组文件异步加载完成以后触发 DOM
+		$.holdReady(true);
 
 		// 这个是异步加载 js，所以他是不会影响到后续代码执行的
+		$.getScript("js/jquery.toggler.js", function () {
 
-		$.getScript("a.js",function(){
-			$.holdReady(false); // 释放掉
+			$.holdReady(false); // 释放掉，让 DOM 触发
+
 		});
 
-		$(function(){
+
+		$(function () {
+			console.log(55555);
 			// 有可能这个先执行了，上面的 JavaScript 文件还没有加载完成
 			// 很多时候都是等上面的 JavaScript 加载完成以后，在处理这里的函数
-		})
+		});
+
 	</script>
 </head>
 <body>

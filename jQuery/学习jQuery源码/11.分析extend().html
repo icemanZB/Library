@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>jQuery</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+		function extend() {
+			/**
+			 * var person = { }; $.extend( person , { name : "hello" } , { age : 30 } );
+			 * 其中 arguments[0] 第一个元素就是 person，后续参数都要往 person 身上扩展
+			 */
+			var options, name, src, copy, copyIsArray, clone,
+			    target = arguments[0] || {},
+			    i      = 1,
+			    length = arguments.length,
+			    /**
+			     * 是否是深拷贝，默认是 false
+			     * */
+			    deep   = false;
+			/**
+			 * 看是不是深拷贝的情况
+			 * var person = { };
+			 * $.extend( true , person ,{ name : "hello" } , { age : 30 }  ); 这种情况走的就是这个 if
+			 */
+			// Handle a deep copy situation
+			if (typeof target === "boolean") {
+				deep = target;
+				/**
+				 * 此时目标元素变成了 arguments[1] 就是第二个参数
+				 */
+				target = arguments[1] || {};
+				// skip the boolean and the target
+				/**
+				 * 由于参数项变了，所以要跳过 boolean 和 target， i 默认是 1，说明是自动跳过 deep ( 是否深拷贝 ) 这个参数
+				 */
+				i = 2;
+			}
+
+			// Handle case when target is a string or something (possible in deep copy)
+			/**
+			 * 检测参数是否正确
+			 * 当目标元素不是对象就把他变成一个对象
+			 */
+			if (typeof target !== "object" && !$.isFunction(target)) {
+				target = {};
+			}
+
+			/**
+			 * 看是不是插件的情况
+			 * $.extend({
+			 *     aaa : function(){
+			 *         alert(1);
+			 *     }
+			 * });
+			 * arguments.length 和 i 相等表示就是只传入了一个参数，就是插件的情况
+			 * 此时的 target 就是 this (  jQuery 对象 )
+			 * $.extend(); ( 扩展工具方法，也就是静态方法 ) => this => $ => this.aaa  =>  $.aaa()
+			 * $.fn.extend(); ( 扩展 jQuery 实例方法 ) => this => $.fn => this.aaa =>  $("div").aaa()
+			 */
+			// extend jQuery itself if only one argument is passed
+			if (length === i) {
+				target = jQuery;
+				--i;
+			}
+			/**
+			 * 这个循环就是 N 多个对象扩展到一个对象上 N = { name : "hello" } , { age : 30 }
+			 * var person = { };
+			 * $.extend( person , { name : "hello" } , { age : 30 } );
+			 */
+			for (; i < length; i++) {
+				// Only deal with non-null/undefined values
+				/**
+				 * 判断 arguments[i] 是否为空，arguments[ i ] 就是 Object {name: "hello"}, Object {age: 30}
+				 * */
+				if ((options = arguments[i]) != null) {
+					// Extend the base object
+					/**
+					 * 对 person 对象进行扩展
+					 */
+					for (name in options) {
+						src = target[name];
+						copy = options[name];
+
+						// Prevent never-ending loop
+						/**
+						 * 防止循环引用
+						 * var person = {}; $.extend( person , { name : person } );
+						 * 这种情况就是循环引用，{ name : person } 这个整体往 person 进行扩展，扩展完 { name : person } 这个对象中的 person 又是个对象，一层层扩展就是循环引用
+						 * 也就是说 person , { name : person } 如果这两个 person 相等，就跳出循环
+						 */
+						if (target === copy) {
+							continue;
+						}
+
+						// Recurse if we're merging plain objects or arrays
+						/**
+						 * 递归 如果我们合并的是普通对象或数组进行深拷贝
+						 * jQuery.isPlainObject(copy) 判断 copy 是不是一个对象
+						 * ( copyIsArray = jQuery.isArray(copy) ) 看下是不是数组，调用的是 ECMA5 原生的方法 Array.isArray()
+						 */
+						if (deep && copy && ( $.isPlainObject(copy) || (copyIsArray = $.isArray(copy)) )) {
+							/**
+							 * 针对数组的情况
+							 */
+							if (copyIsArray) {
+								copyIsArray = false;
+								clone = src && $.isArray(src) ? src : [];
+							} else {
+								/**
+								 * 针对 json 的情况
+								 * 先看下原有的目标下面有没有这个属性，在看下这个是不是 json，如果这两个条件都满足，就不用重新创建新对象
+								 * var obj = { person : { job : "it" } }; var obj2 = { person : {age : 30} }; $.extend( true , obj  , obj2 );
+								 * 例如上述情况，此时的 obj 合并后的结果是 => person : { job : "it",age : 30 }
+								 * 之所以没有覆盖掉原来 obj.name，就是因为递归的传参的时候传入的是 clone = src (源)，src = target[name] = { job : "it" }
+								 * 如果修改一下源码，clone = {}; 直接创建新对象，那么 obj 合并后的最后结果就是 person : { age : 30 }
+								 */
+								clone = src && $.isPlainObject(src) ? src : {};
+							}
+
+							// Never move original objects, clone them
+							/**
+							 * 这句就是递归
+							 */
+							target[name] = extend(deep, clone, copy);
+
+							// Don't bring in undefined values
+							/**
+							 * 浅拷贝，就是基本类型赋值，没有对象的引用关系，继续下次循环
+							 */
+						} else if (copy !== undefined) {
+							target[name] = copy;
+						}
+					}
+				}
+			}
+
+			// Return the modified object
+			return target;
+		}
+
+		var obj = {
+			userName    : "Iceman",
+			location: {
+				city: "shanghai"
+			}
+		};
+
+		var obj2 = {
+			job    : "IT",  // undefined  如果是 undefined 就会被过滤掉
+			location: {
+				state: "beijing"
+			}
+		};
+
+		console.log(
+				extend(true, obj, obj2)
+		);
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

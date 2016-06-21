@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.globalEval()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		var name = "全局变量";
+
+		function test() {
+			var name = "局部变量";
+
+			alert(name); // 局部变量
+
+			eval("alert(name);"); // 局部变量
+
+			$.globalEval("alert(name);");	 // 全局变量
+		}
+
+		test();
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
