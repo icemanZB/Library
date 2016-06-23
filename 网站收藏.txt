@@ -188,3 +188,5 @@ webapp:  http://www.cocoachina.com/webapp/20151110/14148.html
 http://www.blogjava.net/onejavaer/articles/79070.html 正则表达式
 
 http://stackoverflow.com/
+
+http://www.tuicool.com/articles/3QZ7jeV  touch

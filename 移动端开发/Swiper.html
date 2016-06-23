@@ -6,138 +6,68 @@
 	<meta name="format-detection" content="telephone=no" />
 	<title>templete</title>
 	<link rel="stylesheet" href="css/reset.css">
-	<link rel="stylesheet" href="css/swiper.css">
+	<link rel="stylesheet" href="css/swiper.min.css">
 	<style>
-		.swiper-slide img {
+
+		.swiper-container {
 			width: 100%;
+			padding-top: 50px;
+		}
+
+		.swiper-slide {
+			background-position: center;
+			background-size: cover;
+			width: 200px;
+			height: 200px;
+		}
+
+		.swiper-container a {
 			display: block;
-			border: none;
 		}
 
-		.icons {
-			background: url(images/icon_w30.png) no-repeat;
+		.swiper-container img {
+			display: block;
+			width: 100%;
 		}
 
-		.notify {
-			height: 20px;
-			line-height: 20px;
-			margin: 6px auto 0;
-		}
-
-		.notify-icon {
-			width: 15px; height: 13px; display: inline-block; float: left; margin-top: 2.5px;
-			background-position: 0 -312px; background-size: 15px auto;
-		}
-
-		.swiper-notify { height: 20px; margin-left: 18px; overflow: hidden; }
-
-		.notify ul {
-			width: auto; height: auto; overflow: hidden;
-		}
-
-		.notify ul li a {
-			width: 100%; display: block;
-			font-size: 14px; color: #333;
-			overflow: hidden; text-overflow: ellipsis; white-space: nowrap; word-break: keep-all;
-		}
 	</style>
-	<script>
-		(function (doc, win) {
-			var docEl     = doc.documentElement,
-			    resizeEvt = "orientationchange" in window ? "orientationchange" : "resize",
-			    recalc    = function () {
-				    var clientWidth = docEl.clientWidth;
-				    if (!clientWidth) return;
-				    docEl.style.fontSize = 20 * (clientWidth / 320) + "px";
-			    };
 
-			if (!doc.addEventListener) return;
-			win.addEventListener(resizeEvt, recalc, false);
-			doc.addEventListener("DOMContentLoaded", recalc, false);
-		})(document, window);
-	</script>
 </head>
 <body>
 
-<div class="swiper-container" id="BannerSwiper" style="height: 50px;">
+<div class="swiper-container" id="Carrousel">
 	<div class="swiper-wrapper">
 		<div class="swiper-slide">
-			<a href=""><img data-src="images/banner.jpg" class="swiper-lazy" src="" /></a>
-			<div class="swiper-lazy-preloader"></div>
+			<a href="#"><img src="images/pic2.jpg" alt=""></a>
 		</div>
 		<div class="swiper-slide">
-			<a href=""><img data-src="images/banner.jpg" class="swiper-lazy" src="" /></a>
-			<div class="swiper-lazy-preloader"></div>
+			<a href="#"><img src="images/pic3.jpg" alt=""></a>
 		</div>
 		<div class="swiper-slide">
-			<a href=""><img data-src="images/banner.jpg" class="swiper-lazy" src="" /></a>
-			<div class="swiper-lazy-preloader"></div>
+			<a href="#"><img src="images/pic4.jpg" alt=""></a>
 		</div>
 	</div>
-	<div class="swiper-pagination swiper-pagination-white"></div>
+	<!-- Add Pagination -->
+	<div class="swiper-pagination"></div>
 </div>
 
-<div class="notify">
-	<span class="icons notify-icon"></span>
-	<div class="swiper-notify" id="NotifyList">
-		<ul class="swiper-wrapper">
-			<li class="swiper-slide"><a href="">【通知】火车票预售期提前60日,火车票预售期提前火车票预售期提前火车票预售期提前</a></li>
-			<li class="swiper-slide"><a href="">【通知】9月30日至10月7日起受国庆长假影响</a></li>
-		</ul>
-	</div>
-</div>
 
-<script src="js/jquery-2.2.3.js"></script>
-<script src="js/swiper.jquery.min.js"></script>
+<script src="js/swiper.min.js"></script>
 <script>
-	$(function () {
-		// banner
-		var $swiper = $("#BannerSwiper");
-		var $slides = $swiper.find(".swiper-slide");
-		var swiperImage;
-		var swiper = new Swiper($swiper, {
-			pagination                  : $swiper.find(".swiper-pagination"),
-			paginationClickable         : true,
-			preloadImages               : false,
-			lazyLoading                 : true,
-			loop                        : $slides.length > 1,
-			autoplay                    : $slides.length > 1 ? 5000 : false,
-			/* 用户操作 swiper 之后，是否禁止 autoplay，默认为 true 停止 */
-			autoplayDisableOnInteraction: false,
-			/* 回调函数，slider 切换结束时执行 */
-			onSlideChangeEnd            : function (swiper) {
-				var image = swiper.slides.eq(swiper.activeIndex).find(".swiper-lazy-loaded")[0];
-				swiperImage = image || swiperImage;
-				_resize();
-			},
-			/* 回调函数，图片延迟加载结束时执行。slide 中每有一张图片被延迟加载就执行一次。接受 Swiper 实例，延迟加载的 slide，延迟加载的 img 作为参数(可选) */
-			onLazyImageReady            : function (swiper, slide, image) {
-				console.log(swiper); // Swiper实例
-				console.log(slide); // 哪个slide里面的图片在加载
-				console.log(image); // 哪个图片在加载
-				swiperImage = image;
-				_resize();
-			}
-		});
-
-		// 这里是为了防止页面第一次加载，图片没有加载完成高度没有，会有一定的闪动，所以这里默认设置了一个高度防止这个问题
-		function _resize() {
-			$swiper.height($(swiperImage).height() || 50);
-		}
-
-		$(window).resize(_resize);
-
-		// 通知
-		if ($("#NotifyList").find("li").length > 1) {
-			new Swiper("#NotifyList", {
-				direction   : "vertical",
-				/* 值为 true 时，slide 无法拖动，只能使用扩展 API 函数例如 slideNext()、slidePrev()、slideTo() 等改变 slides 滑动 */
-				onlyExternal: true,
-				loop        : true,
-				autoplay    : 5000
-			});
-		}
-
+	var swiper = new Swiper(".swiper-container", {
+		pagination    : ".swiper-pagination",
+		effect        : "coverflow",
+		grabCursor    : true,  // 设置为true时，鼠标覆盖Swiper时指针会变成手掌形状，拖动时指针会变成抓手形状。
+		centeredSlides: true,
+		slidesPerView : "auto",  // 设置slider容器能够同时显示的slides数量
+		coverflow     : {
+			rotate      : 0,
+			stretch     : 80,  // 每个slide之间的拉伸值，越大slide靠得越紧。 默认0
+			depth       : 100,  // slide的位置深度。值越大z轴距离越远，看起来越小。 默认100
+			modifier    : 1,  // depth和rotate 和 stretch 的倍率，相当于 depth*modifier、rotate*modifier、stretch*modifier，值越大这三个参数的效果越明显。默认 1
+			slideShadows: false  // 开启slide阴影。默认 true。
+		},
+		loop          : true
 	});
 </script>
 </body>
