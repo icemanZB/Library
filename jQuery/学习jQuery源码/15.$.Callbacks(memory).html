@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.Callbacks("memory")</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+		// String to Object options format cache
+		var optionsCache = {};
+
+		// Convert String-formatted options into Object-formatted ones and store in cache
+		function createOptions(options) {
+			var object = optionsCache[options] = {};
+			/**
+			 * 用空格分隔单词，匹配空格分隔开，例如："once memory"
+			 * core_rnotwhite = /\S+/g ; =>  ["once", "memory"]
+			 */
+			jQuery.each(options.match(/\S+/g) || [], function (_, flag) {
+				object[flag] = true;
+			});
+			return object;
+		}
+
+		function Callbacks(options) {
+			/**
+			 * 通过字符串在 optionsCache 寻找有没有相应缓存，有则引用
+			 * 如果没有则创建一个，就按照空格切分，例如："memory"
+			 * options : { memory : true }
+			 */
+			options = typeof options === "string" ?
+					( optionsCache[options] || createOptions(options) ) :
+					jQuery.extend({}, options);
+
+			var // Last fire value (for non-forgettable lists)
+					/**
+					 * 最后一次触发回调时传的参数
+					 * 是否为 memory 类型的管理器
+					 */
+					memory,
+					/**
+					 * 列表中的函数是否已经回调至少一次
+					 */
+					fired,
+					/**
+					 * 列表中的函数是否正在回调中
+					 * 当前是否还处于 firing 过程
+					 */
+					firing,
+					/**
+					 * 回调的起点
+					 */
+					firingStart,
+					/**
+					 * 回调时的循环结尾
+					 * 需要fire的队列长度
+					 */
+					firingLength,
+					/**
+					 * 当前正在回调的函数索引
+					 * 当前正在firing的回调在队列的索引
+					 */
+					firingIndex,
+					/**
+					 * 回调函数列表
+					 */
+					list  = [],
+					/**
+					 * 触发回调函数列表
+					 */
+					fire  = function (data) {
+						/**
+						 * data 是包含了作用域( this 就是 Callback 对象 )
+						 * 如果参数 memory 为 true，则记录 data
+						 */
+						memory = options.memory && data;
+
+						/**
+						 * 标记触发回调，说明已经 fire() 过一次了
+						 */
+						fired = true;
+						firingIndex = firingStart || 0;
+						/**
+						 * 重置 firingStart ( 回调的起点 )，防止第二个 $.Callback() 的回调起点错乱
+						 */
+						firingStart = 0;
+						/**
+						 * 需要 fire 的队列长度
+						 */
+						firingLength = list.length;
+						/**
+						 * 触发进行时，标记正在触发回调
+						 */
+						firing = true;
+
+						for (; list && firingIndex < firingLength; firingIndex++) {
+							list[firingIndex].apply(data[0], data[1]);
+						}
+						/**
+						 * 触发结束，标记回调结束
+						 */
+						firing = false;
+
+					},
+					/**
+					 * 暴露在外的Callbacks对象,对外接口
+					 */
+					self  = {
+						/**
+						 * 回调列表中添加一个回调或回调的集合
+						 */
+						add: function () {
+
+							if (list) {
+
+								/**
+								 * 第一次 list.length 肯定是 0 ，第二次 add()  list.length = 1
+								 */
+								var start = list.length;
+
+								(function add(args) {
+
+									jQuery.each(args, function (_, arg) {
+
+										list.push(arg);
+									});
+								})(arguments);
+
+								/**
+								 * 第一次 add()，firing、memory 是 undefined
+								 * 第二次 add()，由于之前调用了 fire() 使得 firing = false;
+								 * memory 是包含了作用域( this 就是 Callback 对象 ) 和 fire("") 中的参数，那么就会进入 else if
+								 */
+
+								if (firing) {
+									firingLength = list.length;
+
+								} else if (memory) {
+									/**
+									 * firingStart = 1; 回调的起点
+									 */
+									firingStart = start;
+									/**
+									 *  memory 保存了前面 fire 过的上下文
+									 */
+									fire(memory);
+								}
+							}
+							return this;
+						},
+
+						fireWith: function (context, args) {
+
+							if (list && ( !fired  )) {
+								args = args || [];
+
+								args = [context, args.slice ? args.slice() : args];
+
+								fire(args);
+							}
+							return this;
+						},
+						fire    : function () {
+							self.fireWith(this, arguments);
+							return this;
+						}
+
+					};
+
+			return self;
+		}
+
+		function aaa() {
+			console.log("aaaaaa");
+		}
+		function bbb() {
+			console.log("bbbbbb");
+		}
+		function ccc() {
+			console.log("cccccc");
+		}
+		// memory：当事件触发后，之后 add 进来的回调就直接执行了，无需再触发多一次
+		var cb = Callbacks("memory");
+		cb.add(aaa);
+		cb.fire("hello");
+		cb.add(bbb);
+		cb.add(ccc);
+	</script>
+</head>
+<body>
+</body>
+</html>

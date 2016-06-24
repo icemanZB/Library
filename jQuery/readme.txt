@@ -19,3 +19,9 @@ jQuery 我相信大家听到这个一定不陌生，没用过也肯定是久仰�
 形象点就是 new F("image") 出了一拳，又反弹到自己脸上了。
 
 http://stackoverflow.com/questions/14299524/clarifcation-on-regular-expression-in-jquery-source  core_pnum 正则分析
+
+http://www.cnblogs.com/littledu/articles/2811728.html  $.Callback()
+
+http://rapheal.sinaapp.com/2013/01/25/jquery-src-callbacks/  $.Callback()
+
+https://segmentfault.com/a/1190000000469273 $.Callback()
