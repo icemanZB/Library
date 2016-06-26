@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>getComputedStyle()</title>
+	<style>
+		#oDiv{
+			color: blue;
+		}
+	</style>
+	<script>
+		window.onload = function () {
+
+			// getComputedStyle 获取计算后的样式，不能获取复合样式
+			// style 可以获取复合样式
+			console.log( window.getComputedStyle(document.getElementById("oDiv"),null).color );
+
+		};
+
+
+
+
+	</script>
+</head>
+
+<body>
+
+<div id="oDiv" style="color:red;"></div>
+</body>
+</html>

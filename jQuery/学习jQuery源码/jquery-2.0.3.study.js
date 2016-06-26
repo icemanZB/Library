@@ -7246,6 +7246,10 @@ var rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>
 	rcleanScript = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g,
 
 	// We have to close these tags to support XHTML (#13200)
+	/*
+	 * 这里是做兼容处理的
+	 * 其中 "1"、"2" 这种数字表示层级
+	 */
 	wrapMap = {
 
 		// Support: IE 9
@@ -7485,6 +7489,9 @@ jQuery.fn.extend({
 					next = this.nextSibling;
 				}
 				jQuery( this ).remove();
+				/*
+				 * 删除操作，在添加到相应的位置
+				 */
 				parent.insertBefore( elem, next );
 			}
 		// Allow new content to include elements from the context set
@@ -7628,9 +7635,15 @@ jQuery.each({
 	insertAfter: "after",
 	replaceAll: "replaceWith"
 }, function( name, original ) {
+	/*
+	 * selector 参数就是 $("div").appendTo( $("div") ); 中的 $("div")
+	 */
 	jQuery.fn[ name ] = function( selector ) {
 		var elems,
 			ret = [],
+			/*
+			 * $("div").appendTo( "div" ); 针对这种情况
+			 */
 			insert = jQuery( selector ),
 			last = insert.length - 1,
 			i = 0;
@@ -7719,6 +7732,9 @@ jQuery.extend({
 			i = 0,
 			l = elems.length,
 			fragment = context.createDocumentFragment(),
+			/*
+			 * 收集创建好的节点，最后统一添加
+			 */
 			nodes = [];
 
 		for ( ; i < l; i++ ) {
@@ -7727,20 +7743,34 @@ jQuery.extend({
 			if ( elem || elem === 0 ) {
 
 				// Add nodes directly
+				/*
+				 * 这个 if 是针对 $("div").append(oSpan);$("div").append($("span"));
+				 */
 				if ( jQuery.type( elem ) === "object" ) {
 					// Support: QtWebKit
 					// jQuery.merge because core_push.apply(_, arraylike) throws
 					jQuery.merge( nodes, elem.nodeType ? [ elem ] : elem );
 
 				// Convert non-html into a text node
+				/*
+				 * rhtml = /<|&#?\w+;/; 判断是否有标签存在，没有标签就会进这个 if
+				 * 是针对 $("div").append("hello");
+				 */
 				} else if ( !rhtml.test( elem ) ) {
 					nodes.push( context.createTextNode( elem ) );
 
 				// Convert html into DOM nodes
+				/*
+				 * 标签的形式，或者是多组标签的形式会走这个 else
+				 * 是针对 $("div").append("<h1>hello</h1>");
+				 */
 				} else {
 					tmp = tmp || fragment.appendChild( context.createElement("div") );
 
 					// Deserialize a standard representation
+					/*
+					 * 有特殊标签进行特殊处理，例如：<tr> 这种 上面有提到过
+					 */
 					tag = ( rtagName.exec( elem ) || ["", ""] )[ 1 ].toLowerCase();
 					wrap = wrapMap[ tag ] || wrapMap._default;
 					tmp.innerHTML = wrap[ 1 ] + elem.replace( rxhtmlTag, "<$1></$2>" ) + wrap[ 2 ];
@@ -7760,6 +7790,9 @@ jQuery.extend({
 
 					// Fixes #12346
 					// Support: Webkit, IE
+					/*
+					 * 清空临时变量，防止内存泄漏
+					 */
 					tmp.textContent = "";
 				}
 			}
@@ -7773,6 +7806,13 @@ jQuery.extend({
 
 			// #4087 - If origin and destination elements are the same, and this is
 			// that element, do not do anything
+			/*
+			 * <span>span1<span>span2</span></span>
+			 * <div>div</div>
+			 *
+			 * $("span").replaceWith( $("div") );
+			 * 找不到要替换操作的节点的时候，就跳出
+			 */
 			if ( selection && jQuery.inArray( elem, selection ) !== -1 ) {
 				continue;
 			}
@@ -7780,6 +7820,9 @@ jQuery.extend({
 			contains = jQuery.contains( elem.ownerDocument, elem );
 
 			// Append to fragment
+			/*
+			 * 添加文档碎片
+			 */
 			tmp = getAll( fragment.appendChild( elem ), "script" );
 
 			// Preserve script evaluation history
@@ -7973,6 +8016,13 @@ jQuery.fn.extend({
 	wrapAll: function( html ) {
 		var wrap;
 
+		/*
+		 * 可以通过函数回调的形式操作
+		 * $("span").wrapAll(function(){
+		 *     return "<div>";
+		 * });
+		 * 这里是分开包装的不是整体包装
+		 */
 		if ( jQuery.isFunction( html ) ) {
 			return this.each(function( i ) {
 				jQuery( this ).wrapAll( html.call(this, i) );
@@ -7985,12 +8035,18 @@ jQuery.fn.extend({
 			wrap = jQuery( html, this[ 0 ].ownerDocument ).eq( 0 ).clone( true );
 
 			if ( this[ 0 ].parentNode ) {
+				/*
+				 * 相当于把创建出来的 "<div>" 添加到第一个 <span> 的前面
+				 */
 				wrap.insertBefore( this[ 0 ] );
 			}
 
 			wrap.map(function() {
 				var elem = this;
-
+				/*
+				 * 找元素节点，处理多标签的情况
+				 * $("span").wrapAll("<div><p></p></div>");
+				 */
 				while ( elem.firstElementChild ) {
 					elem = elem.firstElementChild;
 				}
@@ -8011,6 +8067,9 @@ jQuery.fn.extend({
 
 		return this.each(function() {
 			var self = jQuery( this ),
+			    /*
+			     * 找到所有的子元素
+			     */
 				contents = self.contents();
 
 			if ( contents.length ) {
@@ -8032,6 +8091,9 @@ jQuery.fn.extend({
 
 	unwrap: function() {
 		return this.parent().each(function() {
+			/*
+			 * 排除 body
+			 */
 			if ( !jQuery.nodeName( this, "body" ) ) {
 				jQuery( this ).replaceWith( this.childNodes );
 			}
@@ -8066,6 +8128,9 @@ function vendorPropName( style, name ) {
 	}
 
 	// check for vendor prefixed names
+	/*
+	 * 把第一个字母变成大写 transform -> Transform ，在拼接之后的
+	 */
 	var capName = name.charAt(0).toUpperCase() + name.slice(1),
 		origName = name,
 		i = cssPrefixes.length;
@@ -8083,6 +8148,10 @@ function vendorPropName( style, name ) {
 function isHidden( elem, el ) {
 	// isHidden might be called from jQuery#filter function;
 	// in that case, element will be second argument
+	/*
+	 * el 这个参数是针对 jQuery#filter 的
+	 * jQuery.contains( elem.ownerDocument, elem ); 是针对创建的元素，没有添加到页面的话，jQuery 认为就是隐藏的元素
+	 */
 	elem = el || elem;
 	return jQuery.css( elem, "display" ) === "none" || !jQuery.contains( elem.ownerDocument, elem );
 }
@@ -8105,11 +8174,19 @@ function showHide( elements, show ) {
 			continue;
 		}
 
+		/*
+		 * $("span").show() 的时候获取
+		 */
 		values[ index ] = data_priv.get( elem, "olddisplay" );
 		display = elem.style.display;
 		if ( show ) {
 			// Reset the inline display of this element to learn if it is
 			// being hidden by cascaded rules or not
+			/*
+			 * 这里是处理之前没有调用 hide()的时候，怎么获取元素本身的 display
+			 * span{ display:none; }
+			 * $("span").show();
+			 */
 			if ( !values[ index ] && display === "none" ) {
 				elem.style.display = "";
 			}
@@ -8117,6 +8194,9 @@ function showHide( elements, show ) {
 			// Set elements which have been overridden with display: none
 			// in a stylesheet to whatever the default browser style is
 			// for such an element
+			/*
+			 * css_defaultDisplay() 获取元素默认的 display
+			 */
 			if ( elem.style.display === "" && isHidden( elem ) ) {
 				values[ index ] = data_priv.access( elem, "olddisplay", css_defaultDisplay(elem.nodeName) );
 			}
@@ -8125,6 +8205,10 @@ function showHide( elements, show ) {
 			if ( !values[ index ] ) {
 				hidden = isHidden( elem );
 
+				/*
+				 * 调用 $("span").hide() 的时候就会走这里
+				 * 当不是隐藏的时候就会进 if，通过 jQuery.css(elem, "display") 得到默认的值
+				 */
 				if ( display && display !== "none" || !hidden ) {
 					data_priv.set( elem, "olddisplay", hidden ? display : jQuery.css(elem, "display") );
 				}
@@ -8134,12 +8218,22 @@ function showHide( elements, show ) {
 
 	// Set the display of most of the elements in a second loop
 	// to avoid the constant reflow
+	/*
+	 * 这里是正真的显示隐藏的操作
+	 */
 	for ( index = 0; index < length; index++ ) {
 		elem = elements[ index ];
 		if ( !elem.style ) {
 			continue;
 		}
 		if ( !show || elem.style.display === "none" || elem.style.display === "" ) {
+			/*
+			 * values[ index ] 是检测元素之前的 display 的属性
+			 * <span></span>
+			 *
+			 * $("span").hide().show();
+			 * 在 hide() 的时候监测 元素是什么，比如 getComputedStyle().display -> inline
+			 */
 			elem.style.display = show ? values[ index ] || "" : "none";
 		}
 	}
@@ -8154,23 +8248,39 @@ jQuery.fn.extend({
 				map = {},
 				i = 0;
 
+			/*
+			 * 判断是不是数组，针对 $("div").css(["color","width","height"]);
+			 */
 			if ( jQuery.isArray( name ) ) {
+				/*
+				 *  getStyles 就是 getComputedStyle()
+				 */
 				styles = getStyles( elem );
 				len = name.length;
 
 				for ( ; i < len; i++ ) {
+					/*
+					 * styles 不传的话，就会重复调用 getComputedStyle()，影响性能
+					 */
 					map[ name[ i ] ] = jQuery.css( elem, name[ i ], false, styles );
 				}
 
 				return map;
 			}
 
+			/*
+			 * value 存在的时候就需要设置，调用的是 jQuery.style() -> style
+			 * 不存在的时候调用 jQuery.css() -> curCSS = function(){} -> getComputedStyle()
+			 */
 			return value !== undefined ?
 				jQuery.style( elem, name, value ) :
 				jQuery.css( elem, name );
 		}, name, value, arguments.length > 1 );
 	},
 	show: function() {
+		/*
+		 * 这里通过第二个参数决定是 show() 还是 hide() 行为
+		 */
 		return showHide( this, true );
 	},
 	hide: function() {
@@ -8182,6 +8292,9 @@ jQuery.fn.extend({
 		}
 
 		return this.each(function() {
+			/*
+			 * isHidden() 检测当前元素是否隐藏，如果是隐藏的就是返回 true
+			 */
 			if ( isHidden( this ) ) {
 				jQuery( this ).show();
 			} else {
@@ -8194,6 +8307,10 @@ jQuery.fn.extend({
 jQuery.extend({
 	// Add in style property hooks for overriding the default
 	// behavior of getting and setting a style property
+	/*
+	 * 透明度的特殊处理
+	 * $("div").css("opacity"); 在样式里面没有写 opacity 的话，就认为他是不透明的
+	 */
 	cssHooks: {
 		opacity: {
 			get: function( elem, computed ) {
@@ -8228,8 +8345,14 @@ jQuery.extend({
 	},
 
 	// Get and set the style property on a DOM Node
+	/*
+	 * extra 是针对尺寸方法的 $("div").width()/height()...
+	 */
 	style: function( elem, name, value, extra ) {
 		// Don't set styles on text and comment nodes
+		/*
+		 * 针对的是元素节点
+		 */
 		if ( !elem || elem.nodeType === 3 || elem.nodeType === 8 || !elem.style ) {
 			return;
 		}
@@ -8250,7 +8373,14 @@ jQuery.extend({
 			type = typeof value;
 
 			// convert relative number strings (+= or -=) to relative numbers. #7345
+			/*
+			 * rrelNum = new RegExp( "^([+-])=(" + core_pnum + ")", "i" );  += 、 -= 的操作
+			 * $("#div1").width("+=100");
+			 */
 			if ( type === "string" && (ret = rrelNum.exec( value )) ) {
+				/*
+				 * ret[1] 就是 "-" 或者 "+"  + +1 => +1 、 - +1 => -1
+				 */
 				value = ( ret[1] + 1 ) * ret[2] + parseFloat( jQuery.css( elem, name ) );
 				// Fixes bug #9237
 				type = "number";
@@ -8262,23 +8392,35 @@ jQuery.extend({
 			}
 
 			// If a number was passed in, add 'px' to the (except for certain CSS properties)
+			/*
+			 * cssNumber 这里面的都是不用加单位的
+			 */
 			if ( type === "number" && !jQuery.cssNumber[ origName ] ) {
 				value += "px";
 			}
 
 			// Fixes #8908, it can be done more correctly by specifying setters in cssHooks,
 			// but it would mean to define eight (for every problematic property) identical functions
+			/*
+			 * clone 了一个元素，并且对他的 background 进行设置为 ""，他会影响到没有 clone 之前的元素
+			 */
 			if ( !jQuery.support.clearCloneStyle && value === "" && name.indexOf("background") === 0 ) {
 				style[ name ] = "inherit";
 			}
 
 			// If a hook was provided, use that value, otherwise just set the specified value
+			/*
+			 * 针对尺寸的额外操作
+			 */
 			if ( !hooks || !("set" in hooks) || (value = hooks.set( elem, value, extra )) !== undefined ) {
 				style[ name ] = value;
 			}
 
 		} else {
 			// If a hook was provided get the non-computed value from there
+			/*
+			 * 获取操作
+			 */
 			if ( hooks && "get" in hooks && (ret = hooks.get( elem, false, extra )) !== undefined ) {
 				return ret;
 			}
@@ -8288,15 +8430,29 @@ jQuery.extend({
 		}
 	},
 
+	/*
+	 * style 用来多个值获取，单个值不传，为了提高性能
+	 * curCSS =function(){} 这个方法中也调用了 getComputedStyle()，为了防止重复调用在获取多值的时候
+	 */
 	css: function( elem, name, extra, styles ) {
 		var val, num, hooks,
+		    /*
+		     * 转驼峰形式 background-color -> backgroundColor
+		     */
 			origName = jQuery.camelCase( name );
 
 		// Make sure that we're working with the right name
+		/*
+		 * cssProps: { "float": "cssFloat" }
+		 * vendorPropName 添加浏览器前缀
+		 */
 		name = jQuery.cssProps[ origName ] || ( jQuery.cssProps[ origName ] = vendorPropName( elem.style, origName ) );
 
 		// gets hook for the prefixed version
 		// followed by the unprefixed version
+		/*
+		 * cssHooks：怪异模式下宽度和高度的解析不同，或者 opacity 不写的时候获取是 ""，其实应该是 1
+		 */
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
 
 		// If a hook was provided get the computed value from there
@@ -8310,11 +8466,22 @@ jQuery.extend({
 		}
 
 		//convert "normal" to computed value
+		/*
+	  	 * 返回 "noraml" 的话转成对应的数值
+	  	 * cssNormalTransform = {
+		 *     letterSpacing: 0,
+		 *     fontWeight: 400
+		 * }
+		 */
 		if ( val === "normal" && name in cssNormalTransform ) {
 			val = cssNormalTransform[ name ];
 		}
 
 		// Return, converting to number if forced or a qualifier was provided and val looks numeric
+		/*
+		 * $("div").css("width") -> 获取到的值肯定带单位的
+		 * 有 "extra" 这个参数会把单位去掉
+		 */
 		if ( extra === "" || extra ) {
 			num = parseFloat( val );
 			return extra === true || jQuery.isNumeric( num ) ? num || 0 : val;
@@ -8329,11 +8496,21 @@ curCSS = function( elem, name, _computed ) {
 
 		// Support: IE9
 		// getPropertyValue is only needed for .css('filter') in IE9, see #12537
+		/*
+		 * #div1{ filter:alpha(opacity=50); }
+		 * window.getComputedStyle( document.getElementById("div1"),null )["filter"] 在 IE 9 下， filter 是 undefined
+		 * window.getComputedStyle( document.getElementById("div1"),null ).getPropertyValue("filter") 这样就能获取到
+		 */
 		ret = computed ? computed.getPropertyValue( name ) || computed[ name ] : undefined,
 		style = elem.style;
 
 	if ( computed ) {
 
+		/*
+		 * elem.ownerDocument = document
+		 * jQuery.contains( elem.ownerDocument, elem ) 一般情况下载页面上已有的元素都会返回 true
+		 * 动态创建元素，并且该元素还没有添加到页面的时候，它就会返回 false
+		 */
 		if ( ret === "" && !jQuery.contains( elem.ownerDocument, elem ) ) {
 			ret = jQuery.style( elem, name );
 		}
@@ -8342,6 +8519,14 @@ curCSS = function( elem, name, _computed ) {
 		// A tribute to the "awesome hack by Dean Edwards"
 		// Safari 5.1.7 (at least) returns percentage for a larger set of values, but width seems to be reliably pixels
 		// this is against the CSSOM draft spec: http://dev.w3.org/csswg/cssom/#resolved-values
+		/*
+		 * rmargin = /^margin/; 针对 margin 开头的样式处理
+		 * rnumnonpx = new RegExp( "^(" + core_pnum + ")(?!px)[a-z%]+$", "i" ); 不去匹配带 "px" 像素单位的值，匹配除了像素以外的 "%" 的值
+		 * 也就是说 margin 设置了 "%" 就会进这个 if
+		 *
+		 * #div1 { margin-left : 10%; }
+		 * $("#div1").css("margin-left");  135px; 但是在 Safari 5.1.7 中得到的是 10%
+		 */
 		if ( rnumnonpx.test( ret ) && rmargin.test( name ) ) {
 
 			// Remember the original values
@@ -8354,6 +8539,9 @@ curCSS = function( elem, name, _computed ) {
 			ret = computed.width;
 
 			// Revert the changed values
+			/*
+			 * 值还原
+			 */
 			style.width = width;
 			style.minWidth = minWidth;
 			style.maxWidth = maxWidth;
@@ -8457,6 +8645,9 @@ function getWidthOrHeight( elem, name, extra ) {
 // Try to determine the default display value of an element
 function css_defaultDisplay( nodeName ) {
 	var doc = document,
+	    /*
+	     * elemdisplay = { BODY: "block" }，body 是不能动态创建，给 body 一个默认的值
+	     */
 		display = elemdisplay[ nodeName ];
 
 	if ( !display ) {
@@ -8465,6 +8656,10 @@ function css_defaultDisplay( nodeName ) {
 		// If the simple way fails, read from inside an iframe
 		if ( display === "none" || !display ) {
 			// Use the already-created iframe if possible
+			/*
+			 * 处理 iframe 隐藏的时候，在 iframe 中的元素是显示的，但是 getComputedStyle() 获取到的是 none;
+			 * 动态创建 iframe，并且显示
+			 */
 			iframe = ( iframe ||
 				jQuery("<iframe frameborder='0' width='0' height='0'/>")
 				.css( "cssText", "display:block !important" )
@@ -8488,6 +8683,9 @@ function css_defaultDisplay( nodeName ) {
 
 // Called ONLY from within css_defaultDisplay
 function actualDisplay( name, doc ) {
+	/*
+	 * 动态创建一个标签添加到 body 中，在用 css() 获取动态创建标签的元素的 display，最后删除动态创建的元素
+	 */
 	var elem = jQuery( doc.createElement( name ) ).appendTo( doc.body ),
 		display = jQuery.css( elem[0], "display" );
 	elem.remove();
@@ -8495,6 +8693,9 @@ function actualDisplay( name, doc ) {
 }
 
 jQuery.each([ "height", "width" ], function( i, name ) {
+	/*
+	 * cssHooks.get()、 cssHooks.set()
+	 */
 	jQuery.cssHooks[ name ] = {
 		get: function( elem, computed, extra ) {
 			if ( computed ) {
@@ -10749,6 +10950,9 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 			return jQuery.access( this, function( elem, type, value ) {
 				var doc;
 
+				/*
+				 * 计算浏览器可视区的宽高 $(window).width();
+				 */
 				if ( jQuery.isWindow( elem ) ) {
 					// As of 5/8/2012 this will yield incorrect results for Mobile Safari, but there
 					// isn't a whole lot we can do. See pull request at this URL for discussion:
@@ -10756,6 +10960,9 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 					return elem.document.documentElement[ "client" + name ];
 				}
 
+				/*
+				 * $(document).height() 页面的高度
+				 */
 				// Get document width or height
 				if ( elem.nodeType === 9 ) {
 					doc = elem.documentElement;
