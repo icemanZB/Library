@@ -4164,16 +4164,6 @@ jQuery.Callbacks = function( options ) {
 			fire: function() {
 				self.fireWith( this, arguments );
 				return this;
-			},
-			// To know if the callbacks have already been called at least once
-			/**
-			 * 回调函数列表是否至少被调用一次
-			 */
-			fired: function() {
-				/**
-				 * 判断有没有调用过 fire()，只要调用过一次 fired = true
-				 */
-				return !!fired;
 			}
 		};
 

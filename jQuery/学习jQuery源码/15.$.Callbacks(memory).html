@@ -5,10 +5,8 @@
 	<title>$.Callbacks("memory")</title>
 	<script src="jquery-2.0.3.js"></script>
 	<script>
-		// String to Object options format cache
 		var optionsCache = {};
 
-		// Convert String-formatted options into Object-formatted ones and store in cache
 		function createOptions(options) {
 			var object = optionsCache[options] = {};
 			/**
@@ -31,7 +29,7 @@
 					( optionsCache[options] || createOptions(options) ) :
 					jQuery.extend({}, options);
 
-			var // Last fire value (for non-forgettable lists)
+			var
 					/**
 					 * 最后一次触发回调时传的参数
 					 * 是否为 memory 类型的管理器
@@ -63,11 +61,11 @@
 					/**
 					 * 回调函数列表
 					 */
-					list  = [],
+					list = [],
 					/**
 					 * 触发回调函数列表
 					 */
-					fire  = function (data) {
+					fire = function (data) {
 						/**
 						 * data 是包含了作用域( this 就是 Callback 对象 )
 						 * 如果参数 memory 为 true，则记录 data
@@ -104,7 +102,7 @@
 					/**
 					 * 暴露在外的Callbacks对象,对外接口
 					 */
-					self  = {
+					self = {
 						/**
 						 * 回调列表中添加一个回调或回调的集合
 						 */
@@ -140,7 +138,10 @@
 									 */
 									firingStart = start;
 									/**
-									 *  memory 保存了前面 fire 过的上下文
+									 * memory 保存了前面 fire 过的上下文
+									 * 在 fire 方法里，只有options.memory 为真时，memory 才有值，所以，这里的 memory 保存的是上一次 fire 时的 memory 值
+									 * 而这个的作用就是要立即执行新添加的回调，让新添加的回调也能输出之前 fire 时传的值。
+									 * 这里也是 $.Callbacks("memory") 这个参数作用的地方，有了这个参数，每次 add 也会执行一次 memory
 									 */
 									fire(memory);
 								}

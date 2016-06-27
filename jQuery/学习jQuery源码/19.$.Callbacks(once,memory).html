@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.Callbacks("once memory")</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+
+		var optionsCache = {};
+
+		function createOptions(options) {
+			var object = optionsCache[options] = {};
+
+			jQuery.each(options.match(/\S+/g) || [], function (_, flag) {
+				object[flag] = true;
+			});
+			return object;
+		}
+
+		function Callbacks(options) {
+
+			options = typeof options === "string" ?
+					( optionsCache[options] || createOptions(options) ) :
+					jQuery.extend({}, options);
+
+			var
+					memory,
+					fired,
+					firing,
+					firingLength,
+					firingIndex,
+					firingStart,
+					list  = [],
+					/**
+					 * 如果传了 "once"，stack = false;
+					 */
+					stack = !options.once && [],
+					fire  = function (data) {
+
+						memory = options.memory && data;
+
+						fired = true;
+						firingIndex = firingStart || 0;
+						firingStart = 0;
+						firingLength = list.length;
+
+						firing = true;
+						for (; list && firingIndex < firingLength; firingIndex++) {
+							if (list[firingIndex].apply(data[0], data[1]) === false && options.stopOnFalse) {
+								memory = false;
+								break;
+							}
+						}
+						firing = false;
+
+						if (list) {
+							if (stack) {
+								if (stack.length) {
+									fire(stack.shift());
+								}
+							} else if (memory) {
+								/**
+								 * 当传了 "once memory" 就会进这个 if，使 list =[]; 让之后的 add() 继续能够添加，从而通过 "memory" 功能触发 add() 添加的回调函数
+								 */
+								list = [];
+							} else {
+								/**
+								 * 这里是只传了 "once"，阻止后续的操作
+								 */
+								self.disable();
+							}
+						}
+					},
+
+					self  = {
+						add    : function () {
+							/**
+							 * 当传了 "once memory" 的时候，第二次 add() 这里的 list = [];
+							 */
+							if (list) {
+								var start = list.length;
+
+								(function add(args) {
+									jQuery.each(args, function (_, arg) {
+										var type = jQuery.type(arg);
+										if (type === "function") {
+											if (!options.unique || !self.has(arg)) {
+												list.push(arg);
+											}
+										} else if (arg && arg.length && type !== "string") {
+											add(arg);
+										}
+									});
+
+								})(arguments);
+
+								if (firing) {
+									firingLength = list.length;
+								} else if (memory) {
+									/**
+									 * 这里的逻辑和 "memory" 是一样的
+									 */
+									firingStart = start;
+									fire(memory);
+								}
+
+							}
+							return this;
+						},
+						/**
+						 * 禁用回调列表中的回调
+						 */
+						disable: function () {
+							/**
+							 * 阻止后续的操作，连等赋值都为 undefined
+							 */
+							list = stack = memory = undefined;
+							return this;
+						},
+
+						/**
+						 * 判断在 list 中有没有填加过 fn (  回调函数是否在列表中 )
+						 * fn 不存在的时候，是针对外部调用的时候，如果没有传参数，看看 list 有没有内容，有的话就会返回 true
+						 */
+						has: function (fn) {
+							return fn ? jQuery.inArray(fn, list) > -1 : !!( list && list.length );
+						},
+
+						fireWith: function (context, args) {
+							/**
+							 * 当传了 "once" 的时候，第二次 fire 的话， list = undefined，所以不再触发之后的 fire()
+							 */
+							if (list && ( !fired || stack )) {
+								args = args || [];
+
+								args = [context, args.slice ? args.slice() : args];
+
+								fire(args);
+							}
+							return this;
+						},
+
+						fire: function () {
+							self.fireWith(this, arguments);
+							return this;
+						}
+
+					};
+
+			return self;
+		}
+
+		function aaa(arg) {
+			console.log("aaa : " + arg);
+		}
+
+		function bbb(arg) {
+			console.log("bbb : " + arg);
+		}
+
+		var cb = Callbacks("once memory");  // once 只触发一次回调队列，memory 会让 bbb 在触发一次
+		cb.add(aaa);
+		cb.fire("Alice");
+		cb.add(bbb);
+
+	</script>
+</head>
+<body>
+</body>
+</html>

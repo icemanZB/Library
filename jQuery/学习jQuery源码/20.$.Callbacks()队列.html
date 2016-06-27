@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.Callbacks()的队列</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+		var optionsCache = {};
+
+		function createOptions(options) {
+			var object = optionsCache[options] = {};
+			jQuery.each(options.match(/\S+/g) || [], function (_, flag) {
+				object[flag] = true;
+			});
+			return object;
+		}
+
+		function Callbacks() {
+
+			var
+					fired,
+
+					firing,
+
+					firingStart,
+
+					firingLength,
+
+					firingIndex,
+
+					list  = [],
+
+					stack =  [],
+
+					fire  = function (data) {
+
+						fired = true;
+						firingIndex = firingStart || 0;
+						firingStart = 0;
+
+						firingLength = list.length;
+						/**
+						 * 触发进行时，标记正在触发回调
+						 */
+						firing = true;
+
+						for (; list && firingIndex < firingLength; firingIndex++) {
+							list[firingIndex].apply(data[0], data[1]);
+						}
+						/**
+						 * 触发结束，标记回调结束
+						 */
+						firing = false;
+						if (list) {
+							/**
+							 * 个人认为这个变量应该取名为 queue 好,因为是先进先出的队列结构
+							 */
+							if (stack) {
+								if (stack.length) {
+									/**
+									 * 这里把 stack 中的第一个取出来，在重新进行递归 fire()，在一起调用 list 中的回调函数
+									 */
+									fire(stack.shift());
+								}
+							}
+						}
+					},
+
+					self  = {
+						add: function () {
+
+							if (list) {
+
+								(function add(args) {
+									jQuery.each(args, function (_, arg) {
+										list.push(arg);
+									});
+								})(arguments);
+
+								/**
+								 * 看是回调函数列表是否正在触发 如果是那么只需要修改 firingLength 的长度就行了，因为这样到时会调用到刚添加进去的回调函数
+								 */
+								if (firing) {
+									firingLength = list.length;
+								}
+							}
+
+							return this;
+						},
+
+						fireWith: function (context, args) {
+
+							if (list && ( !fired || stack )) {
+								args = args || [];
+
+								args = [context, args.slice ? args.slice() : args];
+
+								/**
+								 * 如果正在执行 Callback 队列中的函数 即 firing = true;时，这时再调用 fireWith 或者 fire 就会放在 stack 中排队
+								 * stack 在这里相当于一个缓存数组，用于当 fire 忙时暂存下回调
+								 */
+								if (firing) {
+									stack.push(args);
+								} else {
+									fire(args);
+								}
+							}
+							return this;
+						},
+						fire    : function () {
+							self.fireWith(this, arguments);
+							return this;
+						},
+						fired   : function () {
+							return !!fired;
+						}
+					};
+
+			return self;
+		}
+
+		// 防止无限循环
+		var bBtn = true;
+
+		function aaa() {
+			console.log("aaa");
+
+			if (bBtn) {
+				cb.add(ccc);
+				cb.fire();
+				bBtn = false;
+			}
+
+		}
+
+		function bbb() {
+			console.log("bbb");
+		}
+
+		function ccc(){
+			console.log("ccc");
+		}
+
+		var cb = Callbacks();
+		cb.add(aaa);
+		cb.add(bbb);
+		/**
+		 * 当触发 fire() 的时候，此时 list = [ function aaa(){},function bbb(){} ]; 会先输出 "aaa"
+		 * 然后在代码中写了 cb.add(ccc); cb.fire(); 但是此时 firingIndex =1; firingLength =2 ;源码中 for (; list && firingIndex < firingLength; firingIndex++) {} 也只走了一次
+		 * firing = true; 然后继续调用 cb.add(ccc); 因为 firing = true; 所以 firingLength = list.length; firingLength =3; firingIndex =1;
+		 * 执行了 cb.fire(); stack.push(args); 然后继续上一次的没有走完的循环，但是此时 firingLength =3; firingIndex =1; 所以就会输出 "bbb"、"cccc"
+		 * 然后 firing = false; 此时的 stack 是有值的，在递归调用 fire(); 由于 list =[ function aaa(){},function bbb(){},function ccc(){} ];
+		 * 所以重新输出了 "aaa"、"bbb"、"cccc"，因为 firingIndex = 0; firingStart = 0; firingLength = list.length = 3;
+		 */
+		// 这里就是源码中 firing 的控制
+		cb.fire();
+
+	</script>
+</head>
+<body>
+</body>
+</html>

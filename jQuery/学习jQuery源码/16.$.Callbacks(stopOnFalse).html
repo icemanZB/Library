@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.Callbacks("stopOnFalse")</title>
+	<script src="jquery-2.0.3.js"></script>
+	<script>
+
+		var optionsCache = {};
+
+		function createOptions(options) {
+			var object = optionsCache[options] = {};
+
+			jQuery.each(options.match(/\S+/g) || [], function (_, flag) {
+				object[flag] = true;
+			});
+			return object;
+		}
+
+		function Callbacks(options) {
+
+			options = typeof options === "string" ?
+					( optionsCache[options] || createOptions(options) ) :
+					jQuery.extend({}, options);
+
+			var
+					memory,
+					fired,
+					firing,
+					firingLength,
+					firingIndex,
+					firingStart,
+					list = [],
+					fire = function (data) {
+						memory = options.memory && data;
+						fired = true;
+						firingIndex = firingStart || 0;
+						firingStart = 0;
+						firingLength = list.length;
+
+						firing = true;
+						for (; list && firingIndex < firingLength; firingIndex++) {
+							if (list[firingIndex].apply(data[0], data[1]) === false && options.stopOnFalse) {
+								/**
+								 * memory 作用失效，并且跳出循环就不执行之后的 fire()
+								 */
+								memory = false;
+								break;
+							}
+						}
+						firing = false;
+					},
+
+					self = {
+						add: function () {
+							if (list) {
+								var start = list.length;
+
+								(function add(args) {
+
+									$.each(args, function (_, arg) {
+										list.push(arg);
+									});
+
+								})(arguments);
+
+								if (firing) {
+									firingLength = list.length;
+
+								} else if (memory) {
+									firingStart = start;
+									fire(memory);
+								}
+
+							}
+							return this;
+						},
+
+						fireWith: function (context, args) {
+
+							if (list && !fired) {
+								args = args || [];
+
+								args = [context, args.slice ? args.slice() : args];
+
+								fire(args);
+							}
+							return this;
+						},
+
+						fire: function () {
+							self.fireWith(this, arguments);
+							return this;
+						}
+
+					};
+
+			return self;
+		}
+
+		function aaa() {
+			console.log("aaaaaa");
+			return false;
+		}
+		function bbb() {
+			console.log("bbbbbb");
+		}
+
+		// stopOnFalse 如果有个函数中返回 false，并且传了这个参数，那么后面的 fire 就不执行了，并且 memory 作用失效
+		var cb = Callbacks("memory stopOnFalse");
+		cb.add(aaa);
+		cb.add(bbb);
+		cb.fire();
+
+	</script>
+</head>
+<body>
+</body>
+</html>
