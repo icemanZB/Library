@@ -53,12 +53,12 @@
 						firing = false;
 						if (list) {
 							/**
-							 * 个人认为这个变量应该取名为 queue 好,因为是先进先出的队列结构
+							 * 个人认为这个变量应该取名为 queue 好，因为是先进先出的队列结构
 							 */
 							if (stack) {
 								if (stack.length) {
 									/**
-									 * 这里把 stack 中的第一个取出来，在重新进行递归 fire()，在一起调用 list 中的回调函数
+									 * 这里把 stack 中的第一个取出来，在重新进行递归 fire()，再次调用 list 中的回调函数
 									 */
 									fire(stack.shift());
 								}
@@ -78,7 +78,7 @@
 								})(arguments);
 
 								/**
-								 * 看是回调函数列表是否正在触发 如果是那么只需要修改 firingLength 的长度就行了，因为这样到时会调用到刚添加进去的回调函数
+								 * 看是回调函数列表是否正在触发，如果是那么只需要修改 firingLength 的长度就行了，因为这样到时会调用到刚添加进去的回调函数
 								 */
 								if (firing) {
 									firingLength = list.length;

@@ -107,29 +107,16 @@
 							}
 							return this;
 						},
-						/**
-						 * 禁用回调列表中的回调
-						 */
 						disable: function () {
-							/**
-							 * 阻止后续的操作，连等赋值都为 undefined
-							 */
 							list = stack = memory = undefined;
 							return this;
 						},
 
-						/**
-						 * 判断在 list 中有没有填加过 fn (  回调函数是否在列表中 )
-						 * fn 不存在的时候，是针对外部调用的时候，如果没有传参数，看看 list 有没有内容，有的话就会返回 true
-						 */
 						has: function (fn) {
 							return fn ? jQuery.inArray(fn, list) > -1 : !!( list && list.length );
 						},
 
 						fireWith: function (context, args) {
-							/**
-							 * 当传了 "once" 的时候，第二次 fire 的话， list = undefined，所以不再触发之后的 fire()
-							 */
 							if (list && ( !fired || stack )) {
 								args = args || [];
 

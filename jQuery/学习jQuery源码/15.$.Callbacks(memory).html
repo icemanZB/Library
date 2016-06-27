@@ -140,8 +140,8 @@
 									/**
 									 * memory 保存了前面 fire 过的上下文
 									 * 在 fire 方法里，只有options.memory 为真时，memory 才有值，所以，这里的 memory 保存的是上一次 fire 时的 memory 值
-									 * 而这个的作用就是要立即执行新添加的回调，让新添加的回调也能输出之前 fire 时传的值。
-									 * 这里也是 $.Callbacks("memory") 这个参数作用的地方，有了这个参数，每次 add 也会执行一次 memory
+									 * 而这个的作用就是要立即执行新添加的回调函数，让新添加函数的回调也能输出之前 fire 时传的值。
+									 * 这里也是 $.Callbacks("memory") 这个参数作用的地方，有了这个参数，每次 add 也会执行一次 fire
 									 */
 									fire(memory);
 								}

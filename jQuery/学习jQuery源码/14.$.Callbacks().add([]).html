@@ -93,38 +93,18 @@
 							}
 							return this;
 						},
-						/**
-						 * 以给定的上下文和参数调用所有回调函数
-						 */
+
 						fireWith: function (context, args) {
-							/**
-							 * 此时的 list = [function aaa(){}]
-							 *
-							 * fired 第一次调用的时候就是 undefined，!fired = true; 就会进 if
-							 * 也就是说只写了一次 cb.fire(); 不管前面添加了多少个 ( cb.add(aaa);cb.add(bbb);... )
-							 *
-							 * 当写了两次或者以上的 cb.fire(); 那么第二次的时候这个 if 就不会走了
-							 */
+
 							if (list && !fired) {
 								args = args || [];
-								/**
-								 * 这里是针对传参的情况  cb.fire("hello");
-								 * args 包含了作用域，和具体的参数两个值放进了数组中
-								 * args.slice 就是判断是不是数组，是数组的话就直接 args.slice() 返回
-								 */
+
 								args = [context, args.slice ? args.slice() : args];
-								/**
-								 * 直接调用内部函数 fire()
-								 * 这里就把 cb.fire("hello") 中的 "hello" 参数带到了每一个函数中
-								 */
+
 								fire(args);
 							}
 							return this;
 						},
-						/**
-						 * 先调用这里的 fire() 对外的接口，在去调用 fireWidth(this, arguments);
-						 * this 是回调对象 ( Callback )
-						 */
 						fire    : function () {
 							self.fireWith(this, arguments);
 							return this;
@@ -142,7 +122,9 @@
 			console.log("bbbbbb");
 		}
 		var cb = Callbacks();
-		cb.add([aaa, bbb]);
+		cb.add(aaa);
+		cb.fire();
+		cb.add(bbb);
 		cb.fire();
 
 

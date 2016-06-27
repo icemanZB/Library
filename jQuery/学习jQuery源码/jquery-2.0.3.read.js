@@ -287,7 +287,7 @@ jQuery.fn = jQuery.prototype = {
 							// Properties of context are called as methods if possible
 							/**
 							 * 遍历 context = { title : "hi",html : "abcd",css : {background:"red"} };
-							 * 
+							 *
 							 * jQuery.isFunction(); 判断是不是一个方法
 							 * this 自然是 jQuery 对象， 在 jQuery 对象中 判断 this["title"] 有没有这个方法，没有方法就添加属性
 							 * 有这个方法如：this["html"] = this.html(); 就进行函数调用
@@ -318,7 +318,7 @@ jQuery.fn = jQuery.prototype = {
 					 * $("#div") => match = ["#div", undefined, "div", index: 0, input: "#div"]
 					 */
 					elem = document.getElementById( match[2] );
-					
+
 					// Check parentNode to catch when Blackberry 4.6 returns
 					// nodes that are no longer in the document #6963
 					/**
@@ -404,7 +404,7 @@ jQuery.fn = jQuery.prototype = {
 		 */
 		} else if ( jQuery.isFunction( selector ) ) {
 			/**
-			 * rootjQuery = $(document) 
+			 * rootjQuery = $(document)
 			 * 这句就是平时外面写的 $(document).ready(function(){});，这句理解成对应的源码就是 $().ready(); $()就是创建对象，在调用实例方法 ready()
 			 * 其实就是下面的 ready: function( fn ) { // Add the callback  jQuery.ready.promise().done( fn ); return this; }
 			 */
@@ -3870,7 +3870,7 @@ jQuery.Callbacks = function( options ) {
 		fired,
 		// Flag to know if list is currently firing
 		/**
-		 * 列表中的函数是否正在回调中
+		 * 列表中的函数是否正在回调中(queue)
 		 */
 		firing,
 		// First callback to fire (used internally by add and fireWith)
@@ -3880,7 +3880,7 @@ jQuery.Callbacks = function( options ) {
 		firingStart,
 		// End of the loop when firing
 		/**
-		 * 回调时的循环结尾
+		 * 回调时的循环的长度
 		 */
 		firingLength,
 		// Index of currently firing callback (modified by remove if needed)
@@ -3895,7 +3895,8 @@ jQuery.Callbacks = function( options ) {
 		list = [],
 		// Stack of fire calls for repeatable lists
 		/**
-		 * 可重复的回调函数堆栈，用于控制触发回调时的参数列表
+		 * 可重复的回调函数堆栈(queue)
+		 * 如果传了 "once"，stack = false;
 		 */
 		stack = !options.once && [],
 		// Fire callbacks
@@ -3904,29 +3905,36 @@ jQuery.Callbacks = function( options ) {
 		 */
 		fire = function( data ) {
 			/**
-			 * 如果参数 memory 为 true，则记录 data
+			 * data 是包含了作用域 ( this 就是 Callback 对象 ) 和 cb.fire("hello") 中的 "hello" 的 arguments 对象
+			 * 如果参数 memory 为 true，则记录 data，这个 data 是上一次 fire 的 memory 值
 			 */
 			memory = options.memory && data;
 			/**
-			 * 标记触发回调，说明已经 fire() 过一次了
+			 * 标记触发回调，说明已经 fire() 过一次了，同一函数不触发 2 次
 			 */
 			fired = true;
 			firingIndex = firingStart || 0;
+			/**
+			 * 重置 firingStart ( 回调的起点 )，防止第二个 $.Callback() 的回调起点错乱
+			 */
 			firingStart = 0;
+			/**
+			 * 需要 fire 的队列长度
+			 * list => [ function aaa(), function bbb() ]
+			 */
 			firingLength = list.length;
 			/**
 			 * 触发进行时，标记正在触发回调
 			 */
 			firing = true;
 			for ( ; list && firingIndex < firingLength; firingIndex++ ) {
-				/*
-				 * data[0] 对应的就是执行环境，data[1] 就是 "hello"
-				 * 当每个回调函数中 return false; 或者写了 stopOnFalse = true 的话，就跳出循环不会往后执行了
-				 * 也就是说，由于参数 stopOnFalse 为 true，所以当有回调函数返回值为 false 时退出循环
+				/**
+				 * data[0] 对应的就是执行环境，data[1] 就是 cb.fire("hello") 中的 "hello"
+				 * 当每个回调函数中 return false; 并且写了 stopOnFalse = true 的话，就跳出循环不会往后执行了并且 "memory" 作用失效
 				 */
 				if ( list[ firingIndex ].apply( data[ 0 ], data[ 1 ] ) === false && options.stopOnFalse ) {
 					/**
-					 * 阻止未来可能由于 add 所产生的回调
+					 * 阻止未来可能由于 add 所产生的回调 ( 指的是 "memory" )
 					 */
 					memory = false; // To prevent further calls using add
 					break;
@@ -3937,24 +3945,24 @@ jQuery.Callbacks = function( options ) {
 			 */
 			firing = false;
 			if ( list ) {
+				/**
+				 * 个人认为这个变量应该取名为 queue 好，因为是先进先出的队列结构
+				 */
 				if ( stack ) {
 					if ( stack.length ) {
 						/**
-						 * 这里把 stack 中的第一个取出来，在重新进行递归 fire()
+						 * 这里把 stack 中的第一个取出来，在重新进行递归 fire()，再次调用 list 中的回调函数
 						 */
 						fire( stack.shift() );
 					}
 				} else if ( memory ) {
 					/**
-					 * 如果有记忆
-					 * var cb = $.Callbacks("once memory"); cb.add( aaa );cb.fire();cb.add( bbb );cb.fire(); // 这句就是执行了空数组了
-					 * 有 "once" 参数的时候，就只执行一次，清空 list ( 等于讲下次在调用 cb.fire()的时候就是执行的是空数组 )，再有 memory 的时候
-					 * 没有 memory 的时候走的是 self.disable();
+					 * 当传了 "once memory" 就会进这个 if，使 list =[]; 让之后的 add() 继续能够添加，从而通过 "memory" 功能触发 add() 添加的回调函数
 					 */
 					list = [];
 				} else {
 					/**
-					 * 阻止回调列表中的回调
+					 * 这里是只传了 "once"，阻止后续的操作
 					 */
 					self.disable();
 				}
@@ -3962,7 +3970,7 @@ jQuery.Callbacks = function( options ) {
 		},
 		// Actual Callbacks object
 		/**
-		 * 暴露在外的Callbacks对象,对外接口
+		 * 暴露在外的 Callbacks 对象,对外接口
 		 */
 		self = {
 			// Add a callback or a collection of callbacks to the list
@@ -3972,11 +3980,14 @@ jQuery.Callbacks = function( options ) {
 			add: function() {
 				/**
 				 * 一上来的时候，list = []; => true
+				 * 当传了 "once" 的时候，第二次 add() 这里就不会再走了，因为 list = undefined
+				 * 当传了 "once memory" 的时候，第二次 add() 这里的 list = [];
 				 */
 				if ( list ) {
 					// First, we save the current length
 					/**
 					 * 存储当前列表长度
+					 * 第一次 list.length 肯定是 0 ，第二次 add()  list.length = 1
 					 */
 					var start = list.length;
 					/**
@@ -3985,16 +3996,17 @@ jQuery.Callbacks = function( options ) {
 					(function add( args ) {
 						/**
 						 * 对 args 传进来的列表的每一个对象执行操作
+						 * args => [ function aaa() , function bbb() ]]
 						 */
 						jQuery.each( args, function( _, arg ) {
 							var type = jQuery.type( arg );
 							/**
 							 * 如果是 function，就 push 到 list 中
+							 * arg => function aaa() , function bbb()
 							 */
 							if ( type === "function" ) {
 								/**
-								 * 看看有没有 unique 参数，有的话，就会走后面 !self.has(arg)，确保是否可以重复
-								 * self.has( arg ) 看看 arg( aaa,bbb ) 在数组中有没有存在
+								 * 看看有没有 unique 参数，有的话，就会走后面 !self.has(arg)，确保是不可以重复
 								 */
 								if ( !options.unique || !self.has( arg ) ) {
 									list.push( arg );
@@ -4011,21 +4023,27 @@ jQuery.Callbacks = function( options ) {
 					// Do we need to add the callbacks to the
 					// current firing batch?
 					/**
-					 * 如果回调列表中的回调正在执行时，其中的一个回调函数执行了 Callbacks.add 操作 ( 如果在执行 Callbacks.add 操作的状态为 firing 时 )
-					 * 那么需要更新firingLength值
+					 * 看是回调函数列表是否正在触发，如果是那么只需要修改 firingLength 的长度就行了，因为这样到时会调用到刚添加进去的回调函数
 					 */
 					if ( firing ) {
 						firingLength = list.length;
-					// With memory, if we're not firing then
-					// we should call right away
+						// With memory, if we're not firing then
+						// we should call right away
 					} else if ( memory ) {
 						/**
-						 * 如果 options.memory 为 true，则将 memory 做为参数，应用最近增加的回调函数
-						 * 这里有个流程说明下，var memoryCb = $.Callbacks("memory"); memoryCb.add(aaa); memoryCb.fire(); memoryCb.add(ccc);
-						 * 上来先 add 的时候，这里的 memory 是 false，然后 memory、fire()，源码中 fire() 的一句话就是 memory = options.memory && data;
-						 * 此时 memory 就存起来了，在 memoryCb.add(ccc); 的时候就会进入这个 if(memory)，然后在调用 fire() 方法
+						 * 第一次 add()，firing、memory 是 undefined
+						 * 第二次 add()，由于之前调用了 fire() 使得 firing = false;
+						 * memory 是包含了作用域( this 就是 Callback 对象 ) 和 fire("hello") 中的参数，那么就会进入 else if
+						 *
+						 * firingStart = 1; 回调的起点
 						 */
 						firingStart = start;
+						/**
+						 * memory 保存了前面 fire 过的上下文
+						 * 在 fire 方法里，只有 options.memory 为真时，memory 才有值，所以，这里的 memory 保存的是上一次 fire 时的 memory 值
+						 * 而这个的作用就是要立即执行新添加的回调函数，让新添加的回调函数也能输出之前 fire 时传的值。
+						 * 这里也是 $.Callbacks("memory") 这个参数作用的地方，有了这个参数，每次 add 也会执行一次 fire
+						 */
 						fire( memory );
 					}
 				}
@@ -4041,7 +4059,7 @@ jQuery.Callbacks = function( options ) {
 						var index;
 						/**
 						 * 查看这个 arg 在 list 中 存不存在，存在的话并赋值给 index
-						 * while 循环的意义在于借助于强大的 jQuery.inArray 删除函数列表中相同的函数引用 ( 没有设置unique的情况 )
+						 * while 循环的意义在于借助于强大的 jQuery.inArray 删除函数列表中相同的函数引用 ( 没有设置unique的情况，因为一个回调可以被多次添加到队列 )
 						 * jQuery.inArray 将每次返回查找到的元素的 index 作为自己的第三个参数继续进行查找，直到函数列表的尽头
 						 */
 						while( ( index = jQuery.inArray( arg, list, index ) ) > -1 ) {
@@ -4053,6 +4071,14 @@ jQuery.Callbacks = function( options ) {
 							/**
 							 * 在函数列表处于 firing 状态时，最主要的就是维护 firingLength 和 firgingIndex 这两个值
 							 * 保证 fire 时函数列表中的函数能够被正确执行( fire 中的 for 循环需要这两个值 )
+							 *
+							 * 其中第一次 index = 0; firingLength = 3; firingLength-- 就是 2;
+							 * firingIndex 由于上面的循环执行一次的时候就又触发了 fire()， firingIndex 并没有 ++，所以  firingIndex = 0;
+							 * firingIndex--;  firingIndex-- = -1;
+							 * 第二次 index = 0; firingLength = 2; firingLength-- 此时就是 1了
+							 * index <= firingIndex (-1)，所以 这个 if 不进了
+							 * 之后直接跳到上面之前 fire() 的循环中 firingIndex++ 为 0; firingLength = 1; 那么在走一次循环，输出 "cccccc"
+							 * 之后由于 stack 中有内容，所以在一次输出 "cccccc"
 							 */
 							if ( firing ) {
 								if ( index <= firingLength ) {
@@ -4071,7 +4097,7 @@ jQuery.Callbacks = function( options ) {
 			// If no argument is given, return whether or not list has callbacks attached.
 			/**
 			 * 判断在 list 中有没有填加过 fn (  回调函数是否在列表中 )
-			 * fn 不存在的时候，看看 list 有没有内容，有的话就会有长度，返回 true
+			 * fn 不存在的时候，是针对外部调用的时候，如果没有传参数，看看 list 有没有内容，有的话就会返回 true
 			 */
 			has: function( fn ) {
 				return fn ? jQuery.inArray( fn, list ) > -1 : !!( list && list.length );
@@ -4090,8 +4116,8 @@ jQuery.Callbacks = function( options ) {
 			 * 禁用回调列表中的回调
 			 */
 			disable: function() {
-				/*
-				 * 阻止后续的操作
+				/**
+				 * 阻止后续的操作，连等赋值都为 undefined
 				 */
 				list = stack = memory = undefined;
 				return this;
@@ -4109,6 +4135,7 @@ jQuery.Callbacks = function( options ) {
 			// Lock the list in its current state
 			/**
 			 * 列表是否被锁
+			 * 只是会锁住后面的 fire()，如果传了 "memory"， add() 的时候就会触发 fire()
 			 */
 			lock: function() {
 				stack = undefined;
@@ -4127,10 +4154,12 @@ jQuery.Callbacks = function( options ) {
 			 */
 			fireWith: function( context, args ) {
 				/**
-				 * fired 第一次调用的时候就是 undefined， !fired = true
-				 * 第二次调用的时候，就要看 stack，stack = !options.once && []
-				 * 如果有了 once 参数，那就返回 false，那么 if 就不会走就只会触发一次 fire()
-				 * 如果没有传的话 stack = []，那就会进 if，可以再次执行 fire()
+				 * 此时的 list = [function aaa(){}]
+				 * fired 第一次调用的时候就是 undefined，!fired = true; 就会进 if
+				 *
+				 * 当写了两次或者以上的 cb.fire(); 那么第二次的时候这个 if 就不会走了，因为 fired = false;
+				 *
+				 * 当传了 "once" 的时候，第二次 fire 的话， list = undefined，所以不再触发之后的 fire()
 				 */
 				if ( list && ( !fired || stack ) ) {
 					args = args || [];
@@ -4141,15 +4170,14 @@ jQuery.Callbacks = function( options ) {
 					 */
 					args = [ context, args.slice ? args.slice() : args ];
 					/**
-					 * 在之前内部 fire() 的时候，for 循环没有走完 firing = true
-					 * 然后把 args 添加到 stack 中
-					 * 将参数推入堆栈，等待当前回调结束再调用
+					 * 如果正在执行 Callback 队列中的函数 即 firing = true;时，这时再调用 fireWith 或者 fire 就会放在 stack 中排队
+					 * stack 在这里相当于一个缓存数组，用于当 fire 忙时暂存下回调
 					 */
 					if ( firing ) {
 						stack.push( args );
 					} else {
 						/**
-						 * 直接调用
+						 * 直接调用内部函数 fire()
 						 * 这里就把 cb.fire("hello") 中的 "hello" 参数带到了每一个函数中
 						 */
 						fire( args );
@@ -4164,6 +4192,13 @@ jQuery.Callbacks = function( options ) {
 			fire: function() {
 				self.fireWith( this, arguments );
 				return this;
+			},
+			// To know if the callbacks have already been called at least once
+			fired: function() {
+				/**
+				 * 判断有没有调用过 fire()，只要调用过一次 fired = true
+				 */
+				return !!fired;
 			}
 		};
 

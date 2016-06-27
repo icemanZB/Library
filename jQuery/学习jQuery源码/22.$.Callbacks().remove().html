@@ -109,7 +109,15 @@
 										list.splice(index, 1);
 										/**
 										 * 在函数列表处于 firing 状态时，最主要的就是维护 firingLength 和 firgingIndex 这两个值
-										 * 保证 fire 时函数列表中的函数能够被正确执行( fire 中的 for 循环需要这两个值 )
+										 * 保证 fire 时函数列表中的函数能够被正确执行
+										 *
+										 * 其中第一次 index = 0; firingLength = 3; firingLength-- 就是 2;
+										 * firingIndex 由于上面的循环执行一次的时候就又触发了 fire()， firingIndex 并没有 ++，所以  firingIndex = 0;
+										 * firingIndex--;  firingIndex-- = -1;
+										 * 第二次 index = 0; firingLength = 2; firingLength-- 此时就是 1了
+										 * index <= firingIndex (-1)，所以 这个 if 不进了
+										 * 之后直接跳到上面之前 fire() 的循环中 firingIndex++ 为 0; firingLength = 1; 那么在走一次循环，输出 "cccccc"
+										 * 之后由于 stack 中有内容，所以在一次输出 "cccccc"
 										 */
 										if (firing) {
 											if (index <= firingLength) {
@@ -153,19 +161,33 @@
 			return self;
 		}
 
+		// 防止无限循环
+		var bBtn = true;
+
 		function aaa() {
-			console.log("aaaaaa");
+			console.log("aaa");
+
+			if (bBtn) {
+				cb.add(ccc);
+				cb.remove(aaa,bbb);
+				cb.fire();
+				bBtn = false;
+			}
+
 		}
+
 		function bbb() {
 			console.log("bbbbbb");
 		}
+
+		function ccc(){
+			console.log("cccccc");
+		}
+
 		var cb = Callbacks();
 		cb.add(aaa);
 		cb.add(bbb);
-		cb.remove(aaa,bbb);
 		cb.fire();
-
-
 
 	</script>
 </head>
