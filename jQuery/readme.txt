@@ -16,3 +16,19 @@ http://www.cnblogs.com/littledu/articles/2811728.html  $.Callback()
 http://rapheal.sinaapp.com/2013/01/25/jquery-src-callbacks/  $.Callback()
 
 https://segmentfault.com/a/1190000000469273 $.Callback()
+
+http://www.cnblogs.com/snandy/archive/2012/11/15/2770237.html  $.Callback()
+
+www.cnblogs.com/aaronjs/p/3342344.html $.Callback()
+
+http://www.cnblogs.com/aaronjs/p/3348569.html     $.Deferred()
+
+http://www.cnblogs.com/aaronjs/p/3356505.html    $.Deferred()
+
+http://www.imooc.com/code/3774      $.Deferred()
+
+http://www.imooc.com/code/3773      $.Deferred()
+
+http://www.cnblogs.com/justany/archive/2013/01/20/2867444.html  $.Deferred()
+
+http://www.cnblogs.com/yangjunhua/p/3396824.html   $.Deferred()

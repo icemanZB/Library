@@ -190,3 +190,7 @@ http://www.blogjava.net/onejavaer/articles/79070.html 正则表达式
 http://stackoverflow.com/
 
 http://www.tuicool.com/articles/3QZ7jeV  touch
+
+http://www.cnblogs.com/fsjohnhuang/p/4141918.html   jsDeferred
+
+http://jianfei.39.net/  减肥

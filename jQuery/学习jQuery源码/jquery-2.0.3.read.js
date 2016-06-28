@@ -4209,30 +4209,48 @@ jQuery.extend({
 	Deferred: function( func ) {
 		var tuples = [
 				// action, add listener, listener list, final state
-				/*
+				/***
 				 * 使用数组做映射关系，对应调用回调函数
 				 * jQuery.Callbacks("once memory"); "once" 的作用就是只触发一次 resolve()，之后再触发就不起作用了
 				 * setInterval(function(){
 				 *     dfd.resolve();
 				 * },1000);
+				 *  定义的基本接口
+				 * Callbacks(once memory) 的用法，就是只执行一次，并且保持以前的值
+				 * 每个元组分别包含一些与当前 deferred 相关的信息:
+				 * 分别是：触发回调函数列表执行(函数名)，添加回调函数(函数名)，回调函数列表(jQuery.Callbacks 对象)，deferred 最终状态(第三组数据除外)
+				 * 总体而言，三个元组会有对应的三个 callbacklist 对应于 doneList, failList, processList
 				 */
 				[ "resolve", "done", jQuery.Callbacks("once memory"), "resolved" ],
 				[ "reject", "fail", jQuery.Callbacks("once memory"), "rejected" ],
 				[ "notify", "progress", jQuery.Callbacks("memory") ]
 			],
-			state = "pending", /* 默认是等待的状态 */
+		    /**
+		     * 默认是等待的状态
+		     * deferred 的状态，三种：pending(初始状态), resolved(解决状态), rejected(拒绝状态)
+		     * 其实就是tuples最后定义的
+		     */
+			state = "pending",
+		    /***
+		     * 内部 promise 对象的作用：
+		     * 1：通过 promise.promise( deferred ); 混入到 deferred 中使用
+		     * 2：可以生成一个受限的 deferred 对象，不在拥有 resolve(With)、reject(With)、notify(With)
+		     *    这些能改变 deferred 对象状态并且执行 callbacklist 的方法了，换句话只能读，不能改变了
+		     *
+		     * 扩展：done fail pipe process
+		     */
 			promise = {
 				state: function() {
 					return state;
 				},
-				/*
+				/**
 				 * 不管成功或者失败都会走 always
 				 */
 				always: function() {
 					deferred.done( arguments ).fail( arguments );
 					return this;
 				},
-				/*
+				/**
 				 * 分别对应的函数是成功、失败、进行
 				 */
 				then: function( /* fnDone, fnFail, fnProgress */ ) {
@@ -4243,21 +4261,21 @@ jQuery.extend({
 					return jQuery.Deferred(function( newDefer ) {
 						jQuery.each( tuples, function( i, tuple ) {
 							var action = tuple[ 0 ],
-								/*
+								/**
 								 * 找到参数中的每一个函数，判断是不是函数，如果不是函数就是 fn = false
 								 */
 								fn = jQuery.isFunction( fns[ i ] ) && fns[ i ];
 							// deferred[ done | fail | progress ] for forwarding actions to newDefer
-							/*
+							/**
 							 * 添加回调函数  deferred["done"](function(){})
 							 */
 							deferred[ tuple[1] ](function() {
-								/*
+								/**
 								 * 如果是函数，就执行这个函数并且带入 arguments 例如：dfd.resolve("hi"); 此时的 arguments 就是 "hi"
 								 */
 								var returned = fn && fn.apply( this, arguments );
 								if ( returned && jQuery.isFunction( returned.promise ) ) {
-									/*
+									/**
 									 * 这里是提供给 pipe() 的，会直接出发 done | fail | progress
 									 */
 									returned.promise()
@@ -4265,7 +4283,7 @@ jQuery.extend({
 										.fail( newDefer.reject )
 										.progress( newDefer.notify );
 								} else {
-									/*
+									/**
 									 * 如果返回的是字符串的情况
 									 * var newDfd = dfd.pipe(function () {
 									 *     return arguments[0] + " world";
@@ -4281,7 +4299,7 @@ jQuery.extend({
 				},
 				// Get a promise for this deferred
 				// If obj is provided, the promise aspect is added to the object
-				/*
+				/**
 				 * 当传了 deferred 参数的时候，那就是 promise 所有的内容继承给 deferred，所以 deferred 即拥有自己的状态属性，又有 promise 下的所有方法
 				 */
 				promise: function( obj ) {
@@ -4291,31 +4309,62 @@ jQuery.extend({
 			deferred = {};
 
 		// Keep pipe for back-compat
-		/*
+		/**
+		 * 管道接口，API 别名
 		 * 兼容老版本，功能不太一样，但是代码是一样的 pipe 主要是延长 promise
 		 */
 		promise.pipe = promise.then;
 
 		// Add list-specific methods
+		/**
+		 * 遍历 tuples，把定义的接口混入到 deferred 中
+		 */
 		jQuery.each( tuples, function( i, tuple ) {
-			var list = tuple[ 2 ], // 这里就是得到一个回调对象，jQuery.Callbacks("once memory")
-				stateString = tuple[ 3 ];  // 状态
+			/**
+			 * 这里就是得到一个回调对象，jQuery.Callbacks("once memory")
+			 */
+			var list = tuple[ 2 ],
+			    /**
+			     * 状态
+			     */
+				stateString = tuple[ 3 ];
 
 			// promise[ done | fail | progress ] = list.add
-			/*
+			/**
+			 * promise[ done | fail | progress ] = list.add
 			 * 回调对象的 add 方法，赋值给了 promise，tuple[1] => "done"
+			 *
+			 * 给上面的 promise 对象添加 done，fail，process 方法，其实就是给 promise 赋予 3 个回调函数
+			 *
+			 * 分别引用三个不同 jQuery.Callbacks("once memory") 对象的 add 方法，在初始化就构建成了对象
+			 * 向各自的回调函数列表 list(各自闭包中) 中添加回调函数，互不干扰
+			 * promise = {
+             *    done:
+             *    fail:
+             *    process
+             * }
+			 *
+			 * promise.done = $.Callbacks("once memory").add
+			 * promise.fail = $.Callbacks("once memory").add
+			 * promise.progressl = $.Callbacks("memory").add
+			 *
 			 */
 			promise[ tuple[1] ] = list.add;
 
 			// Handle state
+			/**
+			 * 如果存在 Deferred 最终状态，默认会预先向 doneList，failList 中的 list 添加三个回调函数。
+			 */
 			if ( stateString ) {
 				list.add(function() {
 					// state = [ resolved | rejected ]
-					/* 成功、失败 */
+					/**
+					 * 成功、失败
+					 */
 					state = stateString;
 
 				// [ reject_list | resolve_list ].disable; progress_list.lock
-				/*
+				/**
 				 * tuples[ i ^ 1 ][ 2 ].disable     ( i ^ 1 ) 就是位运算符  1^1=0、0^1=1
 				 * 也就是类似取反的操作，如果是 done() 的状态，那么其余的状态都不会去触发 ( reject、notify )
 				 * tuples[ 2 ][ 2 ].lock = jQuery.Callbacks("memory").lock
@@ -4324,7 +4373,7 @@ jQuery.extend({
 			}
 
 			// deferred[ resolve | reject | notify ]
-			/*
+			/**
 			 * deferred 下面加了三个状态
 			 */
 			deferred[ tuple[0] ] = function() {
@@ -4335,14 +4384,15 @@ jQuery.extend({
 		});
 
 		// Make the deferred a promise
-		/*
+		/**
+		 * 混入方法
 		 * deferred 继承了 promise
 		 */
 		promise.promise( deferred );
 
 		// Call given func if any
 		if ( func ) {
-			/*
+			/**
 			 * 如果延迟对象传了参数，就是立即执行，在把 deferred 在传入，这是在内部使用的
 			 */
 			func.call( deferred, deferred );
