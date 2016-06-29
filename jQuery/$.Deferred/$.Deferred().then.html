@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.Deferred()</title>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script>
+
+		$.get("http://service.finance365.com/api/book/GetBookByBookNo/2061").then(
+				function () {
+					alert("$.get succeeded");
+				}, function () {
+					alert("$.get failed!");
+				}
+		);
+
+		// 最后那个 done 方法，处理的是从 url2 获取的数据，而不是从 url1 获取的数据。
+		$.ajax("http://service.finance365.com/api/book/GetBookByBookNo/2061", {dataType: "json"})
+				.then(function (data) {
+					return $.ajax("http://service.finance365.com/api/Company/COMPANY201509071053058314317", {data: {user: data.Book_no}});
+				})
+				.done(function (data) {
+					// 从 url2 获取的数据
+				});
+
+		// 利用 then() 会修改返回值这个特性，我们可以在调用其他回调函数之前，对前一步操作返回的值进行处理。
+		// 先使用 then() 方法，从返回的数据中取出所需要的字段(Book_name)，所以后面的操作就可以只处理这个字段了。
+		var post = $.post("http://service.finance365.com/api/book/GetBookByBookNo/2061")
+				.then(function (p) {
+					return p.Book_name;
+				});
+		post.done(function (r) { console.log(r); });
+
+		// 有时，Ajax 操作返回 json 字符串里面有一个 error 属性，表示发生错误。
+		// 这个时候，传统的方法只能是通过 done() 来判断是否发生错误。
+		// 通过 then() 方法，可以让 deferred 对象调用 fail() 方法。
+		// deferred.then( doneFilter [, failFilter ] [, progressFilter ] )
+		var myDeferred = $.post("http://service.finance365.com/api/book/GetBookByBookNo/2061", {json: JSON.stringify({"error": true})})
+				.then(
+						function (response) {
+							if (response.error) {
+								return $.Deferred().reject(response);
+							}
+							return response;
+						},
+						function () {
+							return $.Deferred().reject({error: true});
+						}
+				);
+		myDeferred.done(function (response) {
+			$("#status").html("Success!");
+		}).fail(function (response) {
+			$("#status").html("An error occurred");
+		});
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -99,7 +99,9 @@
 									var index;
 									/**
 									 * 查看这个 arg 在 list 中 存不存在，存在的话并赋值给 index
-									 * while 循环的意义在于借助于强大的 jQuery.inArray 删除函数列表中相同的函数引用 ( 没有设置 unique 的情况，因为一个回调可以被多次添加到队列 )
+									 * while 循环的意义在于借助于强大的 jQuery.inArray 删除函数列表中相同的函数引用
+									 * ( 没有设置 unique 的情况，因为一个回调可以被多次添加到队列 )
+									 *
 									 * jQuery.inArray 将每次返回查找到的元素的 index 作为自己的第三个参数继续进行查找，直到函数列表的尽头
 									 */
 									while (( index = jQuery.inArray(arg, list, index) ) > -1) {
@@ -169,7 +171,7 @@
 
 			if (bBtn) {
 				cb.add(ccc);
-				cb.remove(aaa,bbb);
+				cb.remove(aaa, bbb);
 				cb.fire();
 				bBtn = false;
 			}
@@ -180,7 +182,7 @@
 			console.log("bbbbbb");
 		}
 
-		function ccc(){
+		function ccc() {
 			console.log("cccccc");
 		}
 

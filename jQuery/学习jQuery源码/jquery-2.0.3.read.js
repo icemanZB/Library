@@ -4255,7 +4255,7 @@ jQuery.extend({
 				 */
 				then: function( /* fnDone, fnFail, fnProgress */ ) {
 					var fns = arguments;
-					/*
+					/**
 					 * 这里 return jQuery.Deferred() 是为了 给下面的 pipe() 使用
 					 */
 					return jQuery.Deferred(function( newDefer ) {

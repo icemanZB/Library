@@ -21,21 +21,48 @@
 					    deferred.done(arguments).fail(arguments);
 					    return this;
 				    },
+				    /**
+				     * then() 返回一个新的 deferred 对象，而 done() 返回的是原有的 deferred 对象。
+				     * 如果 then() 指定的回调函数有返回值，该返回值会作为参数，传入后面的回调函数
+				     */
 				    then   : function (/* fnDone, fnFail, fnProgress */) {
 					    var fns = arguments;
+					    /**
+					     * 这里 return jQuery.Deferred() 是为了 给下面的 pipe() 使用
+					     */
 					    return jQuery.Deferred(function (newDefer) {
 						    jQuery.each(tuples, function (i, tuple) {
 							    var action = tuple[0],
+							        /**
+							         * 找到参数中的每一个函数，判断是不是函数，如果不是函数就是 fn = false
+							         */
 							        fn     = jQuery.isFunction(fns[i]) && fns[i];
 							    // deferred[ done | fail | progress ] for forwarding actions to newDefer
+							    /**
+							     * 添加回调函数  deferred["done"](function(){});
+							     */
 							    deferred[tuple[1]](function () {
+								    /**
+								     * 如果是函数，就执行这个函数并且带入 arguments 例如：dfd.resolve("hi"); 此时的 arguments 就是 "hi"
+								     */
 								    var returned = fn && fn.apply(this, arguments);
 								    if (returned && jQuery.isFunction(returned.promise)) {
+									    /**
+									     * 这里是提供给 pipe() 的，会直接触发 done | fail | progress
+									     */
 									    returned.promise()
 											    .done(newDefer.resolve)
 											    .fail(newDefer.reject)
 											    .progress(newDefer.notify);
 								    } else {
+									    /**
+									     * 如果返回的是字符串的情况
+									     * var newDfd = dfd.pipe(function () {
+									     *     return arguments[0] + " world";
+									     * });
+									     *
+									     * fn ? [ returned ] : arguments fn 有的话取 return 的值，没有的话取 arguments
+									     */
 									    newDefer[action + "With"](this === promise ? newDefer.promise() : this, fn ? [returned] : arguments);
 								    }
 							    });
@@ -94,7 +121,28 @@
 		}
 
 		var dfd = Deferred();
-		console.log(dfd);
+		dfd.then(function (preVale) {
+			console.log(2 * preVale); // 4
+			return 2 * preVale;
+		}).then(function (preVale) {
+			console.log(3 * preVale); // 12
+			return 3 * preVale;
+		});
+
+		dfd.resolve(2);
+
+		var defer = Deferred();
+
+		defer.then(function (value) {
+			return value * 2;
+		}).then(function (value) {
+			return value * 2;
+		}).done(function (value) {
+			console.log(value);  // 20
+		});
+
+		defer.resolve(5);
+
 	</script>
 </head>
 <body>

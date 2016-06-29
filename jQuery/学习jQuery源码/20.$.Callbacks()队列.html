@@ -96,7 +96,7 @@
 								args = [context, args.slice ? args.slice() : args];
 
 								/**
-								 * 如果正在执行 Callback 队列中的函数 即 firing = true;时，这时再调用 fireWith 或者 fire 就会放在 stack 中排队
+								 * 如果正在执行 Callbacks 队列中的函数 即 firing = true;时，这时再调用 fireWith 或者 fire 就会放在 stack 中排队
 								 * stack 在这里相当于一个缓存数组，用于当 fire 忙时暂存下回调
 								 */
 								if (firing) {
@@ -146,7 +146,8 @@
 		cb.add(bbb);
 		/**
 		 * 当触发 fire() 的时候，此时 list = [ function aaa(){},function bbb(){} ]; 会先输出 "aaa"
-		 * 然后在代码中写了 cb.add(ccc); cb.fire(); 但是此时 firingIndex =1; firingLength =2 ;源码中 for (; list && firingIndex < firingLength; firingIndex++) {} 也只走了一次
+		 * 然后在代码中写了 cb.add(ccc); cb.fire(); 但是此时 firingIndex =1; firingLength =2 ;
+		 * 源码中 for (; list && firingIndex < firingLength; firingIndex++) {} 也只走了一次
 		 * firing = true; 然后继续调用 cb.add(ccc); 因为 firing = true; 所以 firingLength = list.length; firingLength =3; firingIndex =1;
 		 * 执行了 cb.fire(); stack.push(args); 然后继续上一次的没有走完的循环，但是此时 firingLength =3; firingIndex =1; 所以就会输出 "bbb"、"cccc"
 		 * 然后 firing = false; 此时的 stack 是有值的，在递归调用 fire(); 由于 list =[ function aaa(){},function bbb(){},function ccc(){} ];

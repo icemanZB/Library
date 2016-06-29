@@ -26,7 +26,7 @@
 
 						for (; list && firingIndex < firingLength; firingIndex++) {
 							/**
-							 * data[0] 对应的就是执行环境 ( this 就是 Callback 对象 ) ，data[1] 就是 "hello"
+							 * data[0] 对应的就是执行环境 ( this 就是 Callbacks 对象 ) ，data[1] 就是 "hello"
 							 */
 							list[firingIndex].apply(data[0], data[1]);
 						}
@@ -91,7 +91,7 @@
 						},
 						/**
 						 * 先调用这里的 fire() 对外的接口，在去调用 fireWidth(this, arguments);
-						 * this 是回调对象 ( Callback )
+						 * this 是回调对象 ( Callbacks )
 						 */
 						fire    : function () {
 							self.fireWith(this, arguments);

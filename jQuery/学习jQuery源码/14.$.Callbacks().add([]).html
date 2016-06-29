@@ -40,7 +40,7 @@
 
 						for (; list && firingIndex < firingLength; firingIndex++) {
 							/**
-							 * data[0] 对应的就是执行环境 ( this 就是 Callback 对象 ) ，data[1] 就是 "hello"
+							 * data[0] 对应的就是执行环境 ( this 就是 Callbacks 对象 ) ，data[1] 就是 "hello"
 							 */
 							list[firingIndex].apply(data[0], data[1]);
 						}

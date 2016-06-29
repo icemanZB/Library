@@ -66,7 +66,7 @@
 				 * 分别引用三个不同 jQuery.Callbacks("once memory") 对象的 add 方法，在初始化就构建成了对象
 				 * 向各自的回调函数列表 list(各自闭包中) 中添加回调函数，互不干扰
 				 *
-				 * 回调方法/事件订阅：
+				 * 回调方法/事件订阅( add(fn) 中传入的 fn 这个回调函数就是观察着 )
 				 * promise.done = jQuery.Callbacks("once memory").add
 				 * promise.fail = jQuery.Callbacks("once memory").add
 				 * promise.progress = jQuery.Callbacks("memory").add
@@ -135,7 +135,7 @@
 				 * resolve/reject/notify 是 callbacks.fireWith，执行的回调函数
 				 * resolveWith/rejectWith/notifyWith 是 callbacks.fireWith 队列方法的引用
 				 *
-				 * 通知方法/事件发布：
+				 * 通知方法/事件发布 ( 目标对象状态改变 => deferred )
 				 *
 				 * deferred[ "resolve" | "reject" | "notify" ] = function(){
 				 *     deferred[ "resolve" | "reject" | "notify" + "With"]();
@@ -146,8 +146,10 @@
 				deferred[tuple[0]] = function () {
 					/**
 					 * 解释一下第一个参数中的条件运算符
-					 * 如果 deferred[ resolve | reject | notify ]方法没有被借用( 即deferred.resolve.call(指定对象, args); ),
-					 * 默认第一个参数为 已经扩展的promise对象，否则为借用方法时指定的对象
+					 * 如果 deferred[ resolve | reject | notify ] 方法没有被借用( 即 deferred.resolve.call(指定对象, args); )?
+					 * 默认第一个参数为 已经扩展的 promise 对象，否则为借用方法时指定的对象?
+					 *
+					 * 在外部调用的时候，dtd.resolve(); 此时 this 就是 deferred 对象，作为 fireWidth(context, args) 的 上下文
 					 */
 					deferred[tuple[0] + "With"](this === deferred ? promise : this, arguments);
 					return this;
@@ -172,8 +174,24 @@
 			return deferred;
 		}
 
-		var dtd = Deferred();
-		// console.log(dtd);
+		$(function () {
+			// 观察者模式，在这种模式中，有两类对象，分别是"观察者-Observer"和"目标对象-Subject"。
+		    // 目标对象中保存着一份观察者的列表，当目标对象的状态发生改变的时候就主动向观察者发出通知(调用观察者提供的方法)，从而建立一种发布/订阅的关系。
+			$("button").on("click", function () {
+				var dfd = Deferred();  // 目标对象，保存观察着列表
+				// 给deferred注册一个成功后的回调通知
+				dfd.done(function () {
+					// 这个回调函数就是观察着，订阅
+					$('body').append('<span>Deferred成功</span>')
+				});
+				// 开始执行一段代码
+				setTimeout(function () {
+					// 就是执行 $.Callbacks().fireWidth( this === deferred ? promise : this, arguments ) 这个方法
+					dfd.resolve(); // 目标对象状态改变，发布
+				}, 500);
+			});
+
+		});
 
 		// 简化
 		var resolve = $.Callbacks();   // "done"
@@ -191,6 +209,6 @@
 	</script>
 </head>
 <body>
-
+<button>按钮</button>
 </body>
 </html>

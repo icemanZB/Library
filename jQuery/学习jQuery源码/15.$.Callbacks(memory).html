@@ -67,7 +67,7 @@
 					 */
 					fire = function (data) {
 						/**
-						 * data 是包含了作用域( this 就是 Callback 对象 )
+						 * data 是包含了作用域( this 就是 Callbacks 对象 )
 						 * 如果参数 memory 为 true，则记录 data
 						 */
 						memory = options.memory && data;
@@ -78,7 +78,7 @@
 						fired = true;
 						firingIndex = firingStart || 0;
 						/**
-						 * 重置 firingStart ( 回调的起点 )，防止第二个 $.Callback() 的回调起点错乱
+						 * 重置 firingStart ( 回调的起点 )，防止第二个 $.Callbacks() 的回调起点错乱
 						 */
 						firingStart = 0;
 						/**
@@ -100,7 +100,7 @@
 
 					},
 					/**
-					 * 暴露在外的Callbacks对象,对外接口
+					 * 暴露在外的 Callbacks 对象,对外接口
 					 */
 					self = {
 						/**
