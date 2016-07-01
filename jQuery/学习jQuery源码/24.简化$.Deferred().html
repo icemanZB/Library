@@ -16,7 +16,7 @@
 				     */
 				    ["resolve", "done", jQuery.Callbacks("once memory"), "resolved"],
 				    ["reject", "fail", jQuery.Callbacks("once memory"), "rejected"],
-				    ["notify", "progress", jQuery.Callbacks("memory")]
+				    ["notify", "progress",jQuery.Callbacks("memory")]
 			    ],
 			    /**
 			     * 默认是等待的状态
@@ -125,7 +125,6 @@
 						 *
 						 */
 					}, tuples[i ^ 1][2].disable, tuples[2][2].lock);
-
 				}
 
 				// deferred[ resolve | reject | notify ]
@@ -166,7 +165,7 @@
 
 			if (func) {
 				/**
-				 * 如果延迟对象传了参数，就是立即执行，在把 deferred 在传入，这是在内部使用的
+				 * 如果延迟对象传了参数，就是立即执行，在把 deferred 在传入，这是在内部使用的( then )
 				 */
 				func.call(deferred, deferred);
 			}
@@ -176,13 +175,13 @@
 
 		$(function () {
 			// 观察者模式，在这种模式中，有两类对象，分别是"观察者-Observer"和"目标对象-Subject"。
-		    // 目标对象中保存着一份观察者的列表，当目标对象的状态发生改变的时候就主动向观察者发出通知(调用观察者提供的方法)，从而建立一种发布/订阅的关系。
+			// 目标对象中保存着一份观察者的列表，当目标对象的状态发生改变的时候就主动向观察者发出通知(调用观察者提供的方法)，从而建立一种发布/订阅的关系。
 			$("button").on("click", function () {
 				var dfd = Deferred();  // 目标对象，保存观察着列表
 				// 给deferred注册一个成功后的回调通知
 				dfd.done(function () {
 					// 这个回调函数就是观察着，订阅
-					$('body').append('<span>Deferred成功</span>')
+					$("body").append("<span>Deferred成功</span>");
 				});
 				// 开始执行一段代码
 				setTimeout(function () {
@@ -205,6 +204,54 @@
 		reject.add(function () {
 			var state = "reject";
 		}, resolve.disable, notify.lock);
+
+		var fn1 = function () {
+			    console.log("resolved");
+		    },
+		    fn2 = function () {
+			    console.log("rejected");
+		    },
+		    fn3 = function () {
+			    console.log("pending");
+		    };
+
+		var defer = Deferred();
+
+		defer.done(fn1);
+		defer.resolve(); // resolved
+
+		// 如果再调用 resolve，fn1 将不会再执行，因为 jQuery.Callbacks("once memory") 回调对象中传入标志 once
+
+		defer.resolve(); // fn1不再执行
+
+		var defer2 = Deferred();
+
+		defer2.resolve();
+		// 这种写法是因为对应的 jQuery.Callbacks("once memory") 回调对象中传入了标志 memory，回调才会触发；
+		defer2.done(fn1).done(fn1).done(fn1);
+
+		// 以下操作不起作用，原因是 fail、reject 操作对应的回调对象被禁用
+		defer2.fail(fn2);
+		defer2.reject();
+
+
+		var defer3 = Deferred();
+
+		defer3.resolve();
+
+		defer3.done(function () {
+			console.log("done");
+		});
+
+		// 以下操作也不起作用，原因是 progress、notify 操作对应的回调对象被锁定；
+		// 为什么在源码中第三个回调对象只是锁定呢，而不是禁用？
+		// 因为在 defer3.resolve(); 的时候已经调用了 lock()，由于是一上来就调用，之前并没有 add()、fire()过，所以 "memory" 是 "undefined"
+		// 在源码中，此时的 lock() === disable()
+		defer3.progress(function () {
+			console.log("progress");
+		});
+		defer3.notify();
+
 
 	</script>
 </head>

@@ -136,13 +136,15 @@
 			console.log("bbbbbb");
 		}
 		var cb = Callbacks("memory");
-		cb.add(aaa);
+//		cb.lock();  // 此时的 memory 是 undefined
+//		cb.add(aaa);  // 在添加回调函数由于源码内 list = undefined; 已经触发了 lock()，所以不再添加任何内容，和 disable() 功能一样
+
+		cb.add(aaa);  // 先添加和触发，那么第二次的时候 "memory" 就有值了，就会起作用
 		cb.fire();
 
 		cb.lock(); // 只是会锁住后面的 fire()，如果传了 "memory"， add() 的时候就会触发 fire()，显示出 "bbbbbb"
 		cb.add(bbb);
 		cb.fire();
-
 
 	</script>
 </head>

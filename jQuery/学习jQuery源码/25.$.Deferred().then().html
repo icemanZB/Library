@@ -24,31 +24,50 @@
 				    /**
 				     * then() 返回一个新的 deferred 对象，而 done() 返回的是原有的 deferred 对象。
 				     * 如果 then() 指定的回调函数有返回值，该返回值会作为参数，传入后面的回调函数
+				     * 例如: var df = $.Deferred(); var df2 = df.then(args); 其中df2 (一个新的promise) 与 newDefer (一个新的deferred) 对应于同一域
+				     *
+				     * 整个then方法就处理了2个事情：1、构建一个新的 deferred 对象，返回受限的 promise 对象
+				     *                         2、给父 deferred 对象的[ done | fail | progress ] 方法都增加一个过滤函数的方法
 				     */
 				    then   : function (/* fnDone, fnFail, fnProgress */) {
 					    var fns = arguments;
 					    /**
-					     * 这里 return jQuery.Deferred() 是为了 给下面的 pipe() 使用
+					     * 这里 return jQuery.Deferred().promise()
+					     * 此时构建了一个新的 Deferred 对象，但是返回的的是经过 promise() 方法处理后的，返回的是一个受限的 promise 对象
+					     * 只能 done/fail/progress，不能 resolve/reject/notify。即只能调用 callbacks.add，没有 callbacks.fire
 					     */
 					    return jQuery.Deferred(function (newDefer) {
 						    jQuery.each(tuples, function (i, tuple) {
 							    var action = tuple[0],
 							        /**
-							         * 找到参数中的每一个函数，判断是不是函数，如果不是函数就是 fn = false
+							         * 判断是不是函数，如果不是函数就是 fn = false;
+							         * newDefer 就是外部传进来的 Deferred 对象
+							         * fns[i] 对应的就是 fnDone、fnFail、fnProgress
 							         */
 							        fn     = jQuery.isFunction(fns[i]) && fns[i];
 							    // deferred[ done | fail | progress ] for forwarding actions to newDefer
 							    /**
-							     * 添加回调函数  deferred["done"](function(){});
+							     * 添加回调函数  deferred["done"](function(){}); => deferred[done] => deferred.done(function(){});
+							     * 分别对当前的 Deferred 对象注册回调函数，也就是注册 deferred[ done | fail | progress ]
+							     * 当 外部 Deferred.resolve() 状态改变时候，就会触发这里的回调函数
+							     *
+							     * deferred[ tuple[1] ](//过滤函数//)
+							     * deferred 其实就是根级父对象的引用，所以就嵌套再深，其实都是调用了父对象 deferred[ done | fail | progress
 							     */
 							    deferred[tuple[1]](function () {
 								    /**
-								     * 如果是函数，就执行这个函数并且带入 arguments 例如：dfd.resolve("hi"); 此时的 arguments 就是 "hi"
+								     * 如果是函数，就执行这个函数并且带入 arguments 例如：外部的 dfd.resolve(5); 此时的 arguments 就是 "5"
+								     * 说明外部延迟对象状态被改变时，fn 才会被调用
 								     */
 								    var returned = fn && fn.apply(this, arguments);
+								    /**
+								     * 在 fn 中显示返回延迟对象，则 returned === deferred
+								     * 如果传进来的回调函数会返回 Deferred 对象则在该对象上注册事件
+								     */
 								    if (returned && jQuery.isFunction(returned.promise)) {
 									    /**
 									     * 这里是提供给 pipe() 的，会直接触发 done | fail | progress
+									     * 也就是说可以直接触发父级外面的 Deferred 对象的状态改变，就可以执行父级的　done() 中的回调，还需研究???
 									     */
 									    returned.promise()
 											    .done(newDefer.resolve)
@@ -56,12 +75,14 @@
 											    .progress(newDefer.notify);
 								    } else {
 									    /**
-									     * 如果返回的是字符串的情况
-									     * var newDfd = dfd.pipe(function () {
-									     *     return arguments[0] + " world";
-									     * });
+									     * 否则用外部传进来的 newDefer 执行对应事件
 									     *
-									     * fn ? [ returned ] : arguments fn 有的话取 return 的值，没有的话取 arguments
+									     * 如果上一个函数有返回值则接受传返回值，否则传上一个 Deferred 传来的参数，原理在 Callbacks().fire() 中
+									     *
+									     * fn ? [ returned ] : arguments fn 有的话取 return 的值
+									     * 没有的话取 arguments ( deferred[ resolve | resolveWith ] 等传递的参数 )
+									     *
+									     *  this === deferred; // true;
 									     */
 									    newDefer[action + "With"](this === promise ? newDefer.promise() : this, fn ? [returned] : arguments);
 								    }
@@ -120,28 +141,36 @@
 			return deferred;
 		}
 
-		var dfd = Deferred();
-		dfd.then(function (preVale) {
-			console.log(2 * preVale); // 4
-			return 2 * preVale;
-		}).then(function (preVale) {
-			console.log(3 * preVale); // 12
-			return 3 * preVale;
-		});
-
-		dfd.resolve(2);
-
 		var defer = Deferred();
 
+		// 先调用 then 定义过滤函数
 		defer.then(function (value) {
 			return value * 2;
-		}).then(function (value) {
-			return value * 2;
-		}).done(function (value) {
-			console.log(value);  // 20
-		});
+		})
+		/**
+		 * deferred.resolve( args )
+		 *
+		 * 当延迟对象被 resolved 时，任何通过 deferred.then 或 deferred.done 添加的 doneCallbacks，都会被调用
+		 * 回调函数的执行顺序和它们被添加的顺序是一样的
+		 * 传递给 deferred.resolve() 的 args 参数，会传给每个回调函数
+		 * 当延迟对象进入 resolved 状态后，再添加的任何 doneCallbacks，当它们被添加时，就会被立刻执行，并带上传入给.resolve() 的参数 ( 由于 $.Callbacks("once memory") )
+		 */
+				.done(function (value) {
+					// 这里的 value 是在 Callbacks() 中的 fire() 执行的 list[firingIndex].apply(data[0], data[1]);data[1] = 之前 then 回调中的 return value *2;
+					console.log(value);  // 10
+				});
 
+		// 在调用外部的 defer 对象执行的 resolve()，通知可以执行 then() 中的回调函数
 		defer.resolve(5);
+
+		// 此时 d 为另外一个 Deferred 对象( promise )，所以没有 d.resolve()
+		// var d = Deferred().then();
+
+		var post = $.post("http://service.finance365.com/api/book/GetBookByBookNo/2061")
+				.then(function (p) {
+					return p.Book_name;
+				});
+		post.done(function (r) { console.log(r); });
 
 	</script>
 </head>

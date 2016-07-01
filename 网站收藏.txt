@@ -194,3 +194,5 @@ http://www.tuicool.com/articles/3QZ7jeV  touch
 http://www.cnblogs.com/fsjohnhuang/p/4141918.html   jsDeferred
 
 http://jianfei.39.net/  减肥
+
+http://www.jb51.net/article/47147.htm   document.write()

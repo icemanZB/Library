@@ -4220,6 +4220,11 @@ jQuery.extend({
 				 * 每个元组分别包含一些与当前 deferred 相关的信息:
 				 * 分别是：触发回调函数列表执行(函数名)，添加回调函数(函数名)，回调函数列表(jQuery.Callbacks 对象)，deferred 最终状态(第三组数据除外)
 				 * 总体而言，三个元组会有对应的三个 callbacklist 对应于 doneList, failList, processList
+				 *
+				 *
+				 *
+				 注意: deferred 与 promise 为同一jQuery.Deferred 作用域中的，其中在 then 方法中，又生成了另外一个域中的 deferred 与 promise
+				 例如: var df = $.Deferred(); var df2 = df.then(args); 其中df2(一个新的promise)与newDefer(一个新的deferred)对应于同一域
 				 */
 				[ "resolve", "done", jQuery.Callbacks("once memory"), "resolved" ],
 				[ "reject", "fail", jQuery.Callbacks("once memory"), "rejected" ],
@@ -4403,17 +4408,25 @@ jQuery.extend({
 	},
 
 	// Deferred helper
+	/**
+	 * 注意 $.when() 是多任务的
+	 * 当一个任务失败的时候，代表整个都失败了。
+	 * 任务是 Deferred 实例，成为异步任务
+	 * 任务是普通 function 时，成为同步任务
+	 */
 	when: function( subordinate /* , ..., subordinateN */ ) {
 		var i = 0,
-			/*
+			/**
 			 * arguments(一些方法) 转成一个数组
 			 */
 			resolveValues = core_slice.call( arguments ),
 			length = resolveValues.length,
 
 			// the count of uncompleted subordinates
-			/*
-			 * 未完成的计数器有多少个，当 length = 0 ( 也就是没有传参数的情况 )，remaining = 0
+			/**
+		     * 未完成的计数器有多少个
+		     *
+			 * 当 length = 0 ( 也就是没有传参数的情况 )，remaining = 0
 			 * 当 length !=1，说明传了参数了，那么看 subordinate && jQuery.isFunction( subordinate.promise )
 			 * subordinate 是参数肯定有为 true，在判断传入的函数是不是延迟对象，是就返回参数列表的长度
 			 * 多个参数的时候，remaining 肯定是参数的长度
@@ -4421,7 +4434,9 @@ jQuery.extend({
 			remaining = length !== 1 || ( subordinate && jQuery.isFunction( subordinate.promise ) ) ? length : 0,
 
 			// the master Deferred. If resolveValues consist of only a single Deferred, just use that.
-			/*
+			/**
+		     * 只有一个异步任务的时候
+		     *
 			 * 当 remaining == 0 的时候，就会创建一个 Deferred 对象
 			 * 当传入了 1 个参数，subordinate 是一个延迟对象的话，就赋值给 deferred，如果 subordinate 不是延迟对象，就会创建新的 Deferred 对象
 			 * 一个参数的时候就会直接 return deferred.promise(); 其他代码都不走了
@@ -4430,13 +4445,25 @@ jQuery.extend({
 			deferred = remaining === 1 ? subordinate : jQuery.Deferred(),
 
 			// Update function for both resolve and progress values
+			/**
+		     * updateFunc 作用就是计数器减掉，并且当 remaining = 0 的时候，触发 resolveWith()
+		     */
 			updateFunc = function( i, contexts, values ) {
 				return function( value ) {
 					contexts[ i ] = this;
 					values[ i ] = arguments.length > 1 ? core_slice.call( arguments ) : value;
+					/**
+					 * 处理中，派发正在处理事件
+					 */
 					if( values === progressValues ) {
 						deferred.notifyWith( contexts, values );
-					} else if ( !( --remaining ) ) { /* 计数器减到 0 就会触发 resolveWith */
+						/**
+						 * 计数器减到 0 就会触发 resolveWith
+						 *
+						 * 成功，并且最后剩余的异步任务为 0 了，说明所有任务都成功了，派发成功事件出去
+						 * 事件包含的上下文是当前任务前边的所有任务的一个集合
+						 */
+					} else if ( !( --remaining ) ) {
 						deferred.resolveWith( contexts, values );
 					}
 				};
@@ -4445,36 +4472,44 @@ jQuery.extend({
 			progressValues, progressContexts, resolveContexts;
 
 		// add listeners to Deferred subordinates; treat others as resolved
-		/*
+		/**
 		 * 多个参数的时候会进 if
 		 */
 		if ( length > 1 ) {
-			/*
-			 * 进行时候的值和作用域
+			/**
+			 * 进行时的值和作用域
 			 */
 			progressValues = new Array( length );
 			progressContexts = new Array( length );
-			/*
-			 * 完成时候的作用域
+			/**
+			 * 完成时的作用域
 			 */
 			resolveContexts = new Array( length );
 			for ( ; i < length; i++ ) {
-				/*
+				/**
 				 * 判断每一项是不是延迟对象
 				 */
 				if ( resolveValues[ i ] && jQuery.isFunction( resolveValues[ i ].promise ) ) {
 					resolveValues[ i ].promise()
-						/*
+						/**
+						 * 成功的时候不断更新自己的状态
+						 * 
 						 * updateFunc 作用就是计数器减掉，并且当 remaining = 0 的时候，触发 resolveWith()
 						 */
 						.done( updateFunc( i, resolveContexts, resolveValues ) )
-						/*
+						/**
 						 * 只要有一个失败就会触发，最后肯定走 fail()
+						 * 当一个任务失败的时候，代表整个都失败了。直接派发一个失败即可
 						 */
 						.fail( deferred.reject )
+						/**
+						 * 正在处理的时候也要不断更新自己的状态
+						 */
 						.progress( updateFunc( i, progressContexts, progressValues ) );
 				} else {
-					/*
+					/**
+					 * 如果是同步任务，则 remain 不应该计它在内
+					 *
 					 * 不是延迟对象就减掉一个，过滤掉不是延迟对象的参数
 					 */
 					--remaining;
@@ -4483,7 +4518,9 @@ jQuery.extend({
 		}
 
 		// if we're not waiting on anything, resolve the master
-		/*
+		/**
+		 * 传进来的任务都是同步任务
+		 *
 		 * 如果我们什么都没有等待，就会触发 resolveWith
 		 * remaining = 0 取反就是 true，也就是未完成的是 0 个，触发 resolveWith ，说明 done 会立即执行
 		 */
@@ -4491,7 +4528,9 @@ jQuery.extend({
 			deferred.resolveWith( resolveContexts, resolveValues );
 		}
 
-		/* 返回延迟对象 */
+		/**
+		 * 返回延迟对象
+		 */
 		return deferred.promise();
 	}
 });

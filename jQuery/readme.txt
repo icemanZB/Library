@@ -32,3 +32,12 @@ http://www.imooc.com/code/3773      $.Deferred()
 http://www.cnblogs.com/justany/archive/2013/01/20/2867444.html  $.Deferred()
 
 http://www.cnblogs.com/yangjunhua/p/3396824.html   $.Deferred()
+
+http://www.cnblogs.com/pingfan1990/p/4286703.html   $.Deferred() $.when()
+
+http://www.imooc.com/code/4448      $.when()
+
+http://www.cnblogs.com/snandy/archive/2012/12/19/2812935.html   $.Deferred() 使用
+
+http://www.cnblogs.com/chaojidan/p/4170697.html?utm_source=tuicool   $.when()
+

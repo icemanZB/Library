@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>分离$.Deferred()</title>
+	<script src="jquery-2.0.3.read.js"></script>
+	<script>
+		function Deferred(func) {
+			var tuples   = [
+				    /***
+				     * 使用数组做映射关系，对应调用回调函数
+				     *
+				     * Callbacks(once memory) 的用法，就是只执行一次，并且保持以前的值
+				     * 每个元组分别包含一些与当前 deferred 相关的信息:
+				     * 分别是：触发回调函数列表执行(函数名)，添加回调函数(函数名)，回调函数列表(jQuery.Callbacks 对象)，deferred 最终状态(第三组数据除外)
+				     */
+				    ["resolve", "done", jQuery.Callbacks("once memory"), "resolved"],
+				    ["reject", "fail", jQuery.Callbacks("once memory"), "rejected"],
+				    ["notify", "progress", jQuery.Callbacks("memory")]
+			    ],
+			    /**
+			     * 默认是等待的状态
+			     * deferred 的状态，三种：pending(初始状态), resolved(解决状态), rejected(拒绝状态)
+			     * 其实就是 tuples 最后定义的
+			     */
+			    state    = "pending",
+			    promise  = {
+				    state  : function () {},
+				    always : function () {},
+				    then   : function () {},
+				    promise: function (obj) {
+					    return obj != null ? jQuery.extend(obj, promise) : promise;
+				    }
+			    },
+			    deferred = {};
+
+			promise.pipe = promise.then;
+
+			/**
+			 * 遍历 tuples，把定义的接口添加到 deferred 中
+			 */
+			jQuery.each(tuples, function (i, tuple) {
+				/**
+				 * 这里就是得到一个回调对象，jQuery.Callbacks("once memory")
+				 */
+				var list        = tuple[2],
+				    /**
+				     * 状态
+				     */
+				    stateString = tuple[3];
+
+				// promise[ done | fail | progress ] = list.add
+				/**
+				 * promise[ done | fail | progress ] = list.add
+				 *
+				 * 分别引用三个不同 jQuery.Callbacks("once memory") 对象的 add 方法，在初始化就构建成了对象
+				 * 向各自的回调函数列表 list(各自闭包中) 中添加回调函数，互不干扰
+				 *
+				 * 回调方法/事件订阅( add(fn) 中传入的 fn 这个回调函数就是观察着 )
+				 * promise.done = jQuery.Callbacks("once memory").add
+				 * promise.fail = jQuery.Callbacks("once memory").add
+				 * promise.progress = jQuery.Callbacks("memory").add
+				 *
+				 */
+				promise[tuple[1]] = list.add;
+
+				/**
+				 * 状态处理：resolved、rejected 会进这个 if，"notify" 进行时就不会
+				 *
+				 */
+				if (stateString) {
+					list.add(function () {
+						// state = [ resolved | rejected ]
+						/**
+						 * 成功、失败 stateString = [ resolved | rejected ]
+						 */
+						state = stateString;
+
+					}, tuples[i ^ 1][2].disable, tuples[2][2].lock);
+				}
+
+				/**
+				 * deferred 下面加了三个状态
+				 *
+				 * resolve/reject/notify 是 callbacks.fireWith，执行的回调函数
+				 * resolveWith/rejectWith/notifyWith 是 callbacks.fireWith 队列方法的引用
+				 *
+				 * 通知方法/事件发布 ( 目标对象状态改变 => deferred )
+				 *
+				 * deferred[ "resolve" | "reject" | "notify" ] = function(){
+				 *     deferred[ "resolve" | "reject" | "notify" + "With"]();
+				 * }
+				 *
+				 * deferred[ "resolve" | "reject" | "notify" ] = list.fireWith;
+				 */
+				deferred[tuple[0]] = function () {
+					/**
+					 * 解释一下第一个参数中的条件运算符
+					 * 如果 deferred[ resolve | reject | notify ] 方法没有被借用( 即 deferred.resolve.call(指定对象, args); )?
+					 * 默认第一个参数为 已经扩展的 promise 对象，否则为借用方法时指定的对象?
+					 *
+					 * 在外部调用的时候，dtd.resolve(); 此时 this 就是 deferred 对象，作为 fireWidth(context, args) 的 上下文
+					 */
+					deferred[tuple[0] + "With"](this === deferred ? promise : this, arguments);
+					return this;
+				};
+
+				deferred[tuple[0] + "With"] = list.fireWith;
+
+			});
+
+			promise.promise(deferred);
+
+			if (func) {
+				func.call(deferred, deferred);
+			}
+
+			return deferred;
+		}
+
+		function cb() {
+			console.log("progress");
+		}
+		var deferred = Deferred();
+		deferred.progress(cb);
+		// 这里不断的会触发，因为是 jQuery.Callbacks("memory").add();
+		// 第一次 "memory" 是 "undefined"，之后每次 fireWith() 的时候， memory() 已经有值了，由于没有 "once"，所以会不断的触发
+		setInterval(function () {
+			deferred.notify();
+		}, 500);
+
+	</script>
+</head>
+<body>
+<button>按钮</button>
+</body>
+</html>

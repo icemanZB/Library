@@ -31,27 +31,6 @@
 				});
 		post.done(function (r) { console.log(r); });
 
-		// 有时，Ajax 操作返回 json 字符串里面有一个 error 属性，表示发生错误。
-		// 这个时候，传统的方法只能是通过 done() 来判断是否发生错误。
-		// 通过 then() 方法，可以让 deferred 对象调用 fail() 方法。
-		// deferred.then( doneFilter [, failFilter ] [, progressFilter ] )
-		var myDeferred = $.post("http://service.finance365.com/api/book/GetBookByBookNo/2061", {json: JSON.stringify({"error": true})})
-				.then(
-						function (response) {
-							if (response.error) {
-								return $.Deferred().reject(response);
-							}
-							return response;
-						},
-						function () {
-							return $.Deferred().reject({error: true});
-						}
-				);
-		myDeferred.done(function (response) {
-			$("#status").html("Success!");
-		}).fail(function (response) {
-			$("#status").html("An error occurred");
-		});
 
 	</script>
 </head>
