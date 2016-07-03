@@ -8556,6 +8556,9 @@ function setPositiveNumber( elem, value, subtract ) {
 	var matches = rnumsplit.exec( value );
 	return matches ?
 		// Guard against undefined "subtract", e.g., when used as in cssHooks
+		/*
+		 * 最小值是0，不能是负数，所以用了 Math.max()
+		 */
 		Math.max( 0, matches[ 1 ] - ( subtract || 0 ) ) + ( matches[ 2 ] || "px" ) :
 		value;
 }
@@ -8565,10 +8568,18 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 		// If we already have the right measurement, avoid augmentation
 		4 :
 		// Otherwise initialize for horizontal or vertical properties
+		/*
+		 * 如果是 width = 1; height = 0;
+		 */
 		name === "width" ? 1 : 0,
 
 		val = 0;
 
+	/*
+	 * width => 1,3
+	 * height => 0,2
+	 * cssExpand = [ "Top", "Right", "Bottom", "Left" ];
+	 */
 	for ( ; i < 4; i += 2 ) {
 		// both box models exclude margin, so add it if we want it
 		if ( extra === "margin" ) {
@@ -8577,6 +8588,9 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 
 		if ( isBorderBox ) {
 			// border-box includes padding, so remove it if we want content
+			/*
+			 * 判断是不是怪异模式，是的话就需要 减掉
+			 */
 			if ( extra === "content" ) {
 				val -= jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
 			}
@@ -8603,15 +8617,27 @@ function getWidthOrHeight( elem, name, extra ) {
 
 	// Start with offset property, which is equivalent to the border-box value
 	var valueIsBorderBox = true,
+	    /*
+	     * offsetWidth = width + padding + border
+	     */
 		val = name === "width" ? elem.offsetWidth : elem.offsetHeight,
 		styles = getStyles( elem ),
+		/*
+		 * isBorderBox 判断盒模型
+		 */
 		isBorderBox = jQuery.support.boxSizing && jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
 
 	// some non-html elements return undefined for offsetWidth, so check for null/undefined
 	// svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
 	// MathML - https://bugzilla.mozilla.org/show_bug.cgi?id=491668
+	/*
+	 * 当是 svg、数学方法的时候，offsetWidth 可能会得到不正确的值，就不用 offsetWidth 获取
+	 */
 	if ( val <= 0 || val == null ) {
 		// Fall back to computed then uncomputed css if necessary
+		/*
+		 * 使用 getComputedStyle() 获取
+		 */
 		val = curCSS( elem, name, styles );
 		if ( val < 0 || val == null ) {
 			val = elem.style[ name ];
@@ -8631,6 +8657,9 @@ function getWidthOrHeight( elem, name, extra ) {
 	}
 
 	// use the active box-sizing model to add/subtract irrelevant styles
+	/*
+	 * augmentWidthOrHeight 处理到底是加(减) padding、margin、border、boxSizing
+	 */
 	return ( val +
 		augmentWidthOrHeight(
 			elem,
@@ -8701,8 +8730,21 @@ jQuery.each([ "height", "width" ], function( i, name ) {
 			if ( computed ) {
 				// certain elements can have dimension info if we invisibly show them
 				// however, it must have a current display style that would benefit from this
+				/*
+				 * 获取隐藏元素的尺寸
+				 * rdisplayswap = /^(none|table(?!-c[ea]).+)/; table(?!-c[ea]) 指的标签的特有属性，比如说 display:table-column;这个属性也是隐藏的
+				 * 排除掉  "table", "table-cell", or "table-caption" 这三个，因为这三个会让元素显示
+				 */
 				return elem.offsetWidth === 0 && rdisplayswap.test( jQuery.css( elem, "display" ) ) ?
+					/*
+					 * swap() 交换 css 样式，先让元素显示出来，然后获取尺寸，最后隐藏
+					 * cssShow = { position: "absolute", visibility: "hidden", display: "block" }
+					 * 这个变量进行元素隐藏 position: "absolute", visibility: "hidden" => display:"none"
+					 */
 					jQuery.swap( elem, cssShow, function() {
+						/*
+						 * 回掉就是显示出来的时候得到相应的结果
+						 */
 						return getWidthOrHeight( elem, name, extra );
 					}) :
 					getWidthOrHeight( elem, name, extra );
@@ -8735,6 +8777,9 @@ jQuery(function() {
 					// Support: Android 2.3
 					// WebKit Bug 13343 - getComputedStyle returns wrong value for margin-right
 					// Work around by temporarily setting element display to inline-block
+					/*
+					 * marginRight 兼容处理
+					 */
 					return jQuery.swap( elem, { "display": "inline-block" },
 						curCSS, [ elem, "marginRight" ] );
 				}
@@ -8745,6 +8790,9 @@ jQuery(function() {
 	// Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=29084
 	// getComputedStyle returns percent when specified for top/left/bottom/right
 	// rather than make the css module depend on the offset module, we just check for it here
+	/*
+	 * 百分比兼容处理
+	 */
 	if ( !jQuery.support.pixelPosition && jQuery.fn.position ) {
 		jQuery.each( [ "top", "left" ], function( i, prop ) {
 			jQuery.cssHooks[ prop ] = {
@@ -8763,6 +8811,9 @@ jQuery(function() {
 
 });
 
+/*
+ * Sizzle 的扩展 $("div:hidden")
+ */
 if ( jQuery.expr && jQuery.expr.filters ) {
 	jQuery.expr.filters.hidden = function( elem ) {
 		// Support: Opera <= 12.12
@@ -8776,6 +8827,11 @@ if ( jQuery.expr && jQuery.expr.filters ) {
 }
 
 // These hooks are used by animate to expand properties
+/*
+ * 对于运动进行扩展
+ * $("div"),animate({ margin:"10px 20px 30px 40px" });
+ * 进行拆分 marginLeft=>40、marginRight=>20、marginTop=>10、marginBottom=>30
+ */
 jQuery.each({
 	margin: "",
 	padding: "",
@@ -8802,6 +8858,9 @@ jQuery.each({
 		jQuery.cssHooks[ prefix + suffix ].set = setPositiveNumber;
 	}
 });
+/*
+ * ajax 源码在这开始
+ */
 var r20 = /%20/g,
 	rbracket = /\[\]$/,
 	rCRLF = /\r?\n/g,
@@ -8809,18 +8868,35 @@ var r20 = /%20/g,
 	rsubmittable = /^(?:input|select|textarea|keygen)/i;
 
 jQuery.fn.extend({
+	/*
+	 * <form id="form1"><input name="text" name="a" value="1"></form>
+	 * $("#form1").serialize(); => [ {"name":"a","value":"1"} ]
+	 */
 	serialize: function() {
 		return jQuery.param( this.serializeArray() );
 	},
 	serializeArray: function() {
 		return this.map(function(){
 			// Can add propHook for "elements" to filter or add form elements
+			/*
+			 * this => form 或者 $("input")，input 是没有 elements 属性的
+			 * form 表单是有 elements 属性的 => $("#form1").get(0).elements
+			 * this.map() 会得到一个 jQuery 对象
+			 */
 			var elements = jQuery.prop( this, "elements" );
 			return elements ? jQuery.makeArray( elements ) : this;
 		})
 		.filter(function(){
 			var type = this.type;
 			// Use .is(":disabled") so that fieldset[disabled] works
+			/*
+			 * 过滤 disabled
+			 * rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i; 排除哪些 input 是没有 value 的
+			 * rsubmittable = /^(?:input|select|textarea|keygen)/i; 这些都是有 value
+			 *
+			 * manipulation_rcheckableType = /^(?:checkbox|radio)$/i;
+			 * this.checked || !manipulation_rcheckableType.test( type ) 单选框或者复选框不是选中状态的，过滤
+			 */
 			return this.name && !jQuery( this ).is( ":disabled" ) &&
 				rsubmittable.test( this.nodeName ) && !rsubmitterTypes.test( type ) &&
 				( this.checked || !manipulation_rcheckableType.test( type ) );
@@ -8830,6 +8906,12 @@ jQuery.fn.extend({
 
 			return val == null ?
 				null :
+				/*
+				 * 判断是不是数组是用在多选框的时候
+				 *
+				 * rCRLF = /\r?\n/g; \r => 回车(可有可无)、\n 换行
+				 * 在标准浏览器下，换行是不存在 "\r"，在低版本 IE 下是存在的
+				 */
 				jQuery.isArray( val ) ?
 					jQuery.map( val, function( val ){
 						return { name: elem.name, value: val.replace( rCRLF, "\r\n" ) };
@@ -8841,6 +8923,11 @@ jQuery.fn.extend({
 
 //Serialize an array of form elements or a set of
 //key/values into a query string
+/*
+ * $.param({"aaa":"111","bbb":"222"})  => aaa=111&bbb=222
+ * $.param({"aaa":[111,333],"bbb":"222"},true)  => aaa=111&aaa=333&bbb=222
+ * $.param([{"name":"1","value":"2"},{"name":"3","value":"4"}])  => 1=2&3=4  ( 数组形式只是针对 name 和 value )
+ */
 jQuery.param = function( a, traditional ) {
 	var prefix,
 		s = [],
@@ -8851,13 +8938,23 @@ jQuery.param = function( a, traditional ) {
 		};
 
 	// Set traditional to true for jQuery <= 1.3.2 behavior.
+	/*
+	 * 这里可以通过 ajax 形式配置是否是 traditional
+	 */
 	if ( traditional === undefined ) {
 		traditional = jQuery.ajaxSettings && jQuery.ajaxSettings.traditional;
 	}
 
 	// If an array was passed in, assume that it is an array of form elements.
+	/*
+	 * a.jquery && !jQuery.isPlainObject( a ) jQuery 对象也是走这个 if
+	 * var $obj = $( [{"name":"1","value":"2"},{"name":"3","value":"4"}] );  $.param( $obj );
+	 */
 	if ( jQuery.isArray( a ) || ( a.jquery && !jQuery.isPlainObject( a ) ) ) {
 		// Serialize the form elements
+		/*
+		 * 这里只能是 name、value
+		 */
 		jQuery.each( a, function() {
 			add( this.name, this.value );
 		});
@@ -8865,12 +8962,20 @@ jQuery.param = function( a, traditional ) {
 	} else {
 		// If traditional, encode the "old" way (the way 1.3.2 or older
 		// did it), otherwise encode params recursively.
+		/*
+		 * $.param({"aaa":[111,333]},true);
+		 */
 		for ( prefix in a ) {
 			buildParams( prefix, a[ prefix ], traditional, add );
 		}
 	}
 
 	// Return the resulting serialization
+	/*
+	 * r20 = /%20/g; 就是空格替换成 "+"，因为后端接受的时候往往是 "+" 号
+	 * encodeURIComponent(" ")  => %20
+	 * $.param({"aaa":"1 3"})  => "aaa=1+3"
+	 */
 	return s.join( "&" ).replace( r20, "+" );
 };
 
@@ -8880,12 +8985,19 @@ function buildParams( prefix, obj, traditional, add ) {
 	if ( jQuery.isArray( obj ) ) {
 		// Serialize array item.
 		jQuery.each( obj, function( i, v ) {
+			/*
+			 * rbracket = /\[\]$/; 匹配在结尾位置的"[]"
+			 * $.param({"aaa[]":[111,333]},true);
+			 */
 			if ( traditional || rbracket.test( prefix ) ) {
 				// Treat each array item as a scalar.
 				add( prefix, v );
 
 			} else {
 				// Item is non-scalar (array or object), encode its numeric index.
+				/*
+				 * $.param({"aaa[]":[111,333]}); 递归拼接
+				 */
 				buildParams( prefix + "[" + ( typeof v === "object" ? i : "" ) + "]", v, traditional, add );
 			}
 		});
