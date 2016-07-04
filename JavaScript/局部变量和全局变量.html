@@ -74,6 +74,20 @@
 		bar();
 
 		console.log(foo); // 10
+
+
+		function fn(a) {
+			console.log(a);
+			var a = 2;
+			function a() {}
+			console.log(a);
+		}
+
+		fn(1);  // function  a() {} 2
+
+		// var 和 function 是会提前声明的，而且 function 是优先于 var 声明的( 如果同时存在的话 )
+		// 所以提前声明后输出的 a 是个 function，然后代码往下执行 a 进行重新赋值了，故第二次输出是 2。
+
 	</script>
 </head>
 <body>

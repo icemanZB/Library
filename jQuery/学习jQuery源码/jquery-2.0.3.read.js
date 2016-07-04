@@ -1687,7 +1687,7 @@ jQuery.extend({
 	 * 原理：先把 display:none; 存起来，在设置 CSS 为：position: "absolute", visibility: "hidden", display: "block"
 	 * 然后把获取到的值存起来，最后把 display:none; 替换回来
 	 *
-	 * 例如：  <div id="box" style="width: 100px;height: 100px;background: red; display: none;"></div> $("#box").css("width");
+	 * 例如：<div id="box" style="width: 100px;height: 100px;background: red; display: none;"></div> $("#box").css("width");
 	 *
 	 * options：Object { position: "absolute", visibility: "hidden", display: "block" }
 	 */
@@ -4542,7 +4542,7 @@ jQuery.support = (function( support ) {
 		opt = select.appendChild( document.createElement("option") );
 
 	// Finish early in limited environments
-	/*
+	/**
 	 * 经过测试，所有 input 都有默认值 "text"，所以这句没有什么意义
 	 */
 	if ( !input.type ) {
@@ -4553,7 +4553,7 @@ jQuery.support = (function( support ) {
 
 	// Support: Safari 5.1, iOS 5.1, Android 4.x, Android 2.3
 	// Check the default checkbox/radio value ("" on old WebKit; "on" elsewhere)
-	/*
+	/**
 	 * 在老版本的 webkit 下是 false
 	 * 检测出浏览器的差异后，需要解决这个问题，在所有浏览器下表现形式都是一样的，统一返回 "on"
 	 * 搜索 "support.checkOn"
@@ -4562,14 +4562,20 @@ jQuery.support = (function( support ) {
 
 	// Must access the parent to make an option select properly
 	// Support: IE9, IE10
-	/*
+	/**
 	 * 在 FF，chrome 中，创建了下拉菜单，这个时候默认子项的第一项是被选中的，在 IE 下并不是
 	 */
 	support.optSelected = opt.selected;
 
 	// Will be defined later
-	/*
+	/**
 	 * 这三个是节点操作，需要等 DOM 加载完，所以初始化了一些值
+	 *
+	 * reliableMarginRight：检查 Margin Right 的计算是否可靠。 各浏览器中都为 true，原注释中提到某些老版本的 Webkit 内核的浏览器中为 false 。
+	 *
+	 * boxSizingReliable：在 IE 下如果是怪异模式，还有 padding 值，width - padding = width;结果在 IE 下 width 是 2px
+	 *
+	 * pixelPosition：只有在 Safari 下返回 1%，其他的浏览器返回的都是 px
 	 */
 	support.reliableMarginRight = true;
 	support.boxSizingReliable = true;
@@ -4577,7 +4583,7 @@ jQuery.support = (function( support ) {
 
 	// Make sure checked status is properly cloned
 	// Support: IE9, IE10
-	/*
+	/**
 	 * 正常情况让复选框选中，clone 出来的复选框也是选中状态，在 IE10、IE9 中 clone 出来的复选框是没有选中的，通过 Hooks 机制处理这兼容问题
 	 */
 	input.checked = true;
@@ -4585,7 +4591,7 @@ jQuery.support = (function( support ) {
 
 	// Make sure that the options inside disabled selects aren't marked as disabled
 	// (WebKit marks them as disabled)
-	/*
+	/**
 	 * 下拉菜单被禁止了，子项应该不会被禁止，只有在老版本的 webkit 会有问题，子项会被禁止
 	 */
 	select.disabled = true;
@@ -4594,7 +4600,7 @@ jQuery.support = (function( support ) {
 	// Check if an input maintains its value after becoming a radio
 	// Support: IE9, IE10
 	input = document.createElement("input");
-	/*
+	/**
 	 * 一定要先设置 value，在设置 type，如果先设置 type 再设置 value，所有浏览器都会返回 true
 	 * 在 IE 下都是 false ( 包括 IE11 )，其实 IE 的值是 "on"
 	 */
@@ -4610,17 +4616,22 @@ jQuery.support = (function( support ) {
 
 	// Support: Safari 5.1, Android 4.x, Android 2.3
 	// old WebKit doesn't clone checked state correctly in fragments
+	/**
+	 * 检查 fragment 中的 checkbox 的选中状态是否能被复制，IE 中为 false ，FireFox 中为 true
+	 * 这段代码创建了一个 fragment ，并将一个处于选中状态的 checkbox 加入，连续复制两遍后检查 checkbox 是否为选中状态。
+	 */
 	support.checkClone = fragment.cloneNode( true ).cloneNode( true ).lastChild.checked;
 
 	// Support: Firefox, Chrome, Safari
 	// Beware of CSP restrictions (https://developer.mozilla.org/en/Security/CSP)
-	/*
+	/**
 	 * 只有 IE 支持 onfocusin
 	 */
 	support.focusinBubbles = "onfocusin" in window;
 
-	/*
-	 * 这个 div 首先是创建出来的，然后在 clone 一个 div，设置 backgroundClip = ""，在看之前的 div 的 backgroundClip 值是否改变 ( 其实任何与 background 有关系的 都会有这样的问题 )
+	/**
+	 * 这个 div 首先是创建出来的，然后在设置 backgroundClip = "";  之后 clone 一个 div，也设置 backgroundClip 值但与前者不同
+	 * 在看之前的 div 的 backgroundClip 值是否改变 ( 其实任何与 background 有关系的 都会有这样的问题 )
 	 * 正常情况下，修改 clone 元素是不会影响到原来的元素的，在 IE 下 都是会被 clone 的元素所影响到
 	 */
 	div.style.backgroundClip = "content-box";
@@ -4631,7 +4642,7 @@ jQuery.support = (function( support ) {
 	jQuery(function() {
 		var container, marginDiv,
 			// Support: Firefox, Android 2.3 (Prefixed box-sizing versions).
-			/*
+			/**
 			 * content-box：标准模式、border-box：怪异模式
 			 */
 			divReset = "padding:0;margin:0;border:0;display:block;-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box",
@@ -4643,15 +4654,15 @@ jQuery.support = (function( support ) {
 		}
 
 		container = document.createElement("div");
-		/*
-		 * margin-top:1px：在 jQuery1x..版本中是有用到的，比如 body.offsetTop;在这个版本中并没有使用
+		/**
+		 * margin-top:1px ：在 jQuery1x..版本中是有用到的，比如 body.offsetTop; 在这个版本中并没有使用
 		 */
 		container.style.cssText = "border:0;width:0;height:0;position:absolute;top:0;left:-9999px;margin-top:1px";
 
 		// Check box-sizing and margin behavior.
 		body.appendChild( container ).appendChild( div );
 
-		/*
+		/**
 		 * 这句也是在 jQuery1x..版本中是有用到的，这里并没有使用
 		 */
 		div.innerHTML = "";
@@ -4660,8 +4671,8 @@ jQuery.support = (function( support ) {
 
 		// Workaround failing boxSizing test due to offsetWidth returning wrong value
 		// with some non-1 values of body zoom, ticket #13543
-		/*
-		 * swap() 是 css 样式转换的方法，可以让 jQuery 获取到隐藏元素的值
+		/**
+		 * swap() 是 css 样式转换的方法，可以让 jQuery 获取到隐藏元素的值，但是这里并没有用到这个功能，不知道为什么要加 jQuery.swap()
 		 * body.style.zoom 有值的时候，会影响到 div.offsetWidth 值，所以要统一一下
 		 * offsetWidth = width + padding + border，但是上面设置了 box-sizing:border-box; 所以这些都是包括在 width 内的
 		 */
@@ -4670,17 +4681,32 @@ jQuery.support = (function( support ) {
 		});
 
 		// Use window.getComputedStyle because jsdom on node.js will break without it.
-		/* 在 nodejs 下是没有 window.getComputedStyle */
+		/**
+		 * 在 nodejs 下是没有 window.getComputedStyle
+		 */
 		if ( window.getComputedStyle ) {
-			/* 只有在 Safari 下返回 1%，其他的浏览器返回的都是 px */
+			/**
+			 * 只有在 Safari 下返回 1%，其他的浏览器返回的都是 px
+			 */
 			support.pixelPosition = ( window.getComputedStyle( div, null ) || {} ).top !== "1%";
-			/* 在 IE 下如果是怪异模式，还有 padding 值，width - padding = width;结果在 IE 下 width 是 2px */
+			/**
+			 * 在 IE 下如果是怪异模式，width = width - padding = ; 结果在 IE 下 width 是 2px;
+			 */
 			support.boxSizingReliable = ( window.getComputedStyle( div, null ) || { width: "4px" } ).width === "4px";
 
 			// Support: Android 2.3
 			// Check if div with explicit width and no margin-right incorrectly
 			// gets computed margin-right based on width of container. (#3333)
 			// WebKit Bug 13343 - getComputedStyle returns wrong value for margin-right
+			/**
+			 * 就是将 width 和 marginRight 设为 0 时，获取的 marginRignt 应为 0
+			 * marginDiv => <div style="padding: 0px; margin: 0px; border: 0px; display: block; box-sizing: content-box; width: 0px;"></div>
+			 *
+			 * div =>
+			 *  <div style="padding: 0px; margin: 0px; border: 0px; display: block; box-sizing: content-box; width: 1px;">
+			 *      <div style="padding: 0px; margin: 0px; border: 0px; display: block; box-sizing: content-box; width: 0px;"></div>
+			 *  </div>
+			 */
 			marginDiv = div.appendChild( document.createElement("div") );
 			marginDiv.style.cssText = div.style.cssText = divReset;
 			marginDiv.style.marginRight = marginDiv.style.width = "0";
@@ -4716,12 +4742,13 @@ function Data() {
 	// Support: Android < 4,
 	// Old WebKit does not have Object.preventExtensions/freeze method,
 	// return new empty object instead with no [[set]] accessor
-	/*
+	/**
 	 * Object.freeze(obj) 防止修改对象，只能获取
-	 * Object.defineProperty( 属性所在对象,属性所在的对象属性名，一个描述符对象 )
+	 * Object.defineProperty( 属性所在对象，属性所在的对象属性名，一个描述符对象 )
 	 * 在 this.cache 对象中默认添加了 "0" 这个属性，并且是不可修改的
+	 *
 	 * 为什么不能修改，假设一个文本节点设置了数据，他是返回空的 {}，那么如果这个时候在有个文本节点设置了数据，他还是返回 {}
-	 * 如果这个是可以改的，那么第一个值改掉了，第二个值也随之改变了
+	 * 如果这个是可以改的，那么第一个值改掉了，第二个值也随之改变了 ？？？ 研究下
 	 */
 	Object.defineProperty( this.cache = {}, 0, {
 		get: function() {
@@ -4729,13 +4756,13 @@ function Data() {
 		}
 	});
 
-	/*
+	/**
 	 * 唯一的标识，用在 <div xxx=""></div>，这个标识就是表示 "xxx"
 	 */
 	this.expando = jQuery.expando + Math.random();
 }
 
-/*
+/**
  * this.cache{
  *     1:{},
  *     2:{}
@@ -4753,10 +4780,10 @@ Data.accepts = function( owner ) {
 	//    - Node.DOCUMENT_NODE
 	//  - Object
 	//    - Any
-	/*
-	 * nodeType = 1 说明是元素、nodeType = 9 说明是 document，这些都是可以被分配的标识的
-	 * 如 1->{"name":"aa"}、2->{"name":"bb"}..，这些是私有的，只有某个元素有，所以是可以被设置修改
-	 * 除了上面的是不能被分配标识的就会返回默认的 "0"->{}，并且是共用的，会有很多不满足条件的会使用它
+	/**
+	 * nodeType = 1; 说明是元素、nodeType = 9; 说明是 document，这些都是可以被分配的标识的
+	 * 如： 1 => {"name":"aa"}、2 => {"name":"bb"}..，这些是私有的，只有某个元素有，所以是可以被设置修改
+	 * 除了上面的是不能被分配标识的就会返回默认的 "0" => {}，并且是共用的，会有很多不满足条件的会使用它
 	 * 还有一些数组之类的是没有 nodeType ，也是可以分配的
 	 */
 	return owner.nodeType ?
@@ -4774,7 +4801,7 @@ Data.prototype = {
 
 		var descriptor = {},
 			// Check if the owner object already has a cache key
-			/*
+			/**
 			 * $.data(document.body,"age",30); $.data(document.body,"job","it");
 			 * owner 就是 body，然后把随机数放到了 body 上面
 			 * 第一次肯定是没有的，找不到的话就分配一个，相同的元素是同一个 ID
@@ -4783,18 +4810,18 @@ Data.prototype = {
 
 		// If not, create one
 		if ( !unlock ) {
-			/*
+			/**
 			 * 分配一个标识
 			 */
 			unlock = Data.uid++;
 
 			// Secure it in a non-enumerable, non-writable property
-			/*
+			/**
 			 * 分配自定义属性
 			 */
 			try {
 				descriptor[ this.expando ] = { value: unlock };
-				/*
+				/**
 				 * 这里添加属性，只能获取不能修改
 				 */
 				Object.defineProperties( owner, descriptor );
@@ -4802,7 +4829,7 @@ Data.prototype = {
 			// Support: Android < 4
 			// Fallback to a less secure definition
 			} catch ( e ) {
-				/*
+				/**
 				 * 通过 extend() 把自定义属性加到 body 上面
 				 */
 				descriptor[ this.expando ] = unlock;
@@ -6098,8 +6125,8 @@ jQuery.each([ "radio", "checkbox" ], function() {
 			}
 		}
 	};
-	/*
-	 * support.checkOn = false，在老版本的 webkit 就会走这个if，解决兼容问题，让这个值"" 变成 "on"
+	/**
+	 * support.checkOn = false，在老版本的 webkit 就会走这个 if，解决兼容问题，让这个值"" 变成 "on"
 	 * 通过 jQuery 的 Hooks 机制，专门解决兼容问题的
 	 */
 	if ( !jQuery.support.checkOn ) {

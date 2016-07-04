@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.swap()</title>
+	<script src="jquery-2.0.3.read.js"></script>
+	<script>
+		$(function(){
+			function swap(elem, options, callback, args) {
+				var ret, name,
+				    /**
+				     * 存老的样式
+				     */
+				    old = {};
+
+				// Remember the old values, and insert the new ones
+				/**
+				 * 把所有老样式存在 old 中 ( 看看有没有设置过 options 里面的样式 )
+				 */
+				for (name in options) {
+					old[name] = elem.style[name];
+					/**
+					 * 把 position: "absolute", visibility: "hidden", display: "block" 给到当前元素
+					 * 如果当前元素有其中某个样式，就会被覆盖
+					 */
+					elem.style[name] = options[name];
+				}
+
+				/**
+				 * 回调函数，获取所需要的样式
+				 */
+				ret = callback.apply(elem, args || []);
+
+				// Revert the old values
+				/**
+				 * 样式还原
+				 * old : Object { position: "", visibility: "", display: "none"}
+				 */
+				for (name in options) {
+					elem.style[name] = old[name];
+				}
+
+				return ret;
+			}
+
+			swap( document.getElementById("box"),{ position: "absolute", visibility: "hidden", display: "block" },function(){
+				console.log(this.offsetWidth);
+			} ) ;
+		});
+
+	</script>
+</head>
+<body>
+
+<div id="box" style="width: 100px;height: 100px;background: red; display: none;"></div>
+
+</body>
+</html>

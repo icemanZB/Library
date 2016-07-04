@@ -41,3 +41,7 @@ http://www.cnblogs.com/snandy/archive/2012/12/19/2812935.html   $.Deferred() 使
 
 http://www.cnblogs.com/chaojidan/p/4170697.html?utm_source=tuicool   $.when()
 
+http://xxing22657-yahoo-com-cn.iteye.com/blog/1044984   $.support
+
+https://segmentfault.com/a/1190000000626031  $.data()
+
