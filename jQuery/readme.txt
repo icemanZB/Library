@@ -45,3 +45,6 @@ http://xxing22657-yahoo-com-cn.iteye.com/blog/1044984   $.support
 
 https://segmentfault.com/a/1190000000626031  $.data()
 
+http://www.jb51.net/article/86535.htm?pc     $.data()
+
+http://www.bubuko.com/infodetail-541759.html   $.data()

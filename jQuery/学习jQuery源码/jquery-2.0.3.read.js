@@ -1563,7 +1563,6 @@ jQuery.extend({
 			 */
 			bulk = key == null;
 		// Sets many values
-
 		/**
 		 * 设置多组值， 此时的 key = {"width":"100px","height":"100px"}，那就是设置值了，所以 chainable = true;
 		 */
@@ -1586,6 +1585,7 @@ jQuery.extend({
 		 * 设置一组值，value 有值说明要设置
 		 */
 		} else if ( value !== undefined ) {
+
 			chainable = true;
 		    /**
 		     * 判断 value 是否是个函数，如果是个字符串，那么 raw = true
@@ -1602,11 +1602,13 @@ jQuery.extend({
 				 * raw = true，那说明 value 是个字符串，可能是这种情况 $("#box").attr(undefined,"abc");
 				 * jQuery.attr.call(elems,value); 调用完毕之后，将 fn 设置为空
 				 * 其实最后走进了 jQuery.prop() 返回了 undefined
+				 *
+				 * $("#box").data("username","iceman"); 也会走进这里，jQuery.access( this,fn, null, value, arguments.length > 1, null, true );
+				 * value => "iceman"，把 value 对应传到 fn 回调函数中，并且修改指向为 $("#box")
 				 */
 				if ( raw ) {
 					fn.call( elems, value );
 					fn = null;
-
 				// ...except when executing function values
 				} else {
 					bulk = fn;
@@ -1636,7 +1638,6 @@ jQuery.extend({
 				/**
 				 * 递归调用
 				 */
-
 				for ( ; i < length; i++ ) {
 					/**
 					 * 如果 raw = true; 那么 value 是原始数据，就取 value，
@@ -1664,6 +1665,8 @@ jQuery.extend({
 		 *
 		 * bluk = true; 没有 key 值的情况下，触发回调函，bluck = false; 有 key 值，在判断 elems.length ( 元素存不存在 )
 		 * length 存在就是有元素，直接走 fn()，不存在就返回 emptyGet，emptyGet 一般不写，就是 undefined
+		 *
+		 * $("#box").data("username"); 当 $("#box") 不存在的时候，会走 fn.call( elems )
 		 */
 		return chainable ?
 			elems :
@@ -4672,7 +4675,7 @@ jQuery.support = (function( support ) {
 		// Workaround failing boxSizing test due to offsetWidth returning wrong value
 		// with some non-1 values of body zoom, ticket #13543
 		/**
-		 * swap() 是 css 样式转换的方法，可以让 jQuery 获取到隐藏元素的值，但是这里并没有用到这个功能，不知道为什么要加 jQuery.swap()
+		 * swap() 是 css 样式转换的方法，可以让 jQuery 获取到隐藏元素的值，但是这里其实是加了一条 zoom: 1;的样式，然后再测试兼容问题，最后样式还原
 		 * body.style.zoom 有值的时候，会影响到 div.offsetWidth 值，所以要统一一下
 		 * offsetWidth = width + padding + border，但是上面设置了 box-sizing:border-box; 所以这些都是包括在 width 内的
 		 */
@@ -4743,13 +4746,12 @@ function Data() {
 	// Old WebKit does not have Object.preventExtensions/freeze method,
 	// return new empty object instead with no [[set]] accessor
 	/**
-	 * Object.freeze(obj) 防止修改对象，只能获取
-	 * Object.defineProperty( 属性所在对象，属性所在的对象属性名，一个描述符对象 )
-	 * 在 this.cache 对象中默认添加了 "0" 这个属性，并且是不可修改的
+	 * Object.defineProperty( 属性所在对象，属性所在的对象属性名，一个描述符对象 )，就是用来定义属性的
+	 * 在 this.cache 对象中默认添加了 "0" 这个属性，并且是不可修改的，作用相当于 Object.freeze(obj) 防止修改对象，只能获取
 	 *
-	 * 为什么不能修改，假设一个文本节点设置了数据，他是返回空的 {}，那么如果这个时候在有个文本节点设置了数据，他还是返回 {}
-	 * 如果这个是可以改的，那么第一个值改掉了，第二个值也随之改变了 ？？？ 研究下
+	 * 为什么不能修改，因为 0:{} 这个是共有的属性，只要不能添加 data() 的，都会返回 "0"，使用这个属性 "0"
 	 */
+
 	Object.defineProperty( this.cache = {}, 0, {
 		get: function() {
 			return {};
@@ -4764,13 +4766,14 @@ function Data() {
 
 /**
  * this.cache{
+ *     0:{},
  *     1:{},
  *     2:{}
  * }
  */
 Data.uid = 1;
 
-/*
+/**
  * 判断节点类型
  */
 Data.accepts = function( owner ) {
@@ -4782,9 +4785,11 @@ Data.accepts = function( owner ) {
 	//    - Any
 	/**
 	 * nodeType = 1; 说明是元素、nodeType = 9; 说明是 document，这些都是可以被分配的标识的
+	 * 诸如 文本节点( nodeType = 3 )、注释节点( nodeType = 8 ) 一律不添加
+	 * 如果是类数组之类的是没有 nodeType ，也是可以分配的 $.data( $("#box"),"username","iceman" );
+	 *
 	 * 如： 1 => {"name":"aa"}、2 => {"name":"bb"}..，这些是私有的，只有某个元素有，所以是可以被设置修改
 	 * 除了上面的是不能被分配标识的就会返回默认的 "0" => {}，并且是共用的，会有很多不满足条件的会使用它
-	 * 还有一些数组之类的是没有 nodeType ，也是可以分配的
 	 */
 	return owner.nodeType ?
 		owner.nodeType === 1 || owner.nodeType === 9 : true;
@@ -4795,6 +4800,10 @@ Data.prototype = {
 		// We can accept data for non-element nodes in modern browsers,
 		// but we should not, see #8335.
 		// Always return the key for a frozen object.
+		/**
+		 * $.data( document.body,"username","iceman" );
+		 * owner => document.body
+		 */
 		if ( !Data.accepts( owner ) ) {
 			return 0;
 		}
@@ -4802,16 +4811,20 @@ Data.prototype = {
 		var descriptor = {},
 			// Check if the owner object already has a cache key
 			/**
-			 * $.data(document.body,"age",30); $.data(document.body,"job","it");
-			 * owner 就是 body，然后把随机数放到了 body 上面
-			 * 第一次肯定是没有的，找不到的话就分配一个，相同的元素是同一个 ID
+			 * $.data( document.body,"age",30 ); $.data(document.body,"job","it");
+		     *
+		     *
+			 * unlock =  document.body[this.expando] 在 body 节点下看看有没有 this.expando 这个属性
 			 */
 			unlock = owner[ this.expando ];
 
 		// If not, create one
+		/**
+		 * unlock 第一次肯定是没有的，找不到的话就分配一个，相同元素第二次就不在创建，是同一个 ID
+		 */
 		if ( !unlock ) {
 			/**
-			 * 分配一个标识
+			 * 分配一个标识， "uid" 是会从 1 开始不断的累加
 			 */
 			unlock = Data.uid++;
 
@@ -4822,7 +4835,12 @@ Data.prototype = {
 			try {
 				descriptor[ this.expando ] = { value: unlock };
 				/**
+				 * Object.defineProperties() 方法可以通过描述符一次定义多个属性
+				 *
 				 * 这里添加属性，只能获取不能修改
+				 * Object.defineProperties( document.body,{
+				 *     this.expando = { value : 1 };
+				 * } );
 				 */
 				Object.defineProperties( owner, descriptor );
 
@@ -4838,35 +4856,56 @@ Data.prototype = {
 		}
 
 		// Ensure the cache object
+		/**
+		 * 创建缓存对象
+		 * this.cache["1"] 第一次肯定是 undefined，就会进 if
+		 * this.cache["1"] = {};
+		 */
 		if ( !this.cache[ unlock ] ) {
 			this.cache[ unlock ] = {};
 		}
 
+		/**
+		 * 第一次肯定是返回的是 "uid" 的累加
+		 * 如果 document.body[this.expando] 在 body 节点找到了这个属性，就直接返回
+		 */
 		return unlock;
 	},
+	/**
+	 * owner => ele
+	 */
 	set: function( owner, data, value ) {
 		var prop,
 			// There may be an unlock assigned to this node,
 			// if there is no entry for this "owner", create one inline
 			// and set the unlock as though an owner entry had always existed
-			/*
-			 * 找到 ID
+			/**
+			 * 找到 ID => "uid"
 			 */
 			unlock = this.key( owner ),
-			/*
-			 * 通过 ID 找到对应的 json
+			/**
+			 * 通过 ID ( "uid" ) 找到对应的 json => {}
+		     *
+		     * this.cache = { 0 : {}, 1 : {}  }
 			 */
 			cache = this.cache[ unlock ];
 
 		// Handle: [ owner, key, value ] args
+		/**
+		 * $.data( document.body,"username","iceman" );
+		 */
 		if ( typeof data === "string" ) {
 			cache[ data ] = value;
 
 		// Handle: [ owner, { properties } ] args
+		/**
+		 * $.data( document.body, {"username": "iceman"} );
+		 */
 		} else {
 			// Fresh assignments by object are shallow copied
-			/*
+			/**
 			 * 这个判断是不是没有什么意义，extend() 内部本来就是调用 for-in
+			 * this.cache["1"] => {} ，data => {"username": "iceman"} => jQuery.extend( {},{"username": "iceman"} );
 			 */
 			if ( jQuery.isEmptyObject( cache ) ) {
 				jQuery.extend( this.cache[ unlock ], data );
@@ -4877,7 +4916,10 @@ Data.prototype = {
 				}
 			}
 		}
-		// console.log( this,this.expando );
+		/**
+		 * cache = { username :"iceman" }
+		 * this.cache = { 0 : {}, 1 : { username :"iceman"  }  }
+		 */
 		return cache;
 	},
 	get: function( owner, key ) {
@@ -4885,16 +4927,22 @@ Data.prototype = {
 		// New caches will be created and the unlock returned,
 		// allowing direct access to the newly created
 		// empty data object. A valid owner object must be provided.
-		/*
-		 * 先找到对应的 ID ，在缓存中找到对应的 json
+		/**
+		 * $.data( document.body , "username");
+		 *
+		 * this.key( owner ) => unlock ( "uid" ) 先找到在 DOM 节点上对应的 ID
+		 * this.cache["1"] => { username: "iceman" } 在缓存中找到对应的 json
+		 *
+		 * 如果没有传 key，那么就会返回一个对象
 		 */
 		var cache = this.cache[ this.key( owner ) ];
 
 		return key === undefined ?
 			cache : cache[ key ];
 	},
-	/*
+	/**
 	 * 对于 get()、set(） 整合
+	 * owner => elem、name => key、data => value
 	 */
 	access: function( owner, key, value ) {
 		var stored;
@@ -4909,11 +4957,19 @@ Data.prototype = {
 		//   1. The entire cache object
 		//   2. The data stored at the key
 		//
+		/**
+		 * 这里是获取的时候 $.data( document.body , "username");、 $.data( document.body );
+		 */
 		if ( key === undefined ||
 				((key && typeof key === "string") && value === undefined) ) {
 
 			stored = this.get( owner, key );
 
+			/**
+			 * 这个三木是处理这样的情况：
+			 * $.data(document.body,"userName","iceman");
+			 * $.data( document.body,"user-name" );
+			 */
 			return stored !== undefined ?
 				stored : this.get( owner, jQuery.camelCase(key) );
 		}
@@ -4924,18 +4980,39 @@ Data.prototype = {
 		//   1. An object of properties
 		//   2. A key and value
 		//
+		/**
+		 * 这两种情况： $.data( document.body,"username","iceman" );、$.data( document.body, {"username": "iceman"} );
+		 *
+		 * this.set( owner, key, value ) 会返回 Object {username: "iceman"}
+		 * 其实内容是放在 this.cache 中，在 DOM 节点上就设置了一个属性，在 key 方法中 DOM 节点上设置了 this.expando 对应 "uid"
+		 *
+		 * this.cache = { 0 : {}, 1 : {"username":"iceman"}  }
+		 */
 		this.set( owner, key, value );
 
 		// Since the "set" path can have two possible entry points
 		// return the expected data based on which path was taken[*]
+		/**
+		 * $.data( document.body,"username","iceman" ); 返回 "iceman"
+		 *
+		 * $.data( document.body, {"username": "iceman"} ); 返回 {"username": "iceman"}
+		 */
 		return value !== undefined ? value : key;
 	},
 	remove: function( owner, key ) {
 		var i, name, camel,
+		    /**
+		     * 找到 ID => "uid"
+		     */
 			unlock = this.key( owner ),
+		    /**
+		     * 通过 ID ( "uid" => 1 ) 找到对应的 json => {}
+		     *
+		     * this.cache = { 0 : {}, 1 : {}  }
+		     */
 			cache = this.cache[ unlock ];
 
-		/*
+		/**
 		 * 不指定具体的 key 的时候，会删除所有的数据缓存
 		 */
 		if ( key === undefined ) {
@@ -4943,8 +5020,8 @@ Data.prototype = {
 
 		} else {
 			// Support array or space separated string of keys
-			/*
-			 * 判断是不是数组， $.removeData(document.body,["age","job"])
+			/**
+			 * 判断是不是数组， $.removeData(document.body,["age","job"]);
 			 */
 			if ( jQuery.isArray( key ) ) {
 				// If "name" is an array of keys...
@@ -4953,14 +5030,22 @@ Data.prototype = {
 				// Since there is no way to tell _how_ a key was added, remove
 				// both plain key and camelCase key. #12786
 				// This will only penalize the array argument path.
-				/*
-				 * jQuery.camelCase 返回驼峰的形式 "all-mame" -> "allName"
+				/**
+				 * jQuery.camelCase 返回驼峰的形式 "all-mame" => "allName"
+				 * $.removeData(document.body,["data-age","data-job"]);
+				 * name => ["data-age", "data-job", "dataAge", "dataJob"]
+				 * ECMA5 数组新方法 map()：对数组中的每一项运行给定函数，返回一个数组，而这个数组的每一项都是在原始数组中的对应项上运行传入函数的结果
+				 * key.map( jQuery.camelCase ) => ["dataAge", "dataJob"]
+				 * key.concat( ["dataAge", "dataJob"] );
 				 */
 				name = key.concat( key.map( jQuery.camelCase ) );
 			} else {
+				/**
+				 * $.removeData(document.body,"username");
+				 */
 				camel = jQuery.camelCase( key );
 				// Try the string as a key before any manipulation
-				/*
+				/**
 				 * key 在 cache 中存不存在
 				 */
 				if ( key in cache ) {
@@ -4969,11 +5054,11 @@ Data.prototype = {
 					// If a key with the spaces exists, use it.
 					// Otherwise, create an array by matching non-whitespace
 					name = camel;
-					/*
+					/**
 					 * 看看转完驼峰以后在不在 cache 中
 					 */
 					name = name in cache ?
-						/*
+						/**
 						 * name.match( core_rnotwhite ) 是去掉空格后有没有 key
 						 */
 						[ name ] : ( name.match( core_rnotwhite ) || [] );
@@ -4981,6 +5066,9 @@ Data.prototype = {
 			}
 
 			i = name.length;
+			/**
+			 * 循环删除
+			 */
 			while ( i-- ) {
 				delete cache[ name[ i ] ];
 			}
@@ -4992,7 +5080,8 @@ Data.prototype = {
 		);
 	},
 	discard: function( owner ) {
-		/*
+		/**
+		 * 一次性删除 cache 对象中元素节点的所有数据？？
 		 * 删除的是一个整体 1:{"name","aa"} 删除的是 "1" 这个整体
 		 */
 		if ( owner[ this.expando ] ) {
@@ -5002,17 +5091,20 @@ Data.prototype = {
 };
 
 // These may be used throughout the jQuery core codebase
-/*
+/**
  * 对外的数据缓存对象
  */
 data_user = new Data();
-/*
+/**
  * 对内的数据缓存对象
  */
 data_priv = new Data();
 
 
 jQuery.extend({
+	/**
+	 * 是否允许添加 data
+	 */
 	acceptData: Data.accepts,
 
 	hasData: function( elem ) {
@@ -5039,54 +5131,67 @@ jQuery.extend({
 });
 
 jQuery.fn.extend({
+	/**
+	 * $("#box").data("username","iceman"); $("#box").data("username");$("#box").data({"username":"iceman","age":"30"});
+	 */
 	data: function( key, value ) {
 		var attrs, name,
-			/*
-			 * 找到一组元素的第一个
+			/**
+			 * 找到一组元素的第一个，获取 data 是一组元素的第一个，设置是一组元素都设置
 			 */
 			elem = this[ 0 ],
 			i = 0,
 			data = null;
 
 		// Gets all values
+		/**
+		 * $("#box").data(); 获取所有 values
+		 * this => $("#box")
+		 */
 		if ( key === undefined ) {
-			/*
+			/**
 			 * 判断元素是否存在
 			 */
 			if ( this.length ) {
-				/*
+				/**
 				 * 获取元素中的数据
+				 * data => { username: "iceman", age: "30" }
 				 */
 				data = data_user.get( elem );
 
-				/*
-				 * 用来获取 HTML 中 data-* 的自定义数据
+				/**
+				 * nodeType = 1; 说明必须是元素
+				 * 用来获取 HTML 中 data-* 的自定义数据：<div id="box" data-user-job="IT"></div>
 				 * data_priv.get( elem, "hasDataAttrs" ) 第一次进来肯定是 false，在取反
 				 */
 				if ( elem.nodeType === 1 && !data_priv.get( elem, "hasDataAttrs" ) ) {
-					/*
+					/**
 					 * 获取元素所有属性的集合
 					 */
 					attrs = elem.attributes;
 					for ( ; i < attrs.length; i++ ) {
-						/*
+						/**
 						 * 获取属性名，如果要获取属性的值的话 attrs[i].value
 						 */
 						name = attrs[ i ].name;
 
+						/**
+						 * 找到 "data-" 开头的属性名：data-user-job
+						 */
 						if ( name.indexOf( "data-" ) === 0 ) {
-							/*
-							 * 把 data- 截掉，然后转驼峰
+							/**
+							 * 把 data- 截掉，name => user-job 然后转驼峰 => userJob
 							 */
 							name = jQuery.camelCase( name.slice(5) );
-							/*
+							/**
 							 * 这个方法就是把自定义属性 "data-*" 放到 $.data() 中
+							 * data[ name ] => 就是获取之前 data_user.get( elem ) =>  { username: "iceman", age: "30" } 中的属性值
 							 */
 							dataAttr( elem, name, data[ name ] );
 						}
 					}
-					/*
-					 * 这里在设置一下，下次就不走了
+					/**
+					 * 这里在设置一下，下次在 $("#box").data(); 就不会进整个 if 了
 					 */
 					data_priv.set( elem, "hasDataAttrs", true );
 				}
@@ -5096,8 +5201,8 @@ jQuery.fn.extend({
 		}
 
 		// Sets multiple values
-		/*
-		 * 设置多个属性值 $("div").data({name:"iceman",age:28})
+		/**
+		 * 设置多个属性值 $("#box").data({"username":"iceman","age":"30"});
 		 */
 		if ( typeof key === "object" ) {
 			return this.each(function() {
@@ -5105,6 +5210,23 @@ jQuery.fn.extend({
 			});
 		}
 
+		/**
+		 * $("#box").data("username","iceman"); 这种情况走这里
+		 *
+		 * null 对应的是 key ，
+		 * arguments.length > 1 == true 的话就是说明 ele 是存在的，否则就说明不存在，jQuery.access() 最终会调用获取的操作 fn.call(ele);
+		 * elem是不存在的，那么回调中的 value 就是 undefined，this.each() 就不会走了
+		 *
+		 * jQuery.access( this,fn,  null, value, arguments.length > 1, null, true );
+		 * jQuery.access 内部使用，多功能值的操作( 设置或者获取 )
+		 * this => elems $("#box")
+		 * fn => 回调函数
+		 * key => null，因为 key 已经有了所以就不用传了
+		 * value => value
+		 * arguments.length > 1 => true =>  chainable = true; 说明现在要设置 ( 也表示是否可以链式调用 )，false 的话那么这个回调函数就是获取操作
+		 * emptyGet => null   ( 一般就是 undefined )
+		 * raw = true; 那说明 value 是个字符串 ( value 是原始数据 )
+		 */
 		return jQuery.access( this, function( value ) {
 			var data,
 				camelKey = jQuery.camelCase( key );
@@ -5114,8 +5236,9 @@ jQuery.fn.extend({
 			// `value` parameter was not undefined. An empty jQuery object
 			// will result in `undefined` for elem = this[ 0 ] which will
 			// throw an exception if an attempt to read a data cache is made.
-			/*
-			 * 这个 if 走的都是获取的操作
+			/**
+			 * value = "iceman"
+			 * 这个 if 走的都是获取的操作：$("#box").data("username");
 			 */
 			if ( elem && value === undefined ) {
 				// Attempt to get data from the cache
@@ -5127,7 +5250,7 @@ jQuery.fn.extend({
 
 				// Attempt to get data from the cache
 				// with the key camelized
-				/*
+				/**
 				 * 转完驼峰再去找
 				 */
 				data = data_user.get( elem, camelKey );
@@ -5147,41 +5270,50 @@ jQuery.fn.extend({
 			}
 
 			// Set the data...
-			/*
-			 * 设置
-			 * 这里会处理一种特殊情况
-			 * $("div").data("nameAge","hi");
-			 * $("div").data("name-age","hello");
-			 * this.cache ={
-			 *     1:{
-			 *         "nameAge":"hello",
-			 *         "name-age":"hello"
-			 *     }
-			 * };
-			 * 如果是只有 $("div").data("name-age","hello"); 只会出现 "nameAge":"hello"
-			 */
 			this.each(function() {
 				// First, attempt to store a copy or reference of any
 				// data that might've been store with a camelCased key.
+				/**
+				 * 一般情况：$("#box").data("username","iceman");
+				 * camelKey => "username";
+				 *
+				 * $("#box").data("nameAge","hi");
+				 * $("#box").data("name-age","hello");
+				 * data => undefined，第二次进来 data 就会有值了，并且是 "hi"
+				 */
 				var data = data_user.get( this, camelKey );
 
 				// For HTML5 data-* attribute interop, we have to
 				// store property names with dashes in a camelCase form.
 				// This might not apply to all properties...*
+				/**
+				 * 设置
+				 */
 				data_user.set( this, camelKey, value );
 
 				// *... In the case of properties that might _actually_
 				// have dashes, we need to also store a copy of that
 				// unchanged property.
+				/**
+				 * 设置
+				 * 这里会处理一种特殊情况
+				 * $("#box").data("nameAge","hi");
+				 * $("#box").data("name-age","hello");
+				 * data_user.cache ={
+				 *     1:{
+				 *         "nameAge":"hello",
+				 *         "name-age":"hello"
+				 *     }
+				 * };
+				 * 如果是只有 $("div").data("name-age","hello"); 只会出现 "nameAge":"hello"
+				 */
 				if ( key.indexOf("-") !== -1 && data !== undefined ) {
+					/**
+					 * 重新设置下，覆盖前者
+					 */
 					data_user.set( this, key, value );
 				}
 			});
-		/*
-		 * null 对应的是 key ，因为 key 已经有了所以就不用传了
-		 * arguments.length == 1 的话就是 false，那么这个回调函数就是获取操作
-		 * 后面两个参数没什么用
-		 */
 		}, null, value, arguments.length > 1, null, true );
 	},
 
@@ -5192,22 +5324,28 @@ jQuery.fn.extend({
 	}
 });
 
+/**
+ * 把自定义属性 "data-*" 放到 $.data() 中
+ */
 function dataAttr( elem, key, data ) {
 	var name;
 
 	// If nothing was found internally, try to fetch any
 	// data from the HTML5 data-* attribute
-	/*
-	 * data === undefined 是为了如果之前 $.data() 设置过，然后又在 HTML 中也设置了同样的属性名，那么就不会再添加到 $.data() 中
-	 * elem.nodeType === 1 是要一个元素
+	/**
+	 * data === undefined 说明 $.data() 没有设置过，如果 data 有值，然后又在 HTML 中也设置了同样的属性名，那么就不会再添加到 $.data() 中
+	 * elem.nodeType === 1 必须是要一个元素
 	 */
 	if ( data === undefined && elem.nodeType === 1 ) {
-		/*
-		 * key 就是转完驼峰的属性名
-		 * rmultiDash 是个正则，找大写的字母，在转成小写 例如： data-ice-name -> data-iceName -> data-ice-name
+		/**
+		 * key => name 指的就是转完驼峰的属性名
+		 * rmultiDash = /([A-Z])/g; 找大写的字母，然后再拼接一个 "-" 例如：userJob => data-Userjob，最后转小写
+		 * "$1" 就是获取分组的内容 ([A-Z]);
+		 * key => userJob; key.replace( rmultiDash, "-$1" ).toLowerCase() => user-job
+		 * 最后 name = "data-user-job";
 		 */
 		name = "data-" + key.replace( rmultiDash, "-$1" ).toLowerCase();
-		/*
+		/**
 		 * 通过属性名找到对应的属性的值
 		 */
 		data = elem.getAttribute( name );
@@ -5218,19 +5356,23 @@ function dataAttr( elem, key, data ) {
 					data === "false" ? false :
 					data === "null" ? null :
 					// Only convert to a number if it doesn't change the string
-					/*
+					/**
 					 * +data 就是转数字，这句就是判断是不是字符串的数字，如果是就存对应的数字
 					 */
 					+data + "" === data ? +data :
-					/*
-					 * 如果属性值是 "a100" 那么上面 +"a100" 就会变成 NaN，那么就会走最后一句，该什么就是什么
-					 * rbrace 这个正则就是判断是不是一个 json，如果是的话，就把字符串的 json 转为真正的 json
+					/**
+					 * rbrace = /(?:\{[\s\S]*\}|\[[\s\S]*\])$/; 判断是不是一个 json
+					 * 如果属性值是 "a100" 那么上面 +"a100" 就会变成 NaN，那么就会走最后一句，该什么就是什么，data = "a100"
+					 * data 如果是 json 的话，就把字符串的 json 转为真正的 json
 					 */
 					rbrace.test( data ) ? JSON.parse( data ) :
 					data;
 			} catch( e ) {}
 
 			// Make sure we set the data so it isn't changed later
+			/**
+			 * 保证设置的 data 之后不会变，也就是说在缓存中也设置下
+			 */
 			data_user.set( elem, key, data );
 		} else {
 			data = undefined;

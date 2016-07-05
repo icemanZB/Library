@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.data()</title>
+	<script src="jquery-2.0.3.read.js"></script>
+	<script>
+		$(function () {
+
+			// $.data(document.body,"username","iceman") ;  // 这里会返回设置的值，也就是 "iceman"
+
+			// $.removeData(document.body,"username");
+
+			// $.removeData(document.body,["data-age","data-job"]);
+
+			// $.data(document.body, {"username": "iceman"});
+
+			// console.log( $.data( document.body , "username") );
+
+			// console.log( $.data( document.body ) );  // {username: "iceman"}
+
+			//$.data(document.body,"userName","iceman") ;
+
+			// console.log( $.data( document.body,"user-name" ) );
+
+			// 针对文本节点无法添加 data
+//			var $text = $("#box").contents().filter(function() {
+//				return this.nodeType == 3;
+//			});
+//
+//			$text.data("age",30);
+//
+//			$text.data("age");  // undefined
+
+			// console.log( $("#box").data( {"username":"iceman","age":"30"} ) );
+
+			// $("#box").data("username","iceman");
+
+			//console.log( $("#box").data("username") );
+
+			// $("span").data("username");
+
+
+			$("#box").data("nameAge","hi");
+			$("#box").data("name-age","hello");
+
+			console.log( $("#box").data("name-age") );
+
+		});
+
+	</script>
+</head>
+<body>
+
+<div id="box" data-user-job="IT">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed</div>
+
+</body>
+</html>
