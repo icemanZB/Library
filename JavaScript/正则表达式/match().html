@@ -22,6 +22,9 @@
 		var str2 = "1 plus 2 equal 3";
 		console.log(str2.match(/\d+/g)); //["1", "2", "3"]
 
+		var str3="column1 = 's' [or] column2 >= 456 [and] aa != 0";
+		console.log( str3.replace(/\[\w+\]/g,"|").split("|")[1]  );
+
 	</script>
 </head>
 <body>

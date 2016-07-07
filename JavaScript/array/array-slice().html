@@ -27,6 +27,32 @@
 		 * 真实数组有 slice() 方法，可以对数组进行浅复制 ( 不影响原数组 )，返回的依然是数组
 		 */
 		Array.prototype.slice.call(arr, 0);
+
+		function cutArr2(arr, rangNum) {
+			if (!arr || !(arr instanceof Array) || arr.length == 0) return null;
+			if (!/^\d+$/ || rangNum <= 0) throw new Error("请传入正确的分割数");
+			var len    = arr.length,
+			    newArr = [];
+
+			var divisor   = Math.floor(len / rangNum),
+			    remainder = len % rangNum;
+
+			if (divisor > 0) {
+				for (var i = 0; i < divisor; i++) {
+					var tmpArr = arr.slice(i * rangNum, i * rangNum + rangNum);
+					newArr.push(tmpArr);
+				}
+			}
+
+			if (remainder > 0) {
+				newArr.push(arr.slice(len - remainder, len));
+			}
+
+			return newArr;
+		}
+
+		console.log(cutArr2([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3));
+
 	</script>
 </head>
 <body>

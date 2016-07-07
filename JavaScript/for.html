@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>for</title>
+	<script>
+		function cutArr(arr) {
+			var len    = arr.length,
+			    newArr = [];
+
+			for (var i = 0; i < len; i += 3) {
+				var tmpArr = [];
+				arr[i] && tmpArr.push(arr[i]);
+				arr[i + 1] && tmpArr.push(arr[i + 1]);
+				arr[i + 2] && tmpArr.push(arr[i + 2]);
+				newArr.push(tmpArr);
+			}
+			return newArr;
+		}
+
+		function cutArr2(arr, rangNum) {
+			if (!arr || !(arr instanceof Array) || arr.length == 0) return null;
+			if (!/^\d+$/ || rangNum <= 0) throw new Error("请传入正确的分割数");
+			var len    = arr.length,
+			    newArr = [];
+
+			var divisor   = Math.floor(len / rangNum),
+			    remainder = len % rangNum;  // 剩余的
+
+			if (divisor > 0) {
+				for (var i = 0; i < divisor; i++) {
+					var tmpArr = arr.slice(i * rangNum, i * rangNum + rangNum);
+					newArr.push(tmpArr);
+				}
+			}
+
+			if (remainder > 0) {
+				newArr.push(arr.slice(len - remainder, len));
+			}
+
+			return newArr;
+		}
+
+		console.log(cutArr2([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3));
+
+		var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+		var newArr = [];
+		for (var i = 0, j = 3; i < 3; i++, j += 3) {
+			var tmpArr = arr.slice(i * 3, j);
+			newArr.push(tmpArr);
+		}
+		console.log(newArr);
+	</script>
+</head>
+<body>
+
+</body>
+</html>

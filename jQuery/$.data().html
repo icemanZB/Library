@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$.data()</title>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script>
+		$(function () {
+
+			// 静态方法与实例方法的区别
+			var ele1 = $("#oDiv");
+			var ele2 = $("#oDiv");
+
+			ele1.data("a", 1111);
+			ele2.data("a", 2222);
+
+			show("第一组,通过$().data()的方式,只取到最后一个a值,之前的被覆盖");
+			show(ele1.data("a"));
+			show(ele2.data("a"));
+
+			show();
+			//=======第二组=========
+			show("第二组,通过$.data的方式,取到2组b值，未覆盖");
+			$.data(ele1, "b", "1111");
+			$.data(ele2, "b", "2222");
+
+			show($.data(ele1, "b"));
+			show($.data(ele2, "b"));
+
+			function show(data) {
+				if (arguments.length == 2) {
+					var info = arguments[0];
+					var data = arguments[1];
+					for (var key in data) {
+						$("body").append('<li>' + info + 'key->' + key + '; value->' + data[key] + '</li>')
+					}
+					return
+				}
+
+				if (!data) {
+					return $("body").append('</br>')
+				}
+				if (typeof data === 'object') {
+					for (var key in data) {
+						$("body").append('<li>key->' + key + '; value->' + data[key] + '</li>')
+					}
+				} else {
+					$("body").append('<li>' + data + '</li>')
+				}
+			}
+		})
+	</script>
+</head>
+<body>
+<div id="oDiv"></div>
+</body>
+</html>

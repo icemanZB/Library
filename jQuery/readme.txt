@@ -48,3 +48,13 @@ https://segmentfault.com/a/1190000000626031  $.data()
 http://www.jb51.net/article/86535.htm?pc     $.data()
 
 http://www.bubuko.com/infodetail-541759.html   $.data()
+
+http://www.imooc.com/code/3446  $.data()
+
+http://www.imooc.com/code/4309  $.data() 与 $().data() 的区别
+
+http://blog.csdn.net/liujie19901217/article/details/51694708  $.queue()
+
+http://blog.csdn.net/charlene0824/article/details/51657424    $.queue()
+
+http://www.cnblogs.com/aaronjs/p/3800619.html   $.queue()

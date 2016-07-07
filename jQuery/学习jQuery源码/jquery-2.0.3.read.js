@@ -1312,7 +1312,7 @@ jQuery.extend({
 			if ( isArraylike( Object(arr) ) ) {
 				/**
 				 * 最后还是调用的是 merge，把 ret( 如果是 jQuery 对象 ) 就把 arr ( arguments、nodeList ) 扩展到 ret ( jQuery 对象上 )
-				 * 如果 ret = []; 就执行单纯的数组合并
+				 * 如果 ret = []; 就执行单纯的数组合并 => jQuery.merge([],[fn1,fn2]); => ret = [fn1,fn2];
 				 * 这里有个判断，如果是字符串的话，就直接放到了数组里面
 				 */
 				jQuery.merge( ret,
@@ -4719,7 +4719,9 @@ jQuery.support = (function( support ) {
 				!parseFloat( ( window.getComputedStyle( marginDiv, null ) || {} ).marginRight );
 		}
 
-		/* 移除创建好的元素 */
+		/**
+		 * 移除创建好的元素
+		 */
 		body.removeChild( container );
 	});
 
@@ -4741,6 +4743,9 @@ var data_user, data_priv,
 	rbrace = /(?:\{[\s\S]*\}|\[[\s\S]*\])$/,
 	rmultiDash = /([A-Z])/g;
 
+/**
+ * 缓存系统，其内部应用中，动画、事件等都有用到这个缓存系统
+ */
 function Data() {
 	// Support: Android < 4,
 	// Old WebKit does not have Object.preventExtensions/freeze method,
@@ -4895,6 +4900,13 @@ Data.prototype = {
 		 * $.data( document.body,"username","iceman" );
 		 */
 		if ( typeof data === "string" ) {
+			/**
+			 * 数据直接就是通过对象的键值对的方式存储在内存中的。
+			 * 当我们重复同一个 key 的时候，其实是反复操作同一个 cache 缓存区下的同一个 key
+			 * var ele1 = $("#oDiv").data("a", 1111);
+			 * var ele2 = $("#oDiv").data("a", 2222);
+			 * 这样后者覆盖前者
+			 */
 			cache[ data ] = value;
 
 		// Handle: [ owner, { properties } ] args
@@ -5092,6 +5104,7 @@ Data.prototype = {
 
 // These may be used throughout the jQuery core codebase
 /**
+ * 了避免 jQuery 内部使用的数据和用户自定义的数据发生冲突，数据缓存模块把内部数据存储在数据缓存对象上，把自定义数据存储在数据缓存对象的属性 data 上
  * 对外的数据缓存对象
  */
 data_user = new Data();
@@ -5112,6 +5125,19 @@ jQuery.extend({
 	},
 
 	data: function( elem, name, data ) {
+		/**
+		 * 这里是使用 access()
+		 * var ele1 = $("#box");
+		 * var ele2 = $("#box");
+		 * $.data(ele1, "b", "1111");
+		 * $.data(ele2, "b", "2222");
+		 * 这里后者不会覆盖前者，会在 cache 中存 2 份
+		 * this.cache={
+		 *     0:{},
+		 *     1:{ b:"1111" },
+		 *     2:{ b:"1111" }
+		 * }
+		 */
 		return data_user.access( elem, name, data );
 	},
 
@@ -5380,35 +5406,38 @@ function dataAttr( elem, key, data ) {
 	}
 	return data;
 }
+/**
+ * 队列(先进先出)方法，执行顺序的管理
+ */
 jQuery.extend({
 	queue: function( elem, type, data ) {
 		var queue;
 
 		if ( elem ) {
-			/*
+			/**
 			 * type 就是队列的名字，默认是 "fx"
 			 */
 			type = ( type || "fx" ) + "queue";
-			/*
-			 * 先去取一下 queue 存不存在
+			/**
+			 * 先去取一下 queue 在缓存中存不存在
 			 * $.queue(document,"q1",aaa); 第一次走 queue 肯定是没有的
 			 * $.queue(document,"q1",bbb); 第二次走就有了
 			 */
 			queue = data_priv.get( elem, type );
 
 			// Speed up dequeue by getting out quickly if this is just a lookup
-			/*
-			 * data 就是第三个参数
+			/**
+			 * data 就是第三个参数，如果 data 存在 执行 setting 操作
 			 */
 			if ( data ) {
-				/*
+				/**
 				 * 第一次当 queue 没有的时候，就创建一个 data 缓存
-				 * $.queue(document,"q1",[ccc]); 当第三个参数是个数组的时候，不管之前添加过多少个，都会被覆盖掉
+				 * $.queue(document,"q1",[ccc]); 当第三个参数是个数组的时候，不管之前添加过多少个，都会被覆盖掉 (队列重置)
 				 */
 				if ( !queue || jQuery.isArray( data ) ) {
 					queue = data_priv.access( elem, type, jQuery.makeArray(data) );
 				} else {
-					/*
+					/**
 					 * 之后的几次直接添加到之前创建的 data 缓存中
 					 */
 					queue.push( data );
