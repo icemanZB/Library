@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>delay()</title>
+	<script src="jquery-2.0.3.read.js"></script>
+	<script>
+		$(function () {
+
+			function fn() {
+				console.log(1);
+			}
+
+			var $p = $("p");
+			$p.delay(2000, "mx");
+
+			$p.queue("mx", fn);
+
+			$p.dequeue("mx"); // 2 秒后输出 1
+
+		})
+	</script>
+</head>
+<body>
+
+<p id="box">PPPPPPPPPPPPPPPPPPPPPPPPPPPP</p>
+
+</body>
+</html>

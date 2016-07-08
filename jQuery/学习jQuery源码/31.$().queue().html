@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$().queue()</title>
+	<script src="jquery-2.0.3.read.js"></script>
+	<script>
+		$(function () {
+
+			function fn1() {console.log(1);}
+
+			function fn2() {console.log(2);}
+
+			var $p = $("p");
+			$p.queue("mx", fn1);
+			$p.queue("mx", fn2);
+
+			// 这样，三个 function 就入列了，列名是 "mx"。 取队列元素只需传一个列名如 "mx"
+			// var queue = $p.queue("mx");
+			// console.log(queue); // [ff1, ff2, ff3]
+		})
+	</script>
+</head>
+<body>
+
+<p id="box">PPPPPPPPPPPPPPPPPPPPPPPPPPPP</p>
+
+</body>
+</html>

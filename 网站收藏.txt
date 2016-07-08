@@ -198,3 +198,8 @@ http://jianfei.39.net/  减肥
 http://www.jb51.net/article/47147.htm   document.write()
 
 http://www.w3cfuns.com/
+
+http://web.jobbole.com/85058/   mvvm
+
+抽离项目中公用的组件
+了解 mvvm reactjs angularjs webpack vuejs

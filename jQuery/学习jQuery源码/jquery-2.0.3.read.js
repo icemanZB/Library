@@ -4894,7 +4894,6 @@ Data.prototype = {
 		     * this.cache = { 0 : {}, 1 : {}  }
 			 */
 			cache = this.cache[ unlock ];
-
 		// Handle: [ owner, key, value ] args
 		/**
 		 * $.data( document.body,"username","iceman" );
@@ -5449,20 +5448,27 @@ jQuery.extend({
 
 	dequeue: function( elem, type ) {
 		type = type || "fx";
-
-		var queue = jQuery.queue( elem, type ), /* 获得队列 */
+		/**
+		 * 获得队列
+		 */
+		var queue = jQuery.queue( elem, type ),
 			startLength = queue.length,
-			fn = queue.shift(), /* 找到队列数组的第一项 */
+			/**
+		     * 找到队列数组的第一项
+		     */
+			fn = queue.shift(),
 			hooks = jQuery._queueHooks( elem, type ),
-			/* next() 就是出队的操作 */
+			/**
+			 * next() 就是出队的操作
+			 */
 			next = function() {
 				jQuery.dequeue( elem, type );
 			};
 
 		// If the fx queue is dequeued, always remove the progress sentinel
-		/*
+		/**
 		 * "inprogress" 是针对 "fx" 的
-		 *  之后的出队操作的时候，有 "inprogress" 的话就删除，然后长度减减
+		 *  之后的出队操作的时候，有 "inprogress" 的话就删除，然后 startLength--;
 		 */
 		if ( fn === "inprogress" ) {
 			fn = queue.shift();
@@ -5472,7 +5478,7 @@ jQuery.extend({
 		if ( fn ) {
 			// Add a progress sentinel to prevent the fx queue from being
 			// automatically dequeued
-			/*
+			/**
 			 * 这里 animate() 第一次调用的时候，就是默认 "fx"，然后直接在队列里面添加了 "inprogress"
 			 * 就是第一次的时候直接执行出队的操作，后续就不会执行了
 			 */
@@ -5482,14 +5488,14 @@ jQuery.extend({
 
 			// clear up the last queue stop function
 			delete hooks.stop;
-			/*
+			/**
 			 * 这里在执行队列中的函数
 			 */
 			fn.call( elem, next, hooks );
 		}
 
-		/*
-		 * 主动触发 remove 操作，清理缓存
+		/**
+		 * 在需要的时候，主动触发 data_priv.remove 操作，清理缓存
 		 */
 		if ( !startLength && hooks ) {
 			hooks.empty.fire();
@@ -5497,12 +5503,18 @@ jQuery.extend({
 	},
 
 	// not intended for public consumption - generates a queueHooks object, or returns the current one
-	/*
-	 * 出队结束之后，在缓存中删除
+	/**
+	 * 出队结束之后，在缓存中删除( 删除data的callbacks )
+	 *
+	 * hooks 其实是元素 elem 在数据缓存中的一个属性对象，如果我们调用的是 $.dequeue(document, "xm"); 的话
+	 * 那么属性对象名就是 xmqueueHooks，属性值是：{ empty: jQuery.Callbacks("once memory").add( function(){} ) }
 	 */
 	_queueHooks: function( elem, type ) {
 		var key = type + "queueHooks";
 		return data_priv.get( elem, key ) || data_priv.access( elem, key, {
+			/**
+			 * empty 的属性值是一个 Callbacks 对象，Callbacks 的特点是可以通过它的 add 方法添加函数，当调用 Callbacks 的 fire 方法时，就会执行 add 添加的方法。
+			 */
 			empty: jQuery.Callbacks("once memory").add(function() {
 				data_priv.remove( elem, [ type + "queue", key ] );
 			})
@@ -5514,8 +5526,8 @@ jQuery.fn.extend({
 	queue: function( type, data ) {
 		var setter = 2;
 
-		/*
-		 * 默认省略了 type
+		/**
+		 * 默认省略了 type，使用 "fx"
 		 */
 		if ( typeof type !== "string" ) {
 			data = type;
@@ -5523,9 +5535,10 @@ jQuery.fn.extend({
 			setter--;
 		}
 
-		/*
+		/**
 		 * 根据长度来判断是设置还是获取
-		 * 获取的话，只查看一组元素的第一个元素
+		 * 获取的话，只获取一组元素的第一个元素
+		 * $p.queue("mx"); => this 就是 $p
 		 */
 		if ( arguments.length < setter ) {
 			return jQuery.queue( this[0], type );
@@ -5533,19 +5546,23 @@ jQuery.fn.extend({
 
 		return data === undefined ?
 			this :
-			/*
-			 * 对每一个进行设置
+			/**
+			 * 对每一个进行设置，$("div").queue("mx", fn1);
 			 */
 			this.each(function() {
+				/**
+				 * 调用工具方法进行设置
+				 */
 				var queue = jQuery.queue( this, type, data );
 
 				// ensure a hooks for this queue
-				/*
-				 * 这里先设置一下 hooks，当上面调用的时候，data_priv.get( elem, key ) 这个就会找到，直接返回
+				/**
+				 * 这里先设置一下 hooks，当上面再次调用 jQuery.queue( this, type, data ); 的时候
+				 * queue = data_priv.get( elem, type ); 这个就会找到，直接 queue.push( data );
 				 */
 				jQuery._queueHooks( this, type );
 
-				/*
+				/**
 				 * 这里是针对运动，入完队以后直接出队
 				 * $(this).animate({width:300},2000);
 				 * $(this).animate({height:300},2000);
@@ -5565,12 +5582,16 @@ jQuery.fn.extend({
 	// Based off of the plugin by Clint Helfers, with permission.
 	// http://blindsignals.com/index.php/2009/07/jquery-delay/
 	delay: function( time, type ) {
-		/*
+		/**
 		 * jQuery.fx.speeds 这个是在运动中定义过的，可以写 "fast"、"slow"
 		 */
 		time = jQuery.fx ? jQuery.fx.speeds[ time ] || time : time;
 		type = type || "fx";
 
+		/**
+		 * 设置 在 queue() 中 设置 dequeue() 的回调函数
+		 * fn.call( elem, next, hooks ); 执行这个回调函数的内容， fn = next(); 执行 dequeue()
+		 */
 		return this.queue( type, function( next, hooks ) {
 			var timeout = setTimeout( next, time );
 			hooks.stop = function() {
@@ -5579,14 +5600,14 @@ jQuery.fn.extend({
 		});
 	},
 	clearQueue: function( type ) {
-		/*
+		/**
 		 * 清除队列
 		 */
 		return this.queue( type || "fx", [] );
 	},
 	// Get a promise resolved when queues of a certain type
 	// are emptied (fx is the type by default)
-	/*
+	/**
 	 * 所有运动做完之后，可以进行 done() 的调用
 	 * $(this).animate({width:300},2000).animate({left:200},2000);
 	 * $(this).promise().done(function(){
@@ -5595,12 +5616,15 @@ jQuery.fn.extend({
 	 */
 	promise: function( type, obj ) {
 		var tmp,
-			count = 1, /* 计数有多少个要执行的队列 */
+		    /**
+		     * 计数有多少个要执行的队列
+		     */
+			count = 1,
 			defer = jQuery.Deferred(),
 			elements = this,
 			i = this.length,
 			resolve = function() {
-				/*
+				/**
 				 * 当所有的都出队了，就说明已经完成了，就会执行done()
 				 */
 				if ( !( --count ) ) {
@@ -5632,10 +5656,10 @@ var nodeHook, boolHook,
 
 jQuery.fn.extend({
 	attr: function( name, value ) {
-		/*
+		/**
 		 * this：每一个元素
 		 * jQuery.attr：回调方法 ( 实际调用的是工具方法中的 attr() )
-		 * name -> value 键值对
+		 * name => value 键值对
 		 * arguments.length > 1 决定是设置还是获取
 		 */
 		return jQuery.access( this, jQuery.attr, name, value, arguments.length > 1 );
@@ -5643,7 +5667,7 @@ jQuery.fn.extend({
 
 	removeAttr: function( name ) {
 		return this.each(function() {
-			/*
+			/**
 			 * 实际调用的是工具方法中的 removeAttr()
 			 */
 			jQuery.removeAttr( this, name );
@@ -5660,17 +5684,28 @@ jQuery.fn.extend({
 		});
 	},
 
+	/**
+	 * $("div").addClass(value);
+	 */
 	addClass: function( value ) {
 		var classes, elem, cur, clazz, j,
 			i = 0,
-			len = this.length,  // this 就是 $("div")
-			proceed = typeof value === "string" && value; // 如果是字符串，就返回该字符串，如果不是，则返回 false
+			/**
+			 * this => $("div")
+			 */
+			len = this.length,
+		    /**
+		     * 如果是字符串，就返回该字符串，如果不是，则返回 false
+		     */
+			proceed = typeof value === "string" && value;
 
-		/*
+		/**
 		 * 传了回调函数
-		 * $("div").addClass(function(index){
+		 * $("div").addClass(function(index,currentclass){
 		 *     return "box" + index;
 		 * });
+		 *
+		 * this => $("div")、currentclass => 当前元素的 className
 		 */
 		if ( jQuery.isFunction( value ) ) {
 			return this.each(function( j ) {
@@ -5680,40 +5715,51 @@ jQuery.fn.extend({
 
 		if ( proceed ) {
 			// The disjunction here is for better compressibility (see removeClass)
-			/*
-			 * 通过正则把字符串中的空格分成数组 $("div").addClass("box1 box2");  classes = [box1,box2]
+			/**
+			 * 通过正则把字符串中的空格分成数组 $("div").addClass("box1 box2");
+			 * core_rnotwhite = /\S+/g ;  classes = [box1,box2];
 			 */
 			classes = ( value || "" ).match( core_rnotwhite ) || [];
 
-			/*
-			 * 循环每一个元素 $("div")
+			/**
+			 * 循环每一个元素 $("div");
 			 */
 			for ( ; i < len; i++ ) {
+				/**
+				 * this[i] => DOM div 不是 jQuery 对象
+				 */
 				elem = this[ i ];
-				/*
-				 * 看看是不是元素节点，如果是其他节点 cur = false
-				 * 先去找自身的 className 有没有，没有的话，就返回 cur = " " ( 空格 )
+				/**
+				 * elem.nodeType === 1; 看看是不是元素节点，如果是其他节点 cur = false;
+				 * 然后先去找自身的 className 有没有，没有的话，就返回 cur = " " ( 空格 )
 				 * 有的话，找到之前的 className，并且前后加上空格
-				 * rclass 正则：匹配一些空白的字符 (回车、换行、换页)，替换成 " " 是空格，不是空， cur = elem.clssName
+				 * rclass = /[\t\r\n\f]/g; 匹配一些空白的字符 (回车、换行、换页)，替换成 " " 是空格，不是空， cur = elem.clssName
+				 *
+				 * <p class="box4"></p>  cur = " box4 ";
 				 */
 				cur = elem.nodeType === 1 && ( elem.className ?
 					( " " + elem.className + " " ).replace( rclass, " " ) :
 					" "
 				);
-
-				/*
-				 * 等于 " "，会返回真
+				/**
+				 * 等于" "，会返回真
 				 */
 				if ( cur ) {
 					j = 0;
-					/*
-					 * clazz 存储所要添加的 class，判断是否在原来的 cur 中，没有找到就添加
+					/**
+					 * classes = [box1,box2]; => clazz = "box1";( 存储所要添加的 className )
+					 * cur => 指的是当前元素原来的 className
+					 * 判断是否在原来的 cur 中，没有找到就添加
 					 */
 					while ( (clazz = classes[j++]) ) {
 						if ( cur.indexOf( " " + clazz + " " ) < 0 ) {
 							cur += clazz + " ";
 						}
 					}
+					/**
+					 * cur = " box4 box1 box2 ";
+					 * jQuery.trim( cur ); 去掉 cur 前后空格
+					 */
 					elem.className = jQuery.trim( cur );
 
 				}
@@ -5727,10 +5773,12 @@ jQuery.fn.extend({
 		var classes, elem, cur, clazz, j,
 			i = 0,
 			len = this.length,
-		/*
+			/**
 			 * "&&" 优先级高于 "||" ， alert( 1 || 0 && 2 ) => 1
-			 * 先计算 typeof value === "string" && value， arguments.length === 0 是没有写参数的时候，作用是删除所有 className
-			 */
+			 * 先计算 typeof value === "string" && value
+		     * arguments.length === 0 是没有写参数的时候，先计算 typeof value === "string" && value => false;
+		     * 在计算  arguments.length === 0 => true;  proceed = true || flase; => true
+		     */
 			proceed = arguments.length === 0 || typeof value === "string" && value;
 
 		if ( jQuery.isFunction( value ) ) {
@@ -5753,15 +5801,15 @@ jQuery.fn.extend({
 					j = 0;
 					while ( (clazz = classes[j++]) ) {
 						// Remove *all* instances
-						/*
-						 * 当 clazz 存在再 cur 中，那就 replace() " "
+						/**
+						 * 当 clazz 存在再 cur 中，那就替换成 " "
 						 */
 						while ( cur.indexOf( " " + clazz + " " ) >= 0 ) {
 							cur = cur.replace( " " + clazz + " ", " " );
 						}
 					}
-					/*
-					 * value ="" 或者不存在的时候，就删除所有
+					/**
+					 * value =""; 或者不存在的时候(undefined)，就删除所有
 					 */
 					elem.className = value ? jQuery.trim( cur ) : "";
 				}
@@ -5771,13 +5819,17 @@ jQuery.fn.extend({
 		return this;
 	},
 
-	/*
-	 * stateVal = true 就是不管元素中有没有这个 className，都是添加操作
-	 * stateVal = false 就是不管元素中有没有这个 className，都是删除操作
+	/**
+	 * stateVal = true; 就是不管元素中有没有这个 className，都是添加操作
+	 * stateVal = false; 就是不管元素中有没有这个 className，都是删除操作
 	 */
 	toggleClass: function( value, stateVal ) {
 		var type = typeof value;
 
+		/**
+		 * $("div").toggleClass("box1",true); => $("div").addClass("box1");
+		 * $("div").toggleClass("box1",false); => $("div").removeClass("box1");
+		 */
 		if ( typeof stateVal === "boolean" && type === "string" ) {
 			return stateVal ? this.addClass( value ) : this.removeClass( value );
 		}
@@ -5806,10 +5858,12 @@ jQuery.fn.extend({
 				}
 
 			// Toggle whole class name
-			/*
+			/**
 			 * 这里平时几乎用不到，不建议使用
 			 * $("div").toggleClass(false)，就是删除已有的 className
 			 * $("div").toggleClass(true) 通过缓存的形式在添加回去
+			 *
+			 * core_strundefined = typeof undefined;
 			 */
 			} else if ( type === core_strundefined || type === "boolean" ) {
 				if ( this.className ) {
@@ -5831,6 +5885,10 @@ jQuery.fn.extend({
 			i = 0,
 			l = this.length;
 		for ( ; i < l; i++ ) {
+			/**
+			 * this[i].nodeType === 1; 判断是元素节点
+			 * rclass = /[\t\r\n\f]/g; 匹配一些空白的字符
+			 */
 			if ( this[i].nodeType === 1 && (" " + this[i].className + " ").replace(rclass, " ").indexOf( className ) >= 0 ) {
 				return true;
 			}

@@ -20,11 +20,15 @@
 			$.queue(document, "xm", [fn1, fn2]); // 第三个参数为 数组
 
 			// 这时可以取到存入到缓存的对象
-			var fns1 = $.queue(document, "mx");
-			var fns2 = $.queue(document, "xm");
+			// var fns1 = $.queue(document, "mx");
+			// var fns2 = $.queue(document, "xm");
 
-			console.log(fns1);// [fn1]
-			console.log(fns2); // [fn1, fn2]
+			// console.log(fns1);// [fn1]
+			// console.log(fns2); // [fn1, fn2]
+
+			setInterval(function () {
+				$.dequeue(document, "xm");
+			}, 1000);
 
 		})
 	</script>

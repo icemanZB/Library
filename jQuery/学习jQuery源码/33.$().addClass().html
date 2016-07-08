@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$().addClass()</title>
+	<script src="jquery-2.0.3.read.js"></script>
+	<script>
+		$(function () {
+
+			$("#box").addClass("box1 box2");
+
+			$("#box").addClass(function(index,curClass){
+				console.log(index,curClass);
+			});
+
+
+			$("#box").removeClass();
+		})
+	</script>
+</head>
+<body>
+
+<p id="box" class="box4">PPPPPPPPPPPPPPPPPPPPPPPPPPPP</p>
+
+</body>
+</html>
