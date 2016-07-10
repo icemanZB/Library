@@ -6636,11 +6636,11 @@ if ( !jQuery.support.focusinBubbles ) {
 			 * 这两个目前就是只是对 focusin、focusout 处理
 			 */
 			setup: function() {
+				/*
+				 * 把函数绑定在 document 上，因为它是支持 focus、blur 这两个事件
+				 * 第三个参数是 true，说明是捕获的操作行为，由于 focus 本身是没有冒泡的，所以就不能写成 false
+				 */
 				if ( attaches++ === 0 ) {
-					/*
-					 * 把函数绑定在 document 上，因为它是支持 focus、blur 这两个事件
-					 * 第三个参数是 true，说明是捕获的操作行为，由于 focus 本身是没有冒泡的，所以就不能写成 false
-					 */
 					document.addEventListener( orig, handler, true );
 				}
 			},
@@ -9080,12 +9080,23 @@ var
 	 * 4) the catchall symbol "*" can be used
 	 * 5) execution will start with transport dataType and THEN continue down to "*" if needed
 	 */
+	/*
+	 * 一个类型对应一个回掉，执行回掉的方法是 inspectPrefiltersOrTransports
+	 * prefilters = {
+	 *     "jsonp":function(){}
+	 * }
+	 */
 	prefilters = {},
 
 	/* Transports bindings
 	 * 1) key is the dataType
 	 * 2) the catchall symbol "*" can be used
 	 * 3) selection will start with transport dataType and THEN go to "*" if needed
+	 */
+	/*
+	 * transports = {
+	 *     "jsonp":function(){}
+	 * }
 	 */
 	transports = {},
 
@@ -9094,6 +9105,10 @@ var
 
 // #8138, IE may throw an exception when accessing
 // a field from window.location if document.domain has been set
+/*
+ * 获取当前页面地址
+ * 在 IE 中，如果设置了 document.domain，那么 location.href 获取就会有问题了
+ */
 try {
 	ajaxLocation = location.href;
 } catch( e ) {
@@ -9108,11 +9123,18 @@ try {
 ajaxLocParts = rurl.exec( ajaxLocation.toLowerCase() ) || [];
 
 // Base "constructor" for jQuery.ajaxPrefilter and jQuery.ajaxTransport
+/*
+ * 映射 "prefilters"、"transports" 数据对象
+ * structure 这个参数就是传的上面两个，判断是预过滤器还是分发处理器
+ */
 function addToPrefiltersOrTransports( structure ) {
 
 	// dataTypeExpression is optional and defaults to "*"
 	return function( dataTypeExpression, func ) {
 
+		/*
+		 * 如果没有写 dataTypeExpression，默认是 "*" 通配
+		 */
 		if ( typeof dataTypeExpression !== "string" ) {
 			func = dataTypeExpression;
 			dataTypeExpression = "*";
@@ -9126,6 +9148,9 @@ function addToPrefiltersOrTransports( structure ) {
 			// For each dataType in the dataTypeExpression
 			while ( (dataType = dataTypes[i++]) ) {
 				// Prepend if requested
+				/*
+				 * 有 "+" 往前面添加，没有就往后添加，它是针对多个回掉函数 "jsonp":[function(){},function(){}]
+				 */
 				if ( dataType[0] === "+" ) {
 					dataType = dataType.slice( 1 ) || "*";
 					(structure[ dataType ] = structure[ dataType ] || []).unshift( func );
@@ -9140,6 +9165,9 @@ function addToPrefiltersOrTransports( structure ) {
 }
 
 // Base inspection function for prefilters and transports
+/*
+ * 触发回掉
+ */
 function inspectPrefiltersOrTransports( structure, options, originalOptions, jqXHR ) {
 
 	var inspected = {},
@@ -9149,18 +9177,31 @@ function inspectPrefiltersOrTransports( structure, options, originalOptions, jqX
 		var selected;
 		inspected[ dataType ] = true;
 		jQuery.each( structure[ dataType ] || [], function( _, prefilterOrFactory ) {
+			/*
+			 * prefilterOrFactory 就是对应的回掉函数，进行调用，这里可能会得到一个 "script"，就会走 if
+			 */
 			var dataTypeOrTransport = prefilterOrFactory( options, originalOptions, jqXHR );
 			if( typeof dataTypeOrTransport === "string" && !seekingTransport && !inspected[ dataTypeOrTransport ] ) {
+				/*
+				 * 这里会把 "script" 添加到 dataTypes 中
+				 */
 				options.dataTypes.unshift( dataTypeOrTransport );
 				inspect( dataTypeOrTransport );
 				return false;
 			} else if ( seekingTransport ) {
+				/*
+				 * 是分发处理的情况，当是跨域的时候是有 return 的返回值，把值赋值给 selected，那么整体结果是 false;
+				 * 如果不是跨域的情况，整体结果就是 true;
+				 */
 				return !( selected = dataTypeOrTransport );
 			}
 		});
 		return selected;
 	}
 
+	/*
+	 * 不是跨域的情况就会走后面 !inspected[ "*" ] && inspect( "*" )
+	 */
 	return inspect( options.dataTypes[ 0 ] ) || !inspected[ "*" ] && inspect( "*" );
 }
 
@@ -9169,6 +9210,13 @@ function inspectPrefiltersOrTransports( structure, options, originalOptions, jqX
 // Fixes #9887
 function ajaxExtend( target, src ) {
 	var key, deep,
+	    /*
+	     * 这两个参数不进行深拷贝，防止内存泄漏
+	     * flatOptions: {
+	     *    url: true,
+	     *    context: true
+	     * }
+	     */
 		flatOptions = jQuery.ajaxSettings.flatOptions || {};
 
 	for ( key in src ) {
@@ -9184,12 +9232,30 @@ function ajaxExtend( target, src ) {
 }
 
 jQuery.fn.load = function( url, params, callback ) {
+	/*
+	 * 这里的判断是用在 $(window).load(function(){});
+	 * _load = jQuery.fn.load 就是存储了之前的 load 方法
+	 */
 	if ( typeof url !== "string" && _load ) {
 		return _load.apply( this, arguments );
 	}
 
+	/*
+	 * $("div").load("2.php ol",{"name":"hello"},function(a,b,c){
+	 *     console.log(a);
+	 *     console.log(b);
+	 *     console.log(c);
+	 * });
+	 *
+	 * <?PHP
+	 *     echo '<ul><li>'.$_POST["name"].'</li></ul><ol><li>111</li></ol>';
+	 * ?>
+	 */
 	var selector, type, response,
 		self = this,
+		/*
+		 * 通过空格拆分选择器
+		 */
 		off = url.indexOf(" ");
 
 	if ( off >= 0 ) {
@@ -9198,6 +9264,9 @@ jQuery.fn.load = function( url, params, callback ) {
 	}
 
 	// If it's a function
+	/*
+	 * 参数的处理，因为第二个参数是可以不写的
+	 */
 	if ( jQuery.isFunction( params ) ) {
 
 		// We assume that it's the callback
@@ -9205,6 +9274,9 @@ jQuery.fn.load = function( url, params, callback ) {
 		params = undefined;
 
 	// Otherwise, build a param string
+	/*
+	 * 第二个参数是对象类型，请求类型改成 "POST"
+	 */
 	} else if ( params && typeof params === "object" ) {
 		type = "POST";
 	}
@@ -9227,9 +9299,15 @@ jQuery.fn.load = function( url, params, callback ) {
 
 				// If a selector was specified, locate the right elements in a dummy div
 				// Exclude scripts to avoid IE 'Permission Denied' errors
+				/*
+				 * 先动态创建一个 div，把拿到的数据 "<ul><ol>" 添加到 "div" 中，然后在进行筛选
+				 */
 				jQuery("<div>").append( jQuery.parseHTML( responseText ) ).find( selector ) :
 
 				// Otherwise use the full result
+				/*
+				 * 没有筛选条件就直接添加
+				 */
 				responseText );
 
 		}).complete( callback && function( jqXHR, status ) {
@@ -9241,6 +9319,9 @@ jQuery.fn.load = function( url, params, callback ) {
 };
 
 // Attach a bunch of functions for handling common AJAX events
+/*
+ * 全局事件
+ */
 jQuery.each( [ "ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend" ], function( i, type ){
 	jQuery.fn[ type ] = function( fn ){
 		return this.on( type, fn );
@@ -9256,11 +9337,23 @@ jQuery.extend({
 	lastModified: {},
 	etag: {},
 
+	/*
+	 * 配置参数
+	 */
 	ajaxSettings: {
 		url: ajaxLocation,
 		type: "GET",
+		/*
+		 * 看看是不是本地打开方式 rlocalProtocol = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/;
+		 */
 		isLocal: rlocalProtocol.test( ajaxLocParts[ 1 ] ),
+		/*
+		 * 默认触发全局事件，也就是 ajax 触发之前会触发全局的事件 $(document).on("ajaxStart",function(){});
+		 */
 		global: true,
+		/*
+		 * 是否 序列化
+		 */
 		processData: true,
 		async: true,
 		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -9268,14 +9361,18 @@ jQuery.extend({
 		timeout: 0,
 		data: null,
 		dataType: null,
-		username: null,
+		username: null, 服务器身份验证
 		password: null,
 		cache: null,
-		throws: false,
-		traditional: false,
-		headers: {},
+		throws: false, 这个参数为 true 的时候，一切的错误都在控制台输出
+		traditional: false, 拼接数据使用传统模式还是常用模式
+		headers: {}, 请求头部信息
 		*/
 
+		/*
+		 * 请求头信息，传输到后台的数据类型，默认是通用
+		 * allTypes = "*\/".concat("*");  => *\/* 这种写法是解决一个bug，当代码压缩处理的时候，直接写成 "*\/*" 会有问题， "\" 这是我自己加的防止语法错误
+		 */
 		accepts: {
 			"*": allTypes,
 			text: "text/plain",
@@ -9284,12 +9381,22 @@ jQuery.extend({
 			json: "application/json, text/javascript"
 		},
 
+		/*
+		 * 针对响应头信息的 Content-Type，服务器端返回的( 可以设置 )，当不去设置 dataType，整体的accepts 是同陪的，不知道是"html"、"xml"、"json"
+		 * 这样怎么选择不同的处理方式，就是根据相应头信息的 Content-Type 决定的，如果他是 "text/html"，那么他现在就进行匹配 => html: /html/
+		 * 那么就会对这个 'html" 进行解析 ( converters )
+		 *
+		 * $.ajax({url:"2.php",contentType:"text/script",success:function(){} }); 这里设置的 contentType 是在请求头信息中的
+		 */
 		contents: {
 			xml: /xml/,
 			html: /html/,
 			json: /json/
 		},
 
+		/*
+		 * 相应的数据对应关系，因为 jqXHR 是模拟出来的，所以可能会没有原生这些 "responseXML"，所以要做映射
+		 */
 		responseFields: {
 			xml: "responseXML",
 			text: "responseText",
@@ -9298,6 +9405,9 @@ jQuery.extend({
 
 		// Data converters
 		// Keys separate source (or catchall "*") and destination types with a single space
+		/*
+		 * 转换对象
+		 */
 		converters: {
 
 			// Convert anything to text
@@ -9317,6 +9427,9 @@ jQuery.extend({
 		// you can add your own custom options here if
 		// and when you create one that shouldn't be
 		// deep extended (see ajaxExtend)
+		/*
+		 * 防止深拷贝导致的内存泄漏
+		 */
 		flatOptions: {
 			url: true,
 			context: true
@@ -9330,9 +9443,16 @@ jQuery.extend({
 		return settings ?
 
 			// Building a settings object
+			/*
+			 * 默认参数 + 配置参数 => 新的{}
+			 */
 			ajaxExtend( ajaxExtend( target, jQuery.ajaxSettings ), settings ) :
 
 			// Extending ajaxSettings
+			/*
+			 * 默认参数 + 配置参数 => 默认参数 ( 覆盖扩展默认参数 )
+			 * $.ajaxSetup({ type:"POST" });
+			 */
 			ajaxExtend( jQuery.ajaxSettings, target );
 	},
 
@@ -9340,6 +9460,10 @@ jQuery.extend({
 	ajaxTransport: addToPrefiltersOrTransports( transports ),
 
 	// Main method
+	/*
+	 * 这里可以接收两个参数，是这样的情况，平时用的不多 $.ajax("2.php",{"type":"POST","success":function(){});
+	 * 一般都这样写： $.ajax({"url":"2.php","type":"POST","success":function(){});
+	 */
 	ajax: function( url, options ) {
 
 		// If url is an object, simulate pre-1.5 signature
@@ -9366,17 +9490,41 @@ jQuery.extend({
 			// Loop variable
 			i,
 			// Create the final options object
+			/*
+			 * 作用是：配置参数覆盖默认参数的行为
+			 */
 			s = jQuery.ajaxSetup( {}, options ),
 			// Callbacks context
+			/*
+			 * 指定上下文
+			 * $.ajax({url:"2.php",context:document,success:function(){
+			 *     console.log(this);  // 不写 context，默认就是 jQuery.ajaxSetup( {}, options )，写了 document
+			 * }});
+			 */
 			callbackContext = s.context || s,
 			// Context for global events is callbackContext if it is a DOM node or jQuery collection
+			/*
+			 * 针对全局事件的操作： [ "ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend" ] 6个自定义事件，通过 trigger(主动触发) 调用
+			 * $(document).on("ajaxStart ajaxStop",function(){}); 这个事件不能给其他元素加，只能加在 document，当然不是所有的全局事件都必须要加在 document 上
+			 * ajaxComplete、ajaxError、ajaxSuccess、ajaxSend 就可以加在某个元素上，但是必须设置 context
+			 *
+			 * 例如： $.ajax({url:"2.php",context:$("#div1"),success:function(){}});
+			 *       $("#div1").on("ajaxSend",function(){ console.log(111); });
+			 */
 			globalEventContext = s.context && ( callbackContext.nodeType || callbackContext.jquery ) ?
 				jQuery( callbackContext ) :
 				jQuery.event,
 			// Deferreds
+			/*
+			 * 用处就是提供不同的写法 $.ajax().done().fail();
+			 */
 			deferred = jQuery.Deferred(),
 			completeDeferred = jQuery.Callbacks("once memory"),
 			// Status-dependent callbacks
+			/*
+			 * 状态码对应的回掉操作
+			 * $.ajax({ url:"2.php",success:function(){}, statusCode:function(){} })
+			 */
 			statusCode = s.statusCode || {},
 			// Headers (they are sent all at once)
 			requestHeaders = {},
@@ -9386,10 +9534,19 @@ jQuery.extend({
 			// Default abort message
 			strAbort = "canceled",
 			// Fake xhr
+			/*
+			 * 模拟出来的 jqXHR
+			 */
 			jqXHR = {
+				/*
+				 * ajax 的 5 种状态 0、1、2、3、4(完成)
+				 */
 				readyState: 0,
 
 				// Builds headers hashtable if needed
+				/*
+				 * 获取对应的相应头信息
+				 */
 				getResponseHeader: function( key ) {
 					var match;
 					if ( state === 2 ) {
@@ -9405,11 +9562,17 @@ jQuery.extend({
 				},
 
 				// Raw string
+				/*
+				 * 获取整体的相应头信息
+				 */
 				getAllResponseHeaders: function() {
 					return state === 2 ? responseHeadersString : null;
 				},
 
 				// Caches the header
+				/*
+				 * 设置请求头
+				 */
 				setRequestHeader: function( name, value ) {
 					var lname = name.toLowerCase();
 					if ( !state ) {
@@ -9420,6 +9583,9 @@ jQuery.extend({
 				},
 
 				// Overrides response content-type header
+				/*
+				 * 设置 mineType，用来处理二进制流
+				 */
 				overrideMimeType: function( type ) {
 					if ( !state ) {
 						s.mimeType = type;
@@ -9428,6 +9594,9 @@ jQuery.extend({
 				},
 
 				// Status-dependent callbacks
+				/*
+				 * 处理  $.ajax({ url:"2.php",success:function(){}, statusCode:function(){} }) 对应的回掉
+				 */
 				statusCode: function( map ) {
 					var code;
 					if ( map ) {
@@ -9445,6 +9614,12 @@ jQuery.extend({
 				},
 
 				// Cancel the request
+				/*
+				 * 一旦出现错误的时候，就会进这里处理 ( 取消请求 )
+				 * timeoutTimer = setTimeout(function(){
+				 *     jqXHR.abort("timeout");
+				 * },s.timeout);
+				 */
 				abort: function( statusText ) {
 					var finalText = statusText || strAbort;
 					if ( transport ) {
@@ -9464,6 +9639,10 @@ jQuery.extend({
 		// Add protocol if not provided (prefilters might expect it)
 		// Handle falsy url in the settings object (#10093: consistency with old signature)
 		// We also use the url parameter if available
+		/*
+		 * 把 hash 值过滤掉
+		 * 如果是 rprotocol = /^\/\//; 两个斜杠，就加上 http:， http://
+		 */
 		s.url = ( ( url || s.url || ajaxLocation ) + "" ).replace( rhash, "" )
 			.replace( rprotocol, ajaxLocParts[ 1 ] + "//" );
 
@@ -9471,11 +9650,20 @@ jQuery.extend({
 		s.type = options.method || options.type || s.method || s.type;
 
 		// Extract dataTypes list
+		/*
+		 * dataType: "html text json" 针对多种不同的情况转为集合
+		 */
 		s.dataTypes = jQuery.trim( s.dataType || "*" ).toLowerCase().match( core_rnotwhite ) || [""];
 
 		// A cross-domain request is in order when we have a protocol:host:port mismatch
+		/*
+		 * 跨域处理
+		 */
 		if ( s.crossDomain == null ) {
 			parts = rurl.exec( s.url.toLowerCase() );
+			/*
+			 * 头部是否相同，主体是否相同，端口号是否相同，判断出是否是跨域的
+			 */
 			s.crossDomain = !!( parts &&
 				( parts[ 1 ] !== ajaxLocParts[ 1 ] || parts[ 2 ] !== ajaxLocParts[ 2 ] ||
 					( parts[ 3 ] || ( parts[ 1 ] === "http:" ? "80" : "443" ) ) !==
@@ -9484,14 +9672,23 @@ jQuery.extend({
 		}
 
 		// Convert data if not already a string
+		/*
+		 * 数据格式化
+		 */
 		if ( s.data && s.processData && typeof s.data !== "string" ) {
 			s.data = jQuery.param( s.data, s.traditional );
 		}
 
 		// Apply prefilters
+		/*
+		 * 触发预处理器的回掉函数，因为传的参数是 " prefilters "
+		 */
 		inspectPrefiltersOrTransports( prefilters, s, options, jqXHR );
 
 		// If request was aborted inside a prefilter, stop there
+		/*
+		 * state === 2; 代表请求已经完成了
+		 */
 		if ( state === 2 ) {
 			return jqXHR;
 		}
@@ -9501,6 +9698,9 @@ jQuery.extend({
 
 		// Watch for a new set of requests
 		if ( fireGlobals && jQuery.active++ === 0 ) {
+			/*
+			 * 这种写法是没有元素的，这个时候 jQuery 会自动调用 document
+			 */
 			jQuery.event.trigger("ajaxStart");
 		}
 
@@ -9508,6 +9708,9 @@ jQuery.extend({
 		s.type = s.type.toUpperCase();
 
 		// Determine if request has content
+		/*
+		 * rnoContent = /^(?:GET|HEAD)$/; 发送数据的时候，是把数据放到网址的后面， "POST" 是 send() 发送的
+		 */
 		s.hasContent = !rnoContent.test( s.type );
 
 		// Save the URL in case we're toying with the If-Modified-Since
@@ -9525,6 +9728,9 @@ jQuery.extend({
 			}
 
 			// Add anti-cache in url if needed
+			/*
+			 * 不需要缓存
+			 */
 			if ( s.cache === false ) {
 				s.url = rts.test( cacheURL ) ?
 
@@ -9537,6 +9743,10 @@ jQuery.extend({
 		}
 
 		// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode.
+		/*
+		 * "If-Modified-Since"、"If-None-Match" 这里是有利于用户体验
+		 * 数据没有变化的时候，使用缓存，变化了在发送 ajax
+		 */
 		if ( s.ifModified ) {
 			if ( jQuery.lastModified[ cacheURL ] ) {
 				jqXHR.setRequestHeader( "If-Modified-Since", jQuery.lastModified[ cacheURL ] );
@@ -9565,6 +9775,9 @@ jQuery.extend({
 		}
 
 		// Allow custom headers/mimetypes and early abort
+		/*
+		 * beforeSend 发送前 return false; 就停止发送 ajax
+		 */
 		if ( s.beforeSend && ( s.beforeSend.call( callbackContext, jqXHR, s ) === false || state === 2 ) ) {
 			// Abort if not done already and return
 			return jqXHR.abort();
@@ -9579,6 +9792,9 @@ jQuery.extend({
 		}
 
 		// Get transport
+		/*
+		 * 触发分发处理器的回掉函数，因为传的参数是 " transports "
+		 */
 		transport = inspectPrefiltersOrTransports( transports, s, options, jqXHR );
 
 		// If no transport, we auto-abort
@@ -9600,6 +9816,9 @@ jQuery.extend({
 
 			try {
 				state = 1;
+				/*
+				 * 掉原生的 send()
+				 */
 				transport.send( requestHeaders, done );
 			} catch ( e ) {
 				// Propagate exception as error if not done
@@ -9649,12 +9868,18 @@ jQuery.extend({
 			}
 
 			// Convert no matter what (that way responseXXX fields are always set)
+			/*
+			 * ajaxConvert 类型转换
+			 */
 			response = ajaxConvert( s, response, jqXHR, isSuccess );
 
 			// If successful, handle type chaining
 			if ( isSuccess ) {
 
 				// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode.
+				/*
+				 * 相应的处理
+				 */
 				if ( s.ifModified ) {
 					modified = jqXHR.getResponseHeader("Last-Modified");
 					if ( modified ) {
@@ -9728,18 +9953,33 @@ jQuery.extend({
 		return jqXHR;
 	},
 
+	/*
+	 * 这里的 dataType 类型已经固定
+	 * getJSON 也支持 jsonp $.getJSON("2.php?callback=?",function(data){ console.log(data); });
+	 *
+	 * echo $_GET["callback"].'({"name":"hello"})';
+	 */
 	getJSON: function( url, data, callback ) {
 		return jQuery.get( url, data, callback, "json" );
 	},
 
+	/*
+	 * getScript 是不传递数据的
+	 */
 	getScript: function( url, callback ) {
 		return jQuery.get( url, undefined, callback, "script" );
 	}
 });
 
+/*
+ * $.get("2.php",{data:data},function(){},"dataType(json)")、$.post("2.php",{data:data},function(){},"dataType(json)")
+ */
 jQuery.each( [ "get", "post" ], function( i, method ) {
 	jQuery[ method ] = function( url, data, callback, type ) {
 		// shift arguments if data argument was omitted
+		/*
+		 * 参数处理
+		 */
 		if ( jQuery.isFunction( data ) ) {
 			type = type || callback;
 			callback = data;
@@ -9760,6 +10000,9 @@ jQuery.each( [ "get", "post" ], function( i, method ) {
  * - finds the right dataType (mediates between content-type and expected dataType)
  * - returns the corresponding response
  */
+/*
+ * Responses 结果中拿到想要的数据
+ */
 function ajaxHandleResponses( s, jqXHR, responses ) {
 
 	var ct, type, finalDataType, firstDataType,
@@ -9767,6 +10010,9 @@ function ajaxHandleResponses( s, jqXHR, responses ) {
 		dataTypes = s.dataTypes;
 
 	// Remove auto dataType and get content-type in the process
+	/*
+	 * 后端设置的 "Content-Type" 得到 dataTypes 类型
+	 */
 	while( dataTypes[ 0 ] === "*" ) {
 		dataTypes.shift();
 		if ( ct === undefined ) {
@@ -9816,6 +10062,9 @@ function ajaxHandleResponses( s, jqXHR, responses ) {
 /* Chain conversions given the request and the original response
  * Also sets the responseXXX fields on the jqXHR instance
  */
+/*
+ * 类型转换器，能够识别 dataType，最后和后台数据进行匹配
+ */
 function ajaxConvert( s, response, jqXHR, isSuccess ) {
 	var conv2, current, conv, tmp, prev,
 		converters = {},
@@ -9857,6 +10106,9 @@ function ajaxConvert( s, response, jqXHR, isSuccess ) {
 			} else if ( prev !== "*" && prev !== current ) {
 
 				// Seek a direct converter
+				/*
+				 * converters 映射关系
+				 */
 				conv = converters[ prev + " " + current ] || converters[ "* " + current ];
 
 				// If none found, seek a pair
@@ -9923,18 +10175,33 @@ jQuery.ajaxSetup({
 });
 
 // Handle cache's special case and crossDomain
+/*
+ * 预过滤器，在发送 ajax 之前进行一些处理
+ */
 jQuery.ajaxPrefilter( "script", function( s ) {
 	if ( s.cache === undefined ) {
+		/*
+		 * 如果是 "script"，不需要缓存
+		 */
 		s.cache = false;
 	}
+	/*
+	 * 跨域必须是 "GET"
+	 */
 	if ( s.crossDomain ) {
 		s.type = "GET";
 	}
 });
 
 // Bind script tag hack transport
+/*
+ * 分发处理器，有可能走 ajax，有可能动态创建 <script>
+ */
 jQuery.ajaxTransport( "script", function( s ) {
 	// This transport only deals with cross domain requests
+	/*
+	 * 如果是跨域的情况是有 return 的，没有跨域的是没有 return
+	 */
 	if ( s.crossDomain ) {
 		var script, callback;
 		return {
@@ -9969,6 +10236,9 @@ var oldCallbacks = [],
 // Default jsonp settings
 jQuery.ajaxSetup({
 	jsonp: "callback",
+	/*
+	 * 随机生成一个 callbackName
+	 */
 	jsonpCallback: function() {
 		var callback = oldCallbacks.pop() || ( jQuery.expando + "_" + ( ajax_nonce++ ) );
 		this[ callback ] = true;
@@ -9977,6 +10247,9 @@ jQuery.ajaxSetup({
 });
 
 // Detect, normalize options and install callbacks for jsonp requests
+/*
+ * 预过滤器
+ */
 jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 
 	var callbackName, overwritten, responseContainer,
@@ -9989,6 +10262,9 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 	if ( jsonProp || s.dataTypes[ 0 ] === "jsonp" ) {
 
 		// Get callback name, remembering preexisting value associated with it
+		/*
+		 * 调用上面的  jQuery.ajaxSetup({ jsonp: "callback",jsonpCallback: function() {} });
+		 */
 		callbackName = s.jsonpCallback = jQuery.isFunction( s.jsonpCallback ) ?
 			s.jsonpCallback() :
 			s.jsonpCallback;
@@ -9997,6 +10273,9 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 		if ( jsonProp ) {
 			s[ jsonProp ] = s[ jsonProp ].replace( rjsonp, "$1" + callbackName );
 		} else if ( s.jsonp !== false ) {
+			/*
+			 * 把问号替换成随机生成的 callbackName
+			 */
 			s.url += ( ajax_rquery.test( s.url ) ? "&" : "?" ) + s.jsonp + "=" + callbackName;
 		}
 
@@ -10005,6 +10284,9 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 			if ( !responseContainer ) {
 				jQuery.error( callbackName + " was not called" );
 			}
+			/*
+			 * responseContainer[ 0 ] jsonp 的数据
+			 */
 			return responseContainer[ 0 ];
 		};
 
@@ -10012,6 +10294,9 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 		s.dataTypes[ 0 ] = "json";
 
 		// Install callback
+		/*
+		 * 在页面中生成一个函数，通过 arguments 得到函数的所有参数
+		 */
 		overwritten = window[ callbackName ];
 		window[ callbackName ] = function() {
 			responseContainer = arguments;
@@ -10035,11 +10320,16 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 			if ( responseContainer && jQuery.isFunction( overwritten ) ) {
 				overwritten( responseContainer[ 0 ] );
 			}
-
+			/*
+			 * 触发完成删除
+			 */
 			responseContainer = overwritten = undefined;
 		});
 
 		// Delegate to script
+		/*
+		 * return "script"; 作用就是在这个函数中 inspectPrefiltersOrTransports()
+		 */
 		return "script";
 	}
 });
@@ -10075,13 +10365,22 @@ if ( window.ActiveXObject ) {
 jQuery.support.cors = !!xhrSupported && ( "withCredentials" in xhrSupported );
 jQuery.support.ajax = xhrSupported = !!xhrSupported;
 
+/*
+ * 分发处理普通形式
+ */
 jQuery.ajaxTransport(function( options ) {
 	var callback;
 	// Cross domain only allowed if supported through XMLHttpRequest
+	/*
+	 * 在不跨域的情况下，调用底层的 ajax
+	 */
 	if ( jQuery.support.cors || xhrSupported && !options.crossDomain ) {
 		return {
 			send: function( headers, complete ) {
 				var i, id,
+				    /*
+				     * options.xhr() => new XMLHttpRequest();
+				     */
 					xhr = options.xhr();
 				xhr.open( options.type, options.url, options.async, options.username, options.password );
 				// Apply custom fields if provided
@@ -10137,6 +10436,10 @@ jQuery.ajaxTransport(function( options ) {
 					};
 				};
 				// Listen to events
+				/*
+				 * 这里并没有使用 onreadystatechange，其实和 onlad 一样的
+				 * onload 是标准的，真正完成的时候就是触发 onload
+				 */
 				xhr.onload = callback();
 				xhr.onerror = callback("error");
 				// Create the abort callback
@@ -10154,6 +10457,9 @@ jQuery.ajaxTransport(function( options ) {
 		};
 	}
 });
+/*
+ * 运动
+ */
 var fxNow, timerId,
 	rfxtypes = /^(?:toggle|show|hide)$/,
 	rfxnum = new RegExp( "^(?:([+-])=|)(" + core_pnum + ")([a-z%]*)$", "i" ),
