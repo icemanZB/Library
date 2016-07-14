@@ -5899,32 +5899,54 @@ jQuery.fn.extend({
 
 	val: function( value ) {
 		var hooks, ret, isFunction,
-			elem = this[0]; // 获取集合中第一个元素
+		    /**
+		     * 获取集合中第一个元素( 获取操作是获取集合中的第一个 )
+		     */
+			elem = this[0];
 
-		/*
+		/**
 		 * 获取操作
 		 */
 		if ( !arguments.length ) {
 			if ( elem ) {
-				/*
+				/**
 				 * valHooks：option select radio checkbox 针对这四个获取做兼容处理
-				 * jQuery.valHooks[ elem.type ] 当 elem 是一个 select，他的 type 是 select-one 那么在 valHooks 中是找不到的
+				 *
+				 * jQuery.each([ "radio", "checkbox" ], function() {});
+				 *
+				 * valHooks ={
+				 *     "option": { get:function(elem){} },
+				 *     "select": { get:function(elem){}, set: function( elem, value ) {} },
+				 *     "radio":{ set:function(elem){} },
+				 *     "checkbox":{ set:function(elem){} },
+				 * };
+				 *
+				 * jQuery.valHooks[ elem.type ] 当 elem 是一个 select，他的 type 是 "select-one" 那么在 valHooks 中是找不到的
 				 * jQuery.valHooks[ elem.nodeName.toLowerCase() ] select 的 nodeName 还是 select 那么在 valHooks 就找到了
 				 * elem 的 option.type 是 ""，所以又要走后面 option.nodeName 就是 option
 				 */
 				hooks = jQuery.valHooks[ elem.type ] || jQuery.valHooks[ elem.nodeName.toLowerCase() ];
 
-				/*
-				 * 处理兼容问题，像 input 是没有兼容问题的就不会走这个 if
+				/**
+				 * 处理兼容问题( option、select )，radio、checkbox 都不会走这个 if
+				 *
+				 * 这里的流程是 jQuery.valHooks["select"].get( elem, "value" ); 在 get() 会在次调用 val() 方法
+				 * 此时 jQuery.valHooks["option"].get( elem, "value" ); 处理兼容问题后，获取到值以后直接返回 ret
 				 */
 				if ( hooks && "get" in hooks && (ret = hooks.get( elem, "value" )) !== undefined ) {
 					return ret;
 				}
 
+				/**
+				 * 像 input 是没有兼容问题的就直接获取
+				 */
 				ret = elem.value;
 
 				return typeof ret === "string" ?
 					// handle most common string cases
+					/**
+					 * rreturn = /\r/g; \r 匹配一个回车符，然后替换为 ""
+					 */
 					ret.replace(rreturn, "") :
 					// handle cases where value is null/undef or number
 					ret == null ? "" : ret;
@@ -5935,14 +5957,14 @@ jQuery.fn.extend({
 
 		isFunction = jQuery.isFunction( value );
 
-		/*
+		/**
 		 * 设置的时候是针对每一个元素的
 		 */
 		return this.each(function( i ) {
 			var val;
 
-			/*
-			 * 判断一定是元素节点
+			/**
+			 * 判断是不是元素节点，不是则直接返回
 			 */
 			if ( this.nodeType !== 1 ) {
 				return;
@@ -5955,17 +5977,21 @@ jQuery.fn.extend({
 			}
 
 			// Treat null/undefined as ""; convert numbers to string
-			/*
-			 * $("input").val(null)
+			/**
+			 * $("input").val(null);
 			 */
 			if ( val == null ) {
 				val = "";
 			} else if ( typeof val === "number" ) {
-				val += ""; // 数字转字符串
+				/***
+				 * 数字转字符串
+				 */
+				val += "";
 			} else if ( jQuery.isArray( val ) ) {
-				/*
-				 * 针对数组 $("#input2").val(["hello"]);当 val 是数组的时候就不是设置值了，而是去匹配每一项，然后选中
-				 * <input type="checkbox" id="input2" value="hello">
+				/**
+				 * 针对数组 $('[name=Fruit]').val(["苹果","桃子"]); 当 val 是数组的时候就不是设置值了，而是去匹配每一项，然后选中
+				 * <label><input name="Fruit" type="checkbox" value="苹果" />苹果 </label>
+				 * <label><input name="Fruit" type="checkbox" value="桃子" />桃子 </label>
 				 */
 				val = jQuery.map(val, function ( value ) {
 					return value == null ? "" : value + "";
@@ -5975,8 +6001,17 @@ jQuery.fn.extend({
 			hooks = jQuery.valHooks[ this.type ] || jQuery.valHooks[ this.nodeName.toLowerCase() ];
 
 			// If set returns undefined, fall back to normal setting
-			/*
-			 * 如果不满足这些条件就直接 this.value = val; 满足了就在 set() 中进行操作
+			/**
+			 * 如果不满足这些条件就直接 $("#txt").val("txt"); => this.value = val;
+			 * 满足了就在 hooks.set() 中进行操作 ( select  )
+			 * $("#city").val("北京");
+			 * <select id="city">
+			 *      <option value="请选择">请选择</option>
+			 *      <option value="上海">上海</option>
+			 *      <option value="北京">北京</option>
+			 * </select>
+			 *
+			 * checkbox、radio => jQuery.each([ "radio", "checkbox" ],function(){});
 			 */
 			if ( !hooks || !("set" in hooks) || hooks.set( this, val, "value" ) === undefined ) {
 				this.value = val;
@@ -5994,9 +6029,9 @@ jQuery.extend({
 			get: function( elem ) {
 				// attributes.value is undefined in Blackberry 4.7 but
 				// uses .value. See #6932
-				/*
-				 * 在 IE6 7 下 <option>111</option>  option.value 是空的，<option value="hello">111</option>这样写就可以找到 "hello"
-				 * 那么 IE 6 7 下使用 text 做兼容， option.text 获取到的就是 111
+				/**
+				 * 在 IE6 7 下 <option>111</option>  option.value 是空的，<option value="hello">111</option> 这样写 option.value = "hello";
+				 * 那么 IE 6 7 下使用 text 做兼容， option.text 获取到的就是 "111"
 				 * elem.attributes.value 在 IE 的高版本是 undefined，在 IE6 7 是 [object]，elem.attributes.value.specified 在 IE 6 7 下是 false
 				 * 那么就会去找 elem.text 相应的内容
 				 */
@@ -6008,31 +6043,120 @@ jQuery.extend({
 			get: function( elem ) {
 				var value, option,
 					options = elem.options,
+
+					/**
+					 * 当 select 中 没有 "multiple"，并且 option 中 没有 "selected" 属性，此时 ( 单选 )
+					 * index = 0;
+				     *
+					 * 当 select 中 有 "multiple"，并且 option 中 没有 "selected" 属性，此时
+				     * index = -1;
+				     *
+				     * 当 select 中 没有 "multiple"，并且 option 中 有 "selected" 属性，此时 ( 单选 )
+				     * index = "选中 options 的下标";
+				     * 
+				     * 当 select 中 有 "multiple"，并且 option 中 有 "selected" 属性，此时
+				     * index = "选中 options 的下标";
+				     */
 					index = elem.selectedIndex,
-					one = elem.type === "select-one" || index < 0,  // 如果是单选的时候 one =true，有 multiple属性就是多选 one = false
+				    /**
+				     * 当 select 中 没有 "multiple"，并且 option 中 没有 "selected" 属性，此时 ( 单选 )
+				     * one = true;
+				     *
+				     * 当 select 中 有 "multiple"，并且 option 中 没有 "selected" 属性，此时
+				     * one = true;
+				     *
+				     * 当 select 中 没有 "multiple"，并且 option 中 有 "selected" 属性，此时 ( 单选 )
+				     * one = true;
+				     *
+				     * 当 select 中 有 "multiple"，并且 option 中 有 "selected" 属性，此时
+				     * one = false;
+				     */
+					one = elem.type === "select-one" || index < 0,
+
+				    /**
+				     * 当 select 中 没有 "multiple"，并且 option 中 没有 "selected" 属性，此时 ( 单选 )
+				     * one = true => values = null; max = index(0) + 1 = 1;
+				     *
+				     * 当 select 中 有 "multiple"，并且 option 中 没有 "selected" 属性，此时
+				     * one = true => values = null; max = index(-1) + 1 = 0;
+				     *
+				     * 当 select 中 没有 "multiple"，并且 option 中 有 "selected" 属性，此时 ( 单选 )
+				     * one = true => values = null; max = "选中 options 的下标" + 1;
+				     *
+				     * 当 select 中 有 "multiple"，并且 option 中 有 "selected" 属性，此时
+				     * one = false => values = []; max = options.length;
+				     */
 					values = one ? null : [],
 					max = one ? index + 1 : options.length,
+
+					/**
+				     * 当 select 中 没有 "multiple"，并且 option 中 没有 "selected" 属性，此时 ( 单选 )
+				     * index = 0; one = true; values = null; max = 1; i = 0;
+				     *
+				     * 当 select 中 有 "multiple"，并且 option 中 没有 "selected" 属性，此时
+				     * index = -1; one = true; values = null; max = 0; i = 0;
+				     *
+				     * 当 select 中没有 "multiple"，并且 option 中 有 "selected" 属性，此时 ( 单选 )
+				     * index = "选中 options 的下标"; one = true; values = null; max = "选中 options 的下标" + 1; i = index = "选中 options 的下标";
+				     *
+				     * 当 select 中 有 "multiple"，并且 option 中 有 "selected" 属性，此时
+				     * index = "选中 options 的下标"; one = false; values = []; max = options.length; i = 0;
+				     */
 					i = index < 0 ?
 						max :
 						one ? index : 0;
 
 				// Loop through all the selected options
-				/*
-				 * 如果是单选的话，就只会循环一次
+				/**
+				 * 如果是单选的话，就只会循环一次，因为 max 总是比 i 大 1
 				 */
 				for ( ; i < max; i++ ) {
 					option = options[ i ];
 
 					// IE6-9 doesn't update selected after form reset (#2551)
+					/**
+					 * 当 select 中 没有 "multiple"，并且 option 中 没有 "selected" 属性，此时 ( 单选 )
+					 * i === index = 0 ; 并且 没有禁用的选项，直接返回获取到的 value;
+					 *
+					 * 当 select 中 有 "multiple"，并且 option 中 没有 "selected" 属性，此时
+					 * option = undefined, i = 0, index = -1 ; max = 0; 不进 if， 直接返回 values =null;
+					 *
+					 * 当 select 中没有 "multiple"，并且 option 中 有 "selected" 属性，此时 ( 单选 )
+					 * i = 2, max = 3; index =2 ( 假设下标是 2 的选中 ) 并且 没有禁用的选项，直接返回获取到的 value;
+					 *
+					 * 当 select 中 有 "multiple"，并且 option 中 有 "selected" 属性，此时
+					 * 循环整个 options ，把选中的 options push 到 values 中，最后返回
+					 */
 					if ( ( option.selected || i === index ) &&
 							// Don't return options that are disabled or in a disabled optgroup
-							/*
-							 * jQuery.support.optDisabled 如果是禁用的元素是不会走这个 if 的
+							/**
+							 * option.disabled = true; 表示某个 options 是禁用的话，就不会获取
+							 *
+							 * jQuery.support.optDisabled 兼容的是下拉菜单被禁止了，子项应该不会被禁止，只有在老版本的 webkit 会有问题，子项会被禁止
+							 * sjQuery.support.optDisabled = true; 那么 !option.disabled = false; 就不会走整个 if 了
+							 *
+							 * 如果整个 select 上有 "disabled" 属性 => !option.parentNode.disabled = false;
+							 *
+							 * jQuery.nodeName() 是否是指定节点名； option.parentNode.nodeName = "SELECT"
+							 * !jQuery.nodeName( option.parentNode, "optgroup" ) = ture;
+							 *
+							 * 所以就算 select 上有 "disabled" 属性，还是会进这个 if
+							 *
+							 * 如果是 这样的情况，就会返回 null
+							 * <select id="optGroup">
+							 *     <optgroup label="Swedish Cars" disabled>
+							 *     <option value ="volvo">Volvo</option>
+							 *     <option value ="saab" selected>Saab</option>
+							 *     </optgroup>
+							 * </select>
 							 */
 							( jQuery.support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null ) &&
 							( !option.parentNode.disabled || !jQuery.nodeName( option.parentNode, "optgroup" ) ) ) {
 
 						// Get the specific value for the option
+						/**
+						 * 获取 value，调用 jQuery( option ).val()
+						 */
 						value = jQuery( option ).val();
 
 						// We don't need an array for one selects
@@ -6041,6 +6165,9 @@ jQuery.extend({
 						}
 
 						// Multi-Selects return an array
+						/**
+						 * 把选中的 options push 到 values 中，最后返回
+						 */
 						values.push( value );
 					}
 				}
@@ -6048,16 +6175,31 @@ jQuery.extend({
 				return values;
 			},
 
+			/**
+			 * select(下拉选框)设置的时候
+			 */
 			set: function( elem, value ) {
+				console.log(value);
 				var optionSet, option,
+				    /**
+				     * 获取所有的下拉选项
+				     */
 					options = elem.options,
-					values = jQuery.makeArray( value ), // 针对是数组
+					/**
+					 * 把 vaue 转为数组，因为 select 有 "multiple"，就会选择多个
+				     */
+					values = jQuery.makeArray( value ),
 					i = options.length;
 
 				while ( i-- ) {
 					option = options[ i ];
-					/*
-					 * 相应的 select 选中 $("select").val(111); 然后 "111" 就会被选中
+					/**
+					 * $("#city").val("北京");
+					 * <select id="city">
+					 *      <option value="请选择">请选择</option>
+					 *      <option value="上海">上海</option>
+					 *      <option value="北京">北京</option>
+					 * </select>
 					 * value 值和相应的 option 值匹配成功就会选中
 					 */
 					if ( (option.selected = jQuery.inArray( jQuery(option).val(), values ) >= 0) ) {
@@ -6066,6 +6208,9 @@ jQuery.extend({
 				}
 
 				// force browsers to behave consistently when non-matching value is set
+				/**
+				 * 如果没有内容选中，保持浏览器表现形式相同
+				 */
 				if ( !optionSet ) {
 					elem.selectedIndex = -1;
 				}
@@ -6346,7 +6491,7 @@ jQuery.each([
 jQuery.each([ "radio", "checkbox" ], function() {
 	jQuery.valHooks[ this ] = {
 		set: function( elem, value ) {
-			/*
+			/**
 			 * 判断是不是数组，相应的选中或者取消状态
 			 */
 			if ( jQuery.isArray( value ) ) {

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>$().val()</title>
+	<script src="jquery-2.0.3.read.js"></script>
+	<script>
+		$(function () {
+
+			// console.log( $("#city").val() );
+
+			// console.log( $("#optGroup").val() );
+
+			// $("#txt").val();
+
+			// console.log($('[name=Fruit]:checkbox:checked').val());
+
+			// console.log( $('[name=Fruit]:checked').val() );
+
+			// console.log( $('[name=identity]:checked').val() );
+
+			// $("#txt").val("txt");
+
+			// $('[name=Fruit]').val(["苹果","桃子"]);
+			// $('[name=identity]').val(["学生","教师"]);
+
+			$("#city").val(["北京","广州"]);
+			// $("#city").val("北京");
+
+		})
+	</script>
+</head>
+<body>
+
+<select id="city" multiple>
+	<option value="请选择">请选择</option>
+	<option value="上海">上海</option>
+	<option value="北京">北京</option>
+	<option value="广州">广州</option>
+</select>
+
+<select id="optGroup">
+	<optgroup label="Swedish Cars" disabled>
+		<option value="volvo">Volvo</option>
+		<option value="saab" selected>Saab</option>
+	</optgroup>
+
+	<optgroup label="German Cars">
+		<option value="mercedes">Mercedes</option>
+		<option value="audi">Audi</option>
+	</optgroup>
+</select>
+
+
+<input type="text" value="测试" id="txt">
+
+您喜欢的水果？<br /><br />
+<label><input name="Fruit" type="checkbox" value="苹果" />苹果 </label>
+<label><input name="Fruit" type="checkbox" value="桃子" />桃子 </label>
+<label><input name="Fruit" type="checkbox" value="香蕉" checked />香蕉 </label>
+<label><input name="Fruit" type="checkbox" value="梨" />梨 </label>
+
+<br /><br />
+<input type="radio" name="identity" value="学生" />学生
+<input type="radio" name="identity" value="教师" />教师
+<input type="radio" name="identity" value="管理员" />管理员
+
+</body>
+</html>

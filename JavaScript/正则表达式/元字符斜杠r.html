@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>正则表达式</title>
+	<script>
+		// \n  匹配一个回车符; 返回回车符被找到的位置,如果未找到匹配,则返回 -1。
+
+		// 基本语法：new RegExp("\r") 或直接量 /\r/
+
+		var str = "Is this all \rthere is?";
+
+		console.log(/\r/g.exec(str)); // ["", index: 12, input: "Is this all there is?"]
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
