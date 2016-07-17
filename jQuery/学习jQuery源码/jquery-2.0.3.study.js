@@ -10465,19 +10465,31 @@ var fxNow, timerId,
 	rfxnum = new RegExp( "^(?:([+-])=|)(" + core_pnum + ")([a-z%]*)$", "i" ),
 	rrun = /queueHooks$/,
 	animationPrefilters = [ defaultPrefilter ],
+	/*
+	 * #div{ width:20px;height:100px;background:red;position:absolute;}
+	 * $("#div").animate({ width:"50%" },2000);
+	 */
 	tweeners = {
 		"*": [function( prop, value ) {
 			var tween = this.createTween( prop, value ),
 				target = tween.cur(),
 				parts = rfxnum.exec( value ),
+				/*
+				 * 存储单位
+				 */
 				unit = parts && parts[ 3 ] || ( jQuery.cssNumber[ prop ] ? "" : "px" ),
 
 				// Starting value computation is required for potential unit mismatches
+				/*
+				 * 存了初始值，单位
+				 */
 				start = ( jQuery.cssNumber[ prop ] || unit !== "px" && +target ) &&
 					rfxnum.exec( jQuery.css( tween.elem, prop ) ),
 				scale = 1,
 				maxIterations = 20;
-
+			/*
+			 * 初始值的单位和目标点的单位不同就会进 if
+			 */
 			if ( start && start[ 3 ] !== unit ) {
 				// Trust units reported by jQuery.css
 				unit = unit || start[ 3 ];
@@ -10487,7 +10499,11 @@ var fxNow, timerId,
 
 				// Iteratively approximate from a nonzero starting point
 				start = +target || 1;
-
+				/*
+				 * 单位转换 tween.cur() = 273
+				 * 20px = ?%
+				 * 273px = 20%
+				 */
 				do {
 					// If previous iteration zeroed out, double until we get *something*
 					// Use a string for doubling factor so we don't accidentally see scale as unchanged below
@@ -10503,7 +10519,14 @@ var fxNow, timerId,
 			}
 
 			// Update tween properties
+			/*
+			 * #div{ width:20px;height:100px;background:red;position:absolute;}
+			 * $("#div").animate({ width:"+=200" },2000);
+			 */
 			if ( parts ) {
+				/*
+				 * 存储初始值
+				 */
 				start = tween.start = +start || +target || 0;
 				tween.unit = unit;
 				// If a +=/-= token was provided, we're doing a relative animation
@@ -10529,6 +10552,9 @@ function createTween( value, prop, animation ) {
 		collection = ( tweeners[ prop ] || [] ).concat( tweeners[ "*" ] ),
 		index = 0,
 		length = collection.length;
+	/*
+	 * 多次循环调用
+	 */
 	for ( ; index < length; index++ ) {
 		if ( (tween = collection[ index ].call( animation, prop, value )) ) {
 
@@ -10551,10 +10577,22 @@ function Animation( elem, properties, options ) {
 			if ( stopped ) {
 				return false;
 			}
+			/*
+			 * createFxNow() 返回的是一个毫秒数
+			 */
 			var currentTime = fxNow || createFxNow(),
+			    /*
+			     * 2000 - 0 的变化
+			     */
 				remaining = Math.max( 0, animation.startTime + animation.duration - currentTime ),
 				// archaic crash bug won't allow us to use 1 - ( 0.5 || 0 ) (#12497)
+				/*
+				 * 1- 0 的变化
+				 */
 				temp = remaining / animation.duration || 0,
+				/*
+				 * 0 - 1 的变化
+				 */
 				percent = 1 - temp,
 				index = 0,
 				length = animation.tweens.length;
@@ -10565,6 +10603,9 @@ function Animation( elem, properties, options ) {
 
 			deferred.notifyWith( elem, [ animation, percent, remaining ]);
 
+			/*
+			 * percent < 1 运动没有结束
+			 */
 			if ( percent < 1 && length ) {
 				return remaining;
 			} else {
@@ -10596,6 +10637,9 @@ function Animation( elem, properties, options ) {
 					return this;
 				}
 				stopped = true;
+				/*
+				 * 立即到达目标点
+				 */
 				for ( ; index < length ; index++ ) {
 					animation.tweens[ index ].run( 1 );
 				}
@@ -10614,6 +10658,9 @@ function Animation( elem, properties, options ) {
 
 	propFilter( props, animation.opts.specialEasing );
 
+	/*
+	 * animationPrefilters = [ defaultPrefilter ]; 方法调用
+	 */
 	for ( ; index < length ; index++ ) {
 		result = animationPrefilters[ index ].call( animation, elem, props, animation.opts );
 		if ( result ) {
@@ -10621,6 +10668,9 @@ function Animation( elem, properties, options ) {
 		}
 	}
 
+	/*
+	 * 循环调用 tweeners={}
+	 */
 	jQuery.map( props, createTween, animation );
 
 	if ( jQuery.isFunction( animation.opts.start ) ) {
@@ -10647,9 +10697,18 @@ function propFilter( props, specialEasing ) {
 
 	// camelCase, specialEasing and expand cssHook pass
 	for ( index in props ) {
+		/*
+		 * 转驼峰的操作 margin-left => marginLeft
+		 */
 		name = jQuery.camelCase( index );
+		/*
+		 * $("#div").animate({"width":200},{ specialEasing:{ "width":"linear" }  });
+		 */
 		easing = specialEasing[ name ];
 		value = props[ index ];
+		/*
+		 * $("#div").animate({"width":[200,linear]},2000);
+		 */
 		if ( jQuery.isArray( value ) ) {
 			easing = value[ 1 ];
 			value = props[ index ] = value[ 0 ];
@@ -10660,6 +10719,9 @@ function propFilter( props, specialEasing ) {
 			delete props[ index ];
 		}
 
+		/*
+		 * 针对复合样式的运动
+		 */
 		hooks = jQuery.cssHooks[ name ];
 		if ( hooks && "expand" in hooks ) {
 			value = hooks.expand( value );
@@ -10709,6 +10771,9 @@ jQuery.Animation = jQuery.extend( Animation, {
 	}
 });
 
+/*
+ * $("#div").animate({"width":200},{ queue:false }).animate({"height":200},{ queue: "fx" ( 默认就是 fx )});
+ */
 function defaultPrefilter( elem, props, opts ) {
 	/* jshint validthis: true */
 	var prop, value, toggle, tween, hooks, oldfire,
@@ -10720,6 +10785,9 @@ function defaultPrefilter( elem, props, opts ) {
 
 	// handle queue: false promises
 	if ( !opts.queue ) {
+		/*
+		 * 先让第一个运动保持一个状态不去触发，等到下一个的时候在同时触发
+		 */
 		hooks = jQuery._queueHooks( elem, "fx" );
 		if ( hooks.unqueued == null ) {
 			hooks.unqueued = 0;
@@ -10763,6 +10831,9 @@ function defaultPrefilter( elem, props, opts ) {
 
 	if ( opts.overflow ) {
 		style.overflow = "hidden";
+		/*
+		 * 样式还原
+		 */
 		anim.always(function() {
 			style.overflow = opts.overflow[ 0 ];
 			style.overflowX = opts.overflow[ 1 ];
@@ -10772,6 +10843,9 @@ function defaultPrefilter( elem, props, opts ) {
 
 
 	// show/hide pass
+	/*
+	 * $("#div").animate({"width":"hide"});
+	 */
 	for ( prop in props ) {
 		value = props[ prop ];
 		if ( rfxtypes.exec( value ) ) {
@@ -10860,6 +10934,10 @@ Tween.prototype = {
 			hooks = Tween.propHooks[ this.prop ];
 
 		if ( this.options.duration ) {
+			/*
+			 * percent：0 - 1 的值
+			 * 后面几个参数是为了扩展传的
+			 */
 			this.pos = eased = jQuery.easing[ this.easing ](
 				percent, this.options.duration * percent, 0, 1, this.options.duration
 			);
@@ -10918,6 +10996,9 @@ Tween.propHooks = {
 // Support: IE9
 // Panic based approach to setting things on disconnected nodes
 
+/*
+ * $(document.documentElement).animate({ scrollTop:600 },2000);
+ */
 Tween.propHooks.scrollTop = Tween.propHooks.scrollLeft = {
 	set: function( tween ) {
 		if ( tween.elem.nodeType && tween.elem.parentNode ) {
@@ -10927,8 +11008,15 @@ Tween.propHooks.scrollTop = Tween.propHooks.scrollLeft = {
 };
 
 jQuery.each([ "toggle", "show", "hide" ], function( i, name ) {
+	/*
+	 * 存储之前没有运动的 "toggle", "show", "hide"
+	 */
 	var cssFn = jQuery.fn[ name ];
 	jQuery.fn[ name ] = function( speed, easing, callback ) {
+		/*
+		 * 不写参数就是没有运动，有参数就是运动的
+		 * genFx 就是得到一个 json
+		 */
 		return speed == null || typeof speed === "boolean" ?
 			cssFn.apply( this, arguments ) :
 			this.animate( genFx( name, true ), speed, easing, callback );
@@ -10936,9 +11024,15 @@ jQuery.each([ "toggle", "show", "hide" ], function( i, name ) {
 });
 
 jQuery.fn.extend({
+	/*
+	 * fadeTo()  可以对隐藏元素进行操作
+	 */
 	fadeTo: function( speed, to, easing, callback ) {
 
 		// show any hidden elements after setting opacity to 0
+		/*
+		 * 当是隐藏元素的时候，先把透明度调成 0 ，在显示出来，之后在进行运动处理
+		 */
 		return this.filter( isHidden ).css( "opacity", 0 ).show()
 
 			// animate to the value specified
@@ -10946,9 +11040,18 @@ jQuery.fn.extend({
 	},
 	animate: function( prop, speed, easing, callback ) {
 		var empty = jQuery.isEmptyObject( prop ),
+		    /*
+		     * jQuery.speed( speed, easing, callback ) 对传进来的参数进行配置，并且自动进行出队的操作
+		     */
 			optall = jQuery.speed( speed, easing, callback ),
+			/*
+			 * doAnimation 入队的函数
+			 */
 			doAnimation = function() {
 				// Operate on a copy of prop so per-property easing won't be lost
+				/*
+				 * 真正运动的操作
+				 */
 				var anim = Animation( this, jQuery.extend( {}, prop ), optall );
 
 				// Empty animations, or finishing resolves immediately
@@ -10958,6 +11061,9 @@ jQuery.fn.extend({
 			};
 			doAnimation.finish = doAnimation;
 
+		/*
+		 * 入队操作
+		 */
 		return empty || optall.queue === false ?
 			this.each( doAnimation ) :
 			this.queue( optall.queue, doAnimation );
@@ -10974,6 +11080,9 @@ jQuery.fn.extend({
 			clearQueue = type;
 			type = undefined;
 		}
+		/*
+		 * 清空队列 $().stop(true);
+		 */
 		if ( clearQueue && type !== false ) {
 			this.queue( type || "fx", [] );
 		}
@@ -10998,6 +11107,9 @@ jQuery.fn.extend({
 
 			for ( index = timers.length; index--; ) {
 				if ( timers[ index ].elem === this && (type == null || timers[ index ].queue === type) ) {
+					/*
+					 * 这里的 stop() 是在上面 animate = deferred.promise({ stop:function( gotoEnd ){} });
+					 */
 					timers[ index ].anim.stop( gotoEnd );
 					dequeue = false;
 					timers.splice( index, 1 );
@@ -11007,12 +11119,18 @@ jQuery.fn.extend({
 			// start the next in the queue if the last step wasn't forced
 			// timers currently will call their complete callbacks, which will dequeue
 			// but only if they were gotoEnd
+			/*
+			 * $().stop(); 只会停止当前的运动
+			 */
 			if ( dequeue || !gotoEnd ) {
 				jQuery.dequeue( this, type );
 			}
 		});
 	},
 	finish: function( type ) {
+		/*
+		 * 默认队列名称 "fx"
+		 */
 		if ( type !== false ) {
 			type = type || "fx";
 		}
@@ -11045,6 +11163,9 @@ jQuery.fn.extend({
 			// look for any animations in the old queue and finish them
 			for ( index = 0; index < length; index++ ) {
 				if ( queue[ index ] && queue[ index ].finish ) {
+					/*
+					 * 这里的 finish 调用的是 doAnimation.finish = doAnimation;
+					 */
 					queue[ index ].finish.call( this );
 				}
 			}
@@ -11056,6 +11177,9 @@ jQuery.fn.extend({
 });
 
 // Generate parameters to create a standard animation
+/*
+ * 有两个参数的时候，需要返回 "高度"、"透明度"，一个参数的时候只返回高度
+ */
 function genFx( type, includeWidth ) {
 	var which,
 		attrs = { height: type },
@@ -11063,6 +11187,10 @@ function genFx( type, includeWidth ) {
 
 	// if we include width, step value is 1 to do all cssExpand values,
 	// if we don't include width, step value is 2 to skip over Left and Right
+	/*
+	 * 当包含宽度操作的时候，结果 includeWidth =1; 循环 4 次
+	 * 不包含的时候就是 includeWidth =0 ; 循环 2 次
+	 */
 	includeWidth = includeWidth? 1 : 0;
 	for( ; i < 4 ; i += 2 - includeWidth ) {
 		which = cssExpand[ i ];
@@ -11090,6 +11218,9 @@ jQuery.each({
 	};
 });
 
+/*
+ * 配置参数
+ */
 jQuery.speed = function( speed, easing, fn ) {
 	var opt = speed && typeof speed === "object" ? jQuery.extend( {}, speed ) : {
 		complete: fn || !fn && easing ||
@@ -11098,6 +11229,10 @@ jQuery.speed = function( speed, easing, fn ) {
 		easing: fn && easing || easing && !jQuery.isFunction( easing ) && easing
 	};
 
+	/*
+	 * jQuery.fx.off = true; 关闭页面所有运动
+	 * duration:"slow" 是可以设置字符串的，jQuery.fx.speeds 存的对应的时间
+	 */
 	opt.duration = jQuery.fx.off ? 0 : typeof opt.duration === "number" ? opt.duration :
 		opt.duration in jQuery.fx.speeds ? jQuery.fx.speeds[ opt.duration ] : jQuery.fx.speeds._default;
 
@@ -11107,6 +11242,9 @@ jQuery.speed = function( speed, easing, fn ) {
 	}
 
 	// Queueing
+	/*
+	 * 这里 opt.old 存储的是运动完成后的回掉函数
+	 */
 	opt.old = opt.complete;
 
 	opt.complete = function() {
@@ -11114,6 +11252,9 @@ jQuery.speed = function( speed, easing, fn ) {
 			opt.old.call( this );
 		}
 
+		/*
+		 * 自动出队
+		 */
 		if ( opt.queue ) {
 			jQuery.dequeue( this, opt.queue );
 		}
@@ -11156,6 +11297,9 @@ jQuery.fx.tick = function() {
 
 jQuery.fx.timer = function( timer ) {
 	if ( timer() && jQuery.timers.push( timer ) ) {
+		/*
+		 * 开始运动
+		 */
 		jQuery.fx.start();
 	}
 };
@@ -11168,6 +11312,9 @@ jQuery.fx.start = function() {
 	}
 };
 
+/*
+ * 停止运动
+ */
 jQuery.fx.stop = function() {
 	clearInterval( timerId );
 	timerId = null;
