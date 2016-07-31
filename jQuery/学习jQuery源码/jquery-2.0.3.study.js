@@ -11337,7 +11337,13 @@ if ( jQuery.expr && jQuery.expr.filters ) {
 		}).length;
 	};
 }
+/*
+ * offset()、position()
+ */
 jQuery.fn.offset = function( options ) {
+	/*
+	 * 传了参数就可以设置：$("#div").offset({ left:100 });
+	 */
 	if ( arguments.length ) {
 		return options === undefined ?
 			this :
@@ -11346,11 +11352,17 @@ jQuery.fn.offset = function( options ) {
 			});
 	}
 
+	/*
+	 * 获取
+	 */
 	var docElem, win,
 		elem = this[ 0 ],
 		box = { top: 0, left: 0 },
 		doc = elem && elem.ownerDocument;
 
+	/*
+	 * 为了保证完整的页面结构
+	 */
 	if ( !doc ) {
 		return;
 	}
@@ -11364,6 +11376,9 @@ jQuery.fn.offset = function( options ) {
 
 	// If we don't have gBCR, just use 0,0 rather than error
 	// BlackBerry 5, iOS 3 (original iPhone)
+	/*
+	 * getBoundingClientRect() 相对于可视区的，不是整个页面的
+	 */
 	if ( typeof elem.getBoundingClientRect !== core_strundefined ) {
 		box = elem.getBoundingClientRect();
 	}
@@ -11403,6 +11418,9 @@ jQuery.offset = {
 			curLeft = parseFloat( curCSSLeft ) || 0;
 		}
 
+		/*
+		 * $("#div").offset(function( i,opt ){ return { left:opt.left }  });
+		 */
 		if ( jQuery.isFunction( options ) ) {
 			options = options.call( elem, i, curOffset );
 		}
@@ -11425,7 +11443,9 @@ jQuery.offset = {
 
 
 jQuery.fn.extend({
-
+	/*
+	 * 只有获取
+	 */
 	position: function() {
 		if ( !this[ 0 ] ) {
 			return;
@@ -11436,6 +11456,9 @@ jQuery.fn.extend({
 			parentOffset = { top: 0, left: 0 };
 
 		// Fixed elements are offset from window (parentOffset = {top:0, left: 0}, because it is it's only offset parent
+		/*
+		 * 固定定位没有相对与元素的
+		 */
 		if ( jQuery.css( elem, "position" ) === "fixed" ) {
 			// We assume that getBoundingClientRect is available when computed position is fixed
 			offset = elem.getBoundingClientRect();
@@ -11502,6 +11525,9 @@ jQuery.each( {scrollLeft: "pageXOffset", scrollTop: "pageYOffset"}, function( me
 });
 
 function getWindow( elem ) {
+	/*
+	 * 如果是 document 就可以获取到当前 window 对应的对象
+	 */
 	return jQuery.isWindow( elem ) ? elem : elem.nodeType === 9 && elem.defaultView;
 }
 // Create innerHeight, innerWidth, height, width, outerHeight and outerWidth methods

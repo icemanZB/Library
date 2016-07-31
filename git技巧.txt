@@ -1,0 +1,68 @@
+1、clone 项目：进入文件夹，比如 cd d:，cd Code/textGit，git clone https://github.com/icemanZB/ProjectTest.git
+2、设置 git 的全局的用户名和邮箱，帮 github 上面一样即可，方便在多人协作的时候让其他人知道是你提交的代码
+   也是一样需要进入到项目目录，比如 cd d:，cd Code/textGit
+   git config --global user.name "icemanZB"、git config --global user.email "254784109@qq.com"
+   查看全局的邮箱或名字：git config --global user.email
+3、查看所有 git 下面的配置 git config --list
+4、[master]：指的是项目的主分支的默认名字
+5、git add demo.html 把工作区的内容添加到暂存区， git add . 提交所有文件
+6、git commit -m "注释" 把暂存区放到版本库，添加注释最好是英文
+7、git status 查看状态
+8、简写方式：git commit -a -m "注释" ( 这个命令省略了 add 的操作， -a 就是把工作区的文件添加到暂存区 )
+9、 git log 查看提交的 log
+10、git diff 是工作区和暂存区的对比、git diff --cached(--staged) 是暂存区和版本区的对比、git diff master(分支名称)工作区和版本库对比
+11、从暂存区撤销回工作区 git reset HEAD filename
+12、工作区还原 git checkout -- filename 当暂存区有内容，先去还原，暂存区没有的话就到版本区进行还原
+13、撤销 commit 提交操作 git commit -m "change" --amend
+14、退出的话是按 "q"
+15、在工作区的文件可以随意删除
+    如果 add 的话( 暂存区中 )，在把工作区中的 test.html 删除，现在使用 git rm test.html 把暂存区中文件删除了
+    工作区中的文件没有删除的话，git rm test.html 是不起作用的，如果想删除的话需要使用 git rm -f test.html，这样暂存区和工作区都没有了
+    使用 git rm --cached test.html 可以把暂存区 test.html 删除，而不删除工作区中的 test.html
+16、恢复操作，需要复制操作的commit id，可以使用 git log 查看
+    git checkout a7e8623bd12 drag.js
+    整个版本的恢复：git reset --hard a7e8623bd12、git reset --hard HEAD^ / git reset --hard HEAD~3 回到前3个版本
+    git reflog 会显示每一次操作行为
+17、推送到远程仓库( guthub 上面 )：首先进入到某个要提交的文件下，然后使用命令：git push origin master(同步的分支)
+    git remote 查看当前远程仓库的名字，默认是 "origin"
+    git remote -v 查看远程的地址
+18、在 github.com 网站上面分配项目修改的权限，找到 New collaborator ( 添加新的协作人员 )
+19、同步更新代码：git fetch(拉取远程仓库的代码，但是并不自动合并) / git pull ( 会自动合并 )
+               git fetch 后，在使用命令 git diff master origin/master 查看区别(冲突)，在使用 git merge origin/master 手动合并
+               最后选择自己要的内容解决冲突后在提交一下 git commit -a -m "merge"，在提交到远端 git push origin master
+20、 当自己没有权限修改开源代码的时候，就可以使用 Fork 开了新分支(镜像一个其他人开发的版本)
+     在这个分支下改好，回到刚才项目的网页，点击 pull request，然后点击 New pull request，在点击 Create pull requset，就会发送一个请求给开源项目代码的人
+21、在网页上回复人家，复制人家给你的消息，可以按 "R" 键，在进行回复 ( 也就是引用人家所说的话进行回复 )
+22、查看分支 git branch / git branch new1 创建 new1 分支
+23、切换分支 git checkout new1
+    git checkout -b new2  ( -b 就是 branch 的简写 )
+    git merge new1 合并分支
+    git branch --merged 查看当前 master 分支下面所合并的分支
+    git branch --no--merged  查看当前 master 没有合并的分支
+    git branch -d new1 删除 new1 分支 ( 没有合并的分支，不允许直接进行删除操作 )
+    git branch -D new2 强制删除没有合并过的分支
+24、把分支提交到 github 上： git push origin new1
+25、在 github 上的 releases 指的是发布的一个里程碑，可以参考 jQuery 的 github
+    git tag v1.0 打标签 \ git tag 就是查看 \ git push origin v1.0 同步到 github 上面
+26、创建博客页 https://pages.github.com/ 把仓库名字起程 Library.github.io
+
+cd 进入目录
+cd.. 返回上一层
+ls  查看目录结构
+mkdir hello 创建 hello 文件夹
+notepad hello.text 创建文件
+"Tab" 键可以自动补全
+git config --global alias.co checkout 在做 checkout 的时候可以使用 co 别名
+git config --list 查看
+
+http://git.oschina.net/progit
+http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
+
+
+fatal: Unable to create 'E:/资料/Library/.git/index.lock': File exists.
+
+If no other git process is currently running, this probably means a
+git process crashed in this repository earlier. Make sure no other git
+process is running and remove the file manually to continue.
+
+处理办法：到这个目录下把 index.lock 文件删除即可
