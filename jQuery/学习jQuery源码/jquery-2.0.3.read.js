@@ -6020,8 +6020,9 @@ jQuery.fn.extend({
 	}
 });
 
-/*
+/**
  * 这些工具方法都是内部使用的
+ * hooks 机制，先通过 support 检测，然后通过 hooks 找到具体的方法，分为两种(set、get)，有获取到这个值，说明做到兼容了
  */
 jQuery.extend({
 	valHooks: {
@@ -6224,7 +6225,7 @@ jQuery.extend({
 			nType = elem.nodeType;
 
 		// don't get/set attributes on text, comment and attribute nodes
-		/*
+		/**
 		 * 当元素不存在的时候、是文本、是注释、是属性 这几个属性没办法设置就先过滤掉
 		 */
 		if ( !elem || nType === 3 || nType === 8 || nType === 2 ) {
@@ -6232,9 +6233,9 @@ jQuery.extend({
 		}
 
 		// Fallback to prop when attributes are not supported
-		/*
+		/**
 		 * 当元素不支持 getAttribute 的时候 ( typeof elem.getAttribute === undefined )
-		 * 那就是用 prop() 代替 attr()，这种情况是出现在：$(document).attr("title","hello"); === $(document).prop("title","hello")
+		 * 那就是用 prop() 代替 attr()，这种情况是出现在：$(document).attr("title","hello"); === $(document).prop("title","hello");
 		 */
 		if ( typeof elem.getAttribute === core_strundefined ) {
 			return jQuery.prop( elem, name, value );
@@ -6242,57 +6243,65 @@ jQuery.extend({
 
 		// All attributes are lowercase
 		// Grab necessary hook if one is defined
-		/*
-		 * nType = 1 就是元素节点，jQuery.isXMLDoc() -> Sizzle 中的方法，就是调用的是 Sizzle.isXML;就是判断当前节点是不是 XML 下的节点
+		/**
+		 * nType === 1; 就是元素节点，jQuery.isXMLDoc() => Sizzle 中的方法，就是调用的是 Sizzle.isXML; 就是判断当前节点是不是 XML 下的节点
 		 * 那么一但是 XML 节点是不会走这个 if，如果是 HTML 下的元素节点是有兼容问题，就会走这个 if
 		 */
 		if ( nType !== 1 || !jQuery.isXMLDoc( elem ) ) {
-			name = name.toLowerCase(); // 统一转成小写
-			/*
-			 * hooks 机制，先通过 support 检测，然后通过 hooks 找到具体的方法，分为两种(set、get)，有获取到这个值，说明做到兼容了
+			/**
+			 * 统一转成小写
+			 */
+			name = name.toLowerCase();
+			/**
 			 * attrHooks 只是针对设置的，如果是这种情况 atrr("type","radio")
-			 * jQuery.expr 是 Sizzle.selectors，它下面有个 match:matchExpr，matchExpr 这下面是一堆的正则表达式，找到 bool -> new RegExp( "^(?:" + booleans + ")$", "i" );
-			 * 那么 booleans 是 "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped"
-			 * 也就是正则去匹配 booleans， 就是说 jQuery.expr.match.bool 这个整体去匹配上面一串，然后 test(name)，在字符串中是否存在，存在就要做 boolHook，不存在就是 nodeHook ( undefined )
-			 * boolHook 对应是下面一个 boolHook={ set:function(){}}
+			 * jQuery.expr 是 Sizzle.selectors，它下面有个 match : matchExpr
+			 *
+			 * ?: (非捕获性分组)，子表达式可以作为被整体修饰但是子表达式匹配的结果不会被存储
+			 * matchExpr 这下面是一堆的正则表达式，找到 bool => new RegExp( "^(?:" + booleans + ")$", "i" );
+			 *
+			 * booleans => "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped"
+			 *
+			 * 也就是正则去匹配 booleans 中的内容， 就是说 jQuery.expr.match.bool 这个整体去匹配上面一串
+			 * 然后 name 在字符串中是否存在，存在就要做 boolHook，不存在就是 nodeHook ( undefined )
+			 * boolHook 对应是下面一个 boolHook = { set:function(){} }
 			 */
 			hooks = jQuery.attrHooks[ name ] ||
 				( jQuery.expr.match.bool.test( name ) ? boolHook : nodeHook );
 		}
 
-		/*
+		/**
 		 * value !== undefined 就是设置的时候
 		 */
 		if ( value !== undefined ) {
 
-			/*
+			/**
 			 * $("div").attr("ice",null); 当第二个参数是 null 的时候，调用的是 removeAttr();
 			 */
 			if ( value === null ) {
 				jQuery.removeAttr( elem, name );
 
 			} else if ( hooks && "set" in hooks && (ret = hooks.set( elem, value, name )) !== undefined ) {
-				/*
+				/**
 				 * 首先 hooks 存在，并且是有 set() 方法，那么通过 set() 获取到这个值，这个值有的话就说明有值，做到兼容了
 				 * 如果等于 undefined 就说明没有兼容性，就跳过
 				 */
 				return ret;
 
 			} else {
-				/*
+				/**
 				 * 没有兼容问题的时候，调用原生的 setAttribute(); 把 value 转为字符串的形式
 				 */
 				elem.setAttribute( name, value + "" );
 				return value;
 			}
-			/*
+			/**
 			 * 获取
 			 */
 		} else if ( hooks && "get" in hooks && (ret = hooks.get( elem, name )) !== null ) {
 			return ret;
 
 		} else {
-			/*
+			/**
 			 * jQuery.find = Sizzle 就是 Sizzle 对象
 			 * Sizzle.attr() 就是 getAttribute() 兼容的操作
 			 * 例如：$("div").attr("title"); 调用的就是这里
@@ -6309,14 +6318,17 @@ jQuery.extend({
 	removeAttr: function( elem, value ) {
 		var name, propName,
 			i = 0,
-			attrNames = value && value.match( core_rnotwhite ); // 匹配空格，返回的是一个数组 ["ice","href","id"]
+		    /**
+		     * 匹配空格，返回的是一个数组 ["ice","href","id"]
+		     */
+			attrNames = value && value.match( core_rnotwhite );
 
 		if ( attrNames && elem.nodeType === 1 ) {
-			/*
+			/**
 			 * 删除多个属性 $("div").removeAttr("ice href id");
 			 */
 			while ( (name = attrNames[i++]) ) {
-				/*
+				/**
 				 * jQuery.propFix[ name ]：看看有没有兼容问题 类似 class -> className
 				 */
 				propName = jQuery.propFix[ name ] || name;
@@ -6326,7 +6338,6 @@ jQuery.extend({
 					// Set corresponding property to false
 					elem[ propName ] = false;
 				}
-
 				elem.removeAttribute( name );
 			}
 		}
@@ -6334,18 +6345,18 @@ jQuery.extend({
 
 	attrHooks: {
 		type: {
-			/*
+			/**
 			 * 只有设置有兼容问题，get ( 获取 )是没有的
 			 */
 			set: function( elem, value ) {
-				/*
-				 * 单选框的兼容，就是在 support里面有的，先设置 value，在设置 type 类型的时候，在 IE 下获取不到 value 值，IE 获取的是 "on"
+				/**
+				 * 单选框的兼容，就是在 support 里面有的，先设置 value，在设置 type 类型的时候，在 IE 下获取不到 value 值，IE 获取的是 "on"
 				 */
 				if ( !jQuery.support.radioValue && value === "radio" && jQuery.nodeName(elem, "input") ) {
 					// Setting the type on a radio button after the value resets the value in IE6-9
 					// Reset value to default in case type is set after value during creation
 					var val = elem.value;
-					/*
+					/**
 					 * 重新设置 type 类型，在去赋值 value 就没有问题了
 					 * 先设置 type，在赋值是没有兼容问题的
 					 */
@@ -6375,7 +6386,7 @@ jQuery.extend({
 
 		notxml = nType !== 1 || !jQuery.isXMLDoc( elem );
 
-		/*
+		/**
 		 * 不是 XML 的就是有兼容问题
 		 */
 		if ( notxml ) {
@@ -6397,7 +6408,7 @@ jQuery.extend({
 	},
 
 	propHooks: {
-		/*
+		/**
 		 * tabIndex：光标切换顺序，在 IE 下，不是 div 他也可以得到 tabIndex，所以要做兼容
 		 * rfocusable：/^(?:input|select|textarea|button)$/i; 不是这些的统一返回 -1
 		 */
@@ -6412,9 +6423,9 @@ jQuery.extend({
 });
 
 // Hooks for boolean attributes
-/*
- * 针对的是这样的情况：$("input").attr("checked",true)
- * $("input").attr("checked","checked") -> $("input").attr("checked",true)
+/**
+ * 针对的是这样的情况：$("input").attr("checked",true);
+ * $("input").attr("checked","checked") => $("input").attr("checked",true)
  */
 boolHook = {
 	set: function( elem, value, name ) {
@@ -6422,7 +6433,7 @@ boolHook = {
 			// Remove boolean attributes when set to false
 			jQuery.removeAttr( elem, name );
 		} else {
-			/*
+			/**
 			 * elem.setAttribute("checked","checked");
 			 */
 			elem.setAttribute( name, name );
@@ -6454,7 +6465,7 @@ jQuery.each( jQuery.expr.match.bool.source.match( /\w+/g ), function( i, name ) 
 
 // Support: IE9+
 // Selectedness for an option in an optgroup can be inaccurate
-/*
+/**
  * 下拉菜单的选中状态，在 IE 下创建的 select 有子项的话，默认是没有选中状态的，标准浏览器有
  */
 if ( !jQuery.support.optSelected ) {
@@ -6469,9 +6480,9 @@ if ( !jQuery.support.optSelected ) {
 	};
 }
 
-/*
-* 把这里面的值转小写 tabIndex -> tabindex
-* */
+/**
+ * 把这里面的值转小写 tabIndex -> tabindex
+ */
 jQuery.each([
 	"tabIndex",
 	"readOnly",
