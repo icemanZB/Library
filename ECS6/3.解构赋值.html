@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>解构赋值</title>
+	<script>
+		/**
+		 * 解构赋值：ES6 允许按照一定模式，从数组和对象中提取值，对变量进行赋值，这被称为解构 ( Destructuring )
+		 * 数组的解构赋值：按照对应的顺序解构。( 老版本的 chrome 不支持 )
+		 */
+		var array = [1, [2, 3]];
+		var [a,[b,c]] = array;
+		console.log(array);
+		console.log(a, b, c);  // 1 2 3
+
+		var obj = {
+			foo: function () {
+
+			},
+			o  : {},
+			arr: [],
+			str: "abc"
+		};
+		// 需要名字一一对应，少些一个也没关系，顺序也无所谓
+		var {foo, arr, str, o} = obj;
+		console.log(foo, arr, str, o);
+
+		var y = 1;
+		var x = 2;
+		// 交换赋值
+		var [x,y] = [y, x];
+		// 1 2
+		console.log(x, y);
+	</script>
+</head>
+<body>
+
+</body>
+</html>

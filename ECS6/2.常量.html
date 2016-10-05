@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>常量</title>
+	<script>
+		/**
+		 * 在定义之后值是固定不变的，即为常量
+		 * 常量的值不能修改，但是如果常量保存的是一个对象，那么对象的属性是可以被修改的。
+		 */
+		const a = 1;
+
+		// a = 2; 报错
+		console.log(a);   // 1
+
+		const obj = {
+			name: "leo"
+		};
+
+		obj.name = "momo";
+
+		console.log(obj.name);  // momo
+	</script>
+</head>
+<body>
+
+</body>
+</html>

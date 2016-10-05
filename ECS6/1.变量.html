@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>变量</title>
+	<script>
+		// 老版本的 chrome， let 是全局作用域的刷，需要加上严格模式，否则会报错
+		/**
+		 * let特性：
+		 * 1、不允许重复声明
+		 * 2、没有预解析。
+		 * 3、块级作用域，一对 {} 包括的区域称为代码块，块级作用域指一个变量或者函数只在该区域才起作用。
+		 */
+		// 没有预解析
+		// console.log(a);
+		let a = 1;
+		// 报错
+		// let a = 3;
+		console.log(a);
+
+		{
+			/* 从块的开始到声明这段的区域：暂存死区 ( 也就是没有预解析 )  */
+			let b = 2;
+			console.log(b);
+		}
+		// 报错
+		// console.log(b);
+		// for 循环的执行速度快于 setTimeout，当 for 循环走完了以后 setTimeout() 才走了一次，此时 i=10;
+		for (var i = 0; i < 10; i++) {
+			setTimeout(function () {
+				console.log(i);
+			});
+		}
+		// 因为 for 循环现在是块级作用域， i 变成了区部变量
+		for (let j = 0; j < 10; j++) {
+			setTimeout(function () {
+				console.log(j);
+			});
+		}
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

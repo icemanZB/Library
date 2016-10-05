@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>数值的扩展</title>
+	<script>
+		// 二进制和八进制表示法
+		// ES6 提供了二进制和八进制数值的新写法，分别用前缀 0b 和 0o 表示
+		var num = 0b11;
+		var num2 = 0o11;
+		console.log(num, num2);   // 3 9
+
+		// Math 对象扩展
+
+		console.log(Math.trunc(1.234)); // 干掉小数点
+
+		console.log(Math.sign(-0)); // 判断参数是正数( 返回 1 )、负数( 返回 -1 )、正 0 还是负 0
+
+		console.log(Math.hypot(3, 4));  // 5  返回所有参数的平方和的平方根 (勾股定理)
+	</script>
+</head>
+<body>
+
+</body>
+</html>

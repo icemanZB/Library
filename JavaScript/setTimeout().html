@@ -16,6 +16,11 @@
 		 * 引擎继续处理后面代码，while 语句将引擎阻塞了1秒，而在这过程中，内核 timer 模块在 0.5 秒时已将延时方法添加到任务队列
 		 * 在引擎执行栈清空后，引擎将延时方法入栈并处理，最终输出的时间超过预期设置的时间。
 		 */
+
+		/*setTimeout(function () {
+			第二个参数不写，默认是浏览器最小的间隔执行
+		});*/
+
 		var start = new Date;
 		setTimeout(function () {
 			var end = new Date;

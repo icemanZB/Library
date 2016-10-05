@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>字符串扩展</title>
+	<script>
+		/**
+		 * JavaScript 内部，字符以 UTF-16 的格式存储，每个字符固定为 2 个字节。
+		 * 对于那些需要 4 个字节存储的字符 ( Unicode 码点大于 0xFFFF 的字符 )，JavaScript 会认为它们是两个字符
+		 */
+		var s = "miaov";
+		var s2 = "𠮷";
+		console.log(s.length);
+		console.log(s2.length);  // 2  四字节的字符( 表情符号 )
+
+		console.log(s2.charCodeAt(0)); // 打印编码值：55362
+		console.log(s2.charCodeAt(1)); // 第二位也有返回值
+		// ES6 返回的第一个值就是对应的码点值 ( 下标为 0 )
+		console.log(s2.codePointAt(0));
+		// 根据码点返回字符
+		console.log(String.fromCodePoint(134071));
+
+		// ES5 提供 fromCharCode()，用于从码点返回对应字符，但是这个方法不能识别辅助平面的字符 ( 编号大于 0xFFFF )
+		String.fromCharCode(0x20BB7);
+		String.fromCodePoint(0x20BB7);
+
+		console.log(s.repeat(10)); //复制 s 10次
+
+		/**
+		 * 模板字符串( template string ) 是增强版的字符串，用反引号（`）标识。 它可以当作普通字符串使用，也可以用来定义多行字符串，或者在字符串中嵌入变量。
+		 * 代码中的字符串用反引号(`)表示，如果需要引入变量则使用${变量名}，在 {} 中可以进行运算，也可以引用对象属性。
+		 */
+
+		var name = "leo";
+		var age = 39;
+
+		var str = "你的名字是：" + name + "你的年龄是：" + age;
+
+		console.log(str);
+
+		// ES6
+		var str2 = `你的名字是：${name}你的年龄是：${age}`;
+		console.log(str2);
+
+		/**
+		 * 字符的 Unicode 表示法： JavaScript 允许采用 "\uxxxx" 形式表示一个字符，其中 "xxxx" 表示字符码点。
+		 * "\u0061" => a，但是这种表示只限于 "\u0000"  ~~ "\uFFFF" 之间的字符。超出这个范围的字符，必须用两个双字节的形式表达。
+		 * "\uD842\uDFB7" => 𠮷
+		 * ES6 对此进行了改进，只要将码点放入大括号，就能正确解读字符
+		 * \u{20Bb7}" => 𠮷  、 "\u{41}\u{42}\u{43}" => abc
+		 */
+
+		console.log("\u0061");  // a
+		console.log("\u{20BB7}");
+
+		/**
+		 * 字符串方法：
+		 * str.includes()
+		 * 参数：1、要查找的字符串  2、起始位置
+		 * 返回布尔值，表示是否找到了参数字符串 ( 类似 indexOf()，但是 indexOf() 返回的是位置下标 )
+		 *
+		 * str.startsWith()
+		 * 参数：1、要查找的字符串( 可以是多个 )  2、起始位置
+		 * 返回布尔值，表示参数字符串是否在源字符串的头部。
+		 *
+		 * str.endsWith()
+		 * 参数：1、要查找的字符串  2、起始位置( 针对的是 n 个字符 )
+		 * 返回布尔值，表示参数字符串是否在源字符串的尾部。
+		 */
+
+		var s3 = "miaov";
+		console.log(s3.includes("d")); // false
+		console.log(s3.startsWith("mia"));  // true
+		console.log(s3.endsWith("ov")); // true
+	</script>
+</head>
+<body>
+
+</body>
+</html>
