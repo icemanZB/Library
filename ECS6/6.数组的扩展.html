@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>数组的扩展</title>
+	<script>
+		window.onload = function () {
+			var divs = document.getElementsByTagName("div");
+
+			// 转数组
+			var aDiv = [].slice.call(divs);
+			console.log(aDiv);
+			// ES6 转数组的方法  Array.from
+			console.log(Array.from(divs));
+
+			// 字符串在 ES6 里面算是类数组
+			console.log(Array.from("miaov"));
+
+			// Array.of() 将一组参数，转换为数组
+			console.log(Array.of(1, 2, 3, 4, 5));
+
+
+			/**
+			 * arr.find()
+			 * 找出第一个符合条件的数组元素
+			 * 参数： 1、回调函数  2、回调函数内 this 的指向
+			 * 遍历整个数组，遍历过程中调用回调函数，如果回调函数的返回值为 true，则返回当前正在遍历的元素。如果所有元素都不符合条件则返回 undefined
+			 *
+			 * arr.findIndex()
+			 * 找出第一个符合条件的数组元素的位置
+			 * 参数： 1、回调函数  2、回调函数内 this 的指向
+			 * 遍历整个数组，遍历过程中调用回调函数，如果回调函数的返回值为 true，则返回该数组元素的位置。如果所有元素都不符合条件则返回 -1
+			 *
+			 * arr.fill()
+			 * 用来填充数组
+			 * 参数: 1、填充的内容  2、起始位置  3、结束位置，不包含结束位置( 不填就是到最后 )
+			 */
+
+			var arr = [1, 2, 3, 4, 5];
+
+			var val = arr.find(function (value, index) {
+
+				return value > 4;
+			});
+
+			console.log(val);
+
+			var index = arr.findIndex(function (value, index) {
+				return value > 5;
+			});
+
+			console.log(index);
+
+			console.log([1, 2, 3, 4, 5].fill(6, 2, 4));   // [1, 2, 6, 6, 5]
+
+			// 先设置数组的长度，然后在填充 10 个 0
+			// arr.length = 10;
+			// arr.fill(0);
+
+
+			var arr2 = [1, 2, 3, 4, 5, 6];
+
+			// key 值得遍历接口
+			for (var key of arr2.keys()) {
+				console.log(key);
+			}
+			// value值得遍历接口，默认遍历 value
+			for (var value of arr2.values()) {
+				console.log(value);
+			}
+			// key 和 value 的遍历接口
+			for (var [key,value] of arr2.entries()) {
+				console.log(key, value);
+			}
+
+
+			/**
+			 * 数组推导
+			 * ES6 提供简洁写法，允许直接通过现有数组生成新数组，这被称为数组推导( array comprehension )
+			 */
+			// 实际测试不支持
+			// var arr3= [for(value of arr) value*2];
+			// console.log(arr3);
+
+			// var arr1 = [1,2,3,4];
+			// var arr2 = [for(i of arr1) if(i>2) i];
+		};
+	</script>
+</head>
+<body>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+</body>
+</html>

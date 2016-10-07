@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>遍历接口</title>
+	<script>
+		var obj = {
+			a: 1,
+			b: 2,
+			c: 3
+		};
+
+		/**
+		 * Symbol ： ES6 引入了一种新的原始数据类型 Symbol，表示独一无二的 ID。它通过 Symbol 函数生成。
+		 * Iterator ： 遍历接口，一个对象如果要有 Iterator 接口，必须部署一个 @@iterator 方法，该方法部署在一个键名为 Symbol.iterator 的属性上
+		 *             对应的键值是一个函数，该函数返回一个遍历对象。
+		 * Symbol.iterator ： 预定义好的、类型为 Symbol 的特殊值
+		 *
+		 * 接口部署：
+		 * Object.prototype[Symbol.iterator] = function () {
+		 *     return { next(){ return { value:value,done:boolean } } };
+		 * }
+		 */
+		var s = Symbol();
+		console.log(s);
+		console.log(typeof s);
+
+		// 传入的参数就是当前数据类型的一个标识
+		var s1 = Symbol("test");
+		var s2 = Symbol("test");
+
+		console.log(s1 == s2);  // false
+
+
+		// 添加遍历接口
+		Object.prototype[Symbol.iterator] = function () {
+			// this 指向是当前调用这个方法的对象，遍历 obj 的话，那 this 指向的就是 obj
+			var keys = Object.keys(this);
+			var _self = this;
+			var index = 0;
+			return {
+				next(){
+					if (index < keys.length) {
+						// done:false 当前遍历没有结束
+						// done:true 停止遍历
+						return {value: _self[keys[index++]], done: false};
+					} else {
+						return {value: undefined, done: true};
+					}
+				}
+			};
+		};
+		for (var value of obj) {
+			console.log(value);
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

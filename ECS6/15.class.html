@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>class</title>
+	<script>
+		/**
+		 * Class 关键字用来声明一个类
+		 * class Person{}
+		 *
+		 * constructor 构造函数
+		 * class person{ constructor(){} }
+		 *
+		 * extends 继承
+		 * class momo extends cat{}  momo 继承 cat
+		 *
+		 * super
+		 * 在 constructor 方法内，super 指代父类的 constructor 方法；在其他方法内，super 指代父类的同名方法。
+		 */
+		class Cat {
+			constructor(name) {
+				this.name = name;
+			}
+
+			getName() {
+				return this.name;
+			}
+		}
+
+		class Momo extends Cat {
+			constructor(name, color) {
+				// this.name =name;
+				super(name);
+				this.color = color;
+			}
+
+			showColor() {
+				return this.color;
+			}
+		}
+		var c1 = new Cat("leo");
+		var m1 = new Momo("momo", "yellow");
+
+		console.log(m1.getName());
+		console.log(m1.showColor());
+		console.log(c1.getName());
+
+
+		/**
+		 * 浏览器并不能直接使用，需要使用 Babel
+		 * 什么是 module ： ES6 所提供的模块化
+		 *
+		 * export 命令 ：用于用户自定义模块，规定对外接口
+		 * 语法
+		 * export var name = "leo";
+		 * export {name1,name2}
+		 *
+		 * import命令 ： 用于输入其他模块提供的接口
+		 * 语法
+		 * import {nam1,name2} from '文件路径'; 输入的名称必须与输出的相同
+		 *
+		 * as 关键字 ： 为输入的变量换一个新的名字
+		 * import { name as n } from '路径';
+		 * 整体输入模块
+		 * import * as 变量名 from '路径';
+		 * module 变量名 from '路径'; 输入的模块定义在变量名上
+		 *
+		 * export default ： 输出匿名函数
+		 * 语法：
+		 * export default function(){};
+		 * 在输入的时候可以使用任何名字指向该匿名函数
+		 * 例如 ： import name from '路径'；
+		 *
+		 * 模块的继承
+		 * export * from '模块路径';  输出模块中所有方法和属性
+		 *
+		 * export { a as b} from '模块路径';  将模块中的a变量转为b输出
+		 */
+	</script>
+</head>
+<body>
+
+</body>
+</html>

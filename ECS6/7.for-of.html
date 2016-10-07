@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>for-of</title>
+	<script>
+		var arr = [1, 2, 3, 4, 5];
+		var str = "miaov";
+		var obj = {
+			a: 1,
+			b: 2,
+			c: 3
+		};
+
+		// for-of 只要有遍历接口就能遍历，但是对象是没有遍历接口
+		// arr 不是一个遍历接口，如果是的话，他会返回一个函数，然后 for-of 在遍历的时候去调用这个方法
+		for (var value of arr) {
+			console.log(value);
+		}
+
+		for (var s of str) {
+			console.log(s);
+		}
+
+		for (var o of obj) {
+			console.log(o);  // 报错
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

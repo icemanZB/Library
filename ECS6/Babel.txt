@@ -1,0 +1,59 @@
+Babel ： node 的工具可以将 es6 的代码转成 es5 的代码，但是转不了模块化
+
+安装babel
+npm install --global babel-cli  安装babel-cli工具
+
+配置文件
+echo { presets: ["es2015"] }> .babelrc   ( 命令行 )
+
+在根目录创建.babelrc文件并写入文件内容{presets: ['es2015']}
+
+安装 webpack 和 babel 的一些依赖。
+npm install webpack -g  安装webpack
+npm install --save-dev babel-loader babel-core
+npm install babel-preset-es2015 --save-dev
+webpack ： 转模块使用的
+webpack.config.js
+module.exports = {
+	entry:{main:"./es6/main.js"},   // 把哪个文件进行转换
+	output:{  // 输出模块
+		path:__dirname,
+		filename:"[name].js"   // [name] 替换  entry 中 的 mian 这个key
+	},
+	module: {
+	    // 依赖
+		loaders: [{
+			test: /\.js$/,  // 匹配后缀 .js
+			exclude: /node_modules/,
+			babel-loaderadersader: "babel-loader"
+		}]
+	}
+}
+
+单独的文件转换
+babel es6.js -o es5.js
+babel es6.js --out-file es5.js
+多个文件转换
+babel -d es5/  es6/
+
+
+{
+   "name": "my-es6-project",
+   "version": "1.0.0",
+   "devDependencies": {
+     "babel-cli": "^6.9.0",
+     "babel-core": "^6.9.0",
+     "babel-preset-es2015": "^6.9.0"
+   },
+   "babel": {
+     "presets": [
+       "es2015"
+     ]
+   },
+   "scripts": {
+     "build": "babel ./src -d ./lib",
+ 	 "prepublish": "npm run build"
+   }
+ }
+
+http://es6.ruanyifeng.com/#docs/intro

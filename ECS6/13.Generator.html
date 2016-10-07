@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Generator</title>
+	<script>
+		/**
+		 * Generator ： 所谓 Generator，可以把它理解成一个函数的内部状态的遍历器，每调用一次，函数的内部状态发生一次改变。
+		 * ES6 引入 Generator 函数，作用就是可以完全控制函数的内部状态变化，依次遍历这些状态。
+		 *
+		 * 在形式上， Generator 是一个普通函数，但是有两个特征。
+		 * 1、function 命令与函数名之间有一个星号
+		 * 2、函数体内部使用 yield 语句，定义遍历器的每个成员，即不同的内部状态
+		 */
+		function* fn(b) {
+			console.log(b);
+			var a = yield 1;
+			console.log(a);  // true 就是 next(true) 中的参数
+			for (var i = 0; i < 10; i++) {
+				yield i;
+			}
+		}
+		var f = fn("b");
+		console.log(f.next());
+		console.log(f.next(true));
+		console.log(f.next());
+
+		// 每次调用 next() 都是接着上次继续往后走
+		// 第一次调用 走到 yield 1;
+		// 第二次调用从 yield 1; 下面走到 yield 2;
+		function* fn1() {
+
+			yield 1;
+
+			yield 2;
+		}
+
+		var f1 = fn1();
+		// 返回遍历接口
+		console.log(f1);
+		console.log(f1.next());
+		console.log(f1.next());
+	</script>
+</head>
+<body>
+
+</body>
+</html>
