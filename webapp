@@ -5,4 +5,11 @@
    http://zhidao.baidu.com/link?url=F8erMJZ72VeeX-5X287bRRiJh1Vmueia0-y3EKFI0g8_fLvCYJxSwwBXEtJRZdJ1gRuch_-wZVQ0LKQwRihjYK
    目录浏览全部启用，方便查看目录
    MIME 类型添加.json 后缀，方便访问 json文件
+   基本设置，编辑物理路径
 
+swiper 插件: 当一个元素是 fixed 的时候， ios 在滚动的时候不去渲染 fixed ，导致一些定位失效，需要加上 -webkit-transform:translate3d(0,0,0)
+让 ios 重新渲染。iscroll 没有这个问题，因为 iscroll 本身用的就是 transform 看项目->商城 -> app -> 开学季节
+
+a 标签点击事件绑定在 document 上，防止在 ios 上点击的时候出现黑色的背景
+
+pointer-events: none; 不响应事件

@@ -209,5 +209,27 @@ http://www.bootcss.com/p/font-awesome/#
 
 http://www.daqianduan.com/2348.html  设置字体
 
+http://www.inwaishe.com/portal.php 外设
+
+http://post.smzdm.com/p/6804/ 值得买
+
+http://www.shihuo.cn/youhui/14043.html  羽毛球拍
+http://post.smzdm.com/p/20402/ 羽毛球
+
+http://code.ciaoca.com/ 前端开发仓库 
+
+http://www.imooc.com/article/4379 imooc 面试题分析
+
+https://github.com/amfe/lib-flexible  淘宝 flexiable.js
+
+
 抽离项目中公用的组件
 了解 mvvm reactjs angularjs webpack vuejs
+
+https://design.google.com/devices/ 适配
+
+http://www.open-open.com/lib/view/open1452229325136.html   雪碧图适配
+
+https://jsfiddle.net/
+
+http://www.jianshu.com/
